@@ -1,0 +1,64 @@
+/* purgecss start ignore */
+@tailwind base;
+@tailwind components;
+/* purgecss end ignore */
+@tailwind utilities;
+
+html {
+  overflow-x: hidden;
+}
+
+.container {
+  overflow: hidden;
+}
+
+header {
+  width: 100%;
+  position:fixed;
+  z-index: 10000;
+  background:#fff;
+}
+
+
+
+.header-nav {
+  display:flex;
+  justify-content: space-between;
+  width:63%;
+}
+
+.header-logo {
+  align-items:center;
+  display: flex;
+}
+header .nav {
+  display: none;
+  visibility:hidden;
+  button {
+    color:black;
+  }
+}
+
+.header-shadow {
+  position: absolute;
+  width: 100%;
+  bottom: -1.56rem;
+  left: 0px;
+  background-image: radial-gradient(closest-side, rgba(0, 0, 0, 0.6) 0px, rgba(0, 0, 0, 0.2) 50%, transparent 100%);
+  background-position: 0% -0.94rem;
+  background-repeat: no-repeat;
+  height: 1.56rem;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 810;
+  visibility: visible;
+}
+
+@madia (min-width:768px) {
+  header .nav {
+  display: inline-flex;
+  width:calc(100% - 300px);
+  justify-content: flex-end;
+}
+
+}
