@@ -4,16 +4,13 @@ import HeroPost from '../components/hero-post'
 import Layout from '../components/layout'
 import { getAllPostsForHome } from '../lib/api'
 import Head from 'next/head'
-import { CMS_NAME } from '../lib/constants'
 
 
 
 
 export default function Index({ preview, allPosts }) {
   const heroPost = allPosts[0]
-  // console.log(allPosts[0])
   const morePosts = allPosts.slice(1)
-  // console.log(morePosts)
   return (
     <>
       <Layout preview={preview}>
@@ -40,8 +37,6 @@ export default function Index({ preview, allPosts }) {
 
 export async function getStaticProps({ preview = false }) {
   const allPosts = (await getAllPostsForHome(preview)) ?? []
-  // console.log(allPosts)
-  // console.log(preview)
   return {
     props: { preview, allPosts },
   }
