@@ -4,38 +4,127 @@
 /* purgecss end ignore */
 @tailwind utilities;
 
+*,
+a,
+div,
+h1,
+h2,
+h3,
+h4,
+h5,
+img,
+li,
+p,
+span {
+  text-rendering: geometricprecision;
+}
+
+.col-10 {
+  flex: 0 0 83.33%;
+  max-width: 83.33%;
+}
+
+#container {
+  max-height: 103vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+  section {
+    min-height: 100vh;
+    height: 100%;
+    width: 100vw;
+    scroll-snap-align: start;
+  }
+}
+
+$breakpoint: (
+  tab: "screen and (max-width: 767px)",
+  sp: "screen and (max-width: 480px)",
+);
+
+.home {
+  background-image: radial-gradient(#00000029 0.8px, #ffffff 0.8px);
+  background-size: 30px 31px;
+}
+
+.image-md * {
+  mix-blend-mode:multiply;
+}
+
+@mixin mq($bp) {
+  @media #{map-get($breakpoint,$bp)} {
+    @content;
+  }
+}
+
+@font-face {
+  font-family: "Gilroy-light"; /* フォント名 */
+  /* フォーマットごとにパスを指定 */
+  src: url("../public/font/Gilroy-Light.otf") format("opentype");
+}
+@font-face {
+  font-family: "Gilroy-bold"; /* フォント名 */
+  /* フォーマットごとにパスを指定 */
+  src: url("../public/font/Gilroy-ExtraBold.otf") format("opentype");
+}
+
 html {
   overflow-x: hidden;
+  font-family: "Gilroy-light" !important;
+  font-weight: 500;
+  font-size: 16px;
+}
+body {
+  font-family: "Gilroy-light";
+  position: relative;
+  font-size: 10px;
+  background: #fff;
 }
 
 .container {
   overflow: hidden;
 }
 
-header {
+.container-fluid {
   width: 100%;
-  position:fixed;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+//表示開始
+.open-enter-active {
+  position: fixed;
+  transform: translate3d(-100vw, 0, 0);
+}
+
+//表示完了
+.open-enter-done {
+  position: fixed;
+  background: rgb(255, 255, 255) none repeat scroll 0% 0%;
+  inset: 0px 3.13rem 0px 0px;
+  transition: all 600ms cubic-bezier(0.23, 1, 0.32, 1) 200ms;
+  transform: translate3d(0px, 0px, 0px);
+}
+
+// 非表示完了
+.open-enter-exit-active {
+  background: #ffffff;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  transform: translate3d(-100vw, 0, 0);
+  transition: all cubic-bezier(0.23, 1, 0.32, 1);
+  transition-duration: 300ms;
+  right: 3.13rem;
+}
+
+header {
+  position: fixed;
   z-index: 10000;
-  background:#fff;
-}
-
-
-
-.header-nav {
-  display:flex;
-  justify-content: space-between;
-  width:63%;
-}
-
-.header-logo {
-  align-items:center;
-  display: flex;
-}
-header .nav {
-  display: none;
-  visibility:hidden;
+  background: #fff;
   button {
-    color:black;
+    color: black !important;
   }
 }
 
@@ -44,7 +133,12 @@ header .nav {
   width: 100%;
   bottom: -1.56rem;
   left: 0px;
-  background-image: radial-gradient(closest-side, rgba(0, 0, 0, 0.6) 0px, rgba(0, 0, 0, 0.2) 50%, transparent 100%);
+  background-image: radial-gradient(
+    closest-side,
+    rgba(0, 0, 0, 0.6) 0px,
+    rgba(0, 0, 0, 0.2) 50%,
+    transparent 100%
+  );
   background-position: 0% -0.94rem;
   background-repeat: no-repeat;
   height: 1.56rem;
@@ -54,11 +148,17 @@ header .nav {
   visibility: visible;
 }
 
-@madia (min-width:768px) {
-  header .nav {
-  display: inline-flex;
-  width:calc(100% - 300px);
-  justify-content: flex-end;
-}
+@include mq(tab) {
+  header {
+    .hamberger {
+      display: none;
+      visibility: hidden;
+    }
 
+    nav {
+      display: inline-flex;
+      width: calc(100% - 300px);
+      justify-content: flex-end;
+    }
+  }
 }

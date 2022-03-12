@@ -12,6 +12,8 @@ module.exports = {
         cyan: '#79FFE1',
       },
       spacing: {
+        'h-w': 'calc(4.16666667vw - 30px)',
+        'h-logo': 'calc(4.16666667vw - 40px)',
         28: '7rem',
       },
       letterSpacing: {
@@ -21,14 +23,19 @@ module.exports = {
         tight: 1.2,
       },
       fontSize: {
-        '5xl': '2.5rem',
+        '4xl': '2.2rem',
+        '5xl': '3rem',
         '6xl': '2.75rem',
-        '7xl': '4.5rem',
-        '8xl': '6.25rem',
+        '7xl': '5.5rem',
+        '8xl': '6rem',
       },
       boxShadow: {
         small: '0 5px 10px rgba(0, 0, 0, 0.12)',
         medium: '0 8px 30px rgba(0, 0, 0, 0.12)',
+      },
+      fontFamily: {
+        'G-light': ["Gilroy-light"],
+        'G-bold': ["Gilroy-bold"],
       },
     },
   },
