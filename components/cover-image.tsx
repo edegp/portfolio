@@ -1,29 +1,30 @@
-import ContentfulImage from './contentful-image'
-import Link from 'next/link'
-import cn from 'classnames'
+import Link from "next/link";
+import cn from "classnames";
+import ContentfulImage from "./contentful-image";
 
-export default function CoverImage({ title, url, slug }) {
+export default function CoverImage({ title, url, slug, width, height }) {
   const image = (
     <ContentfulImage
-      width={2000}
-      height={1000}
+      width={width}
+      height={height}
       alt={`Cover Image for ${title}`}
-      className={cn('shadow-small', {
-        'hover:shadow-medium transition-shadow duration-200': slug,
+      className={cn("shadow-small", {
+        "hover:shadow-medium transition-shadow duration-200": slug,
       })}
       src={url}
     />
-  )
+  );
 
   return (
     <div className="sm:mx-0">
       {slug ? (
-        <Link href={`/posts/${slug}`}>
+        <Link href={`posts/${slug}` || "#"} passHref>
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
           <a aria-label={title}>{image}</a>
         </Link>
       ) : (
         image
       )}
     </div>
-  )
+  );
 }

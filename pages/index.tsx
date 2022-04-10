@@ -1,58 +1,102 @@
-import Container from "../components/container";
-import MoreStories from "../components/more-stories";
-import HeroPost from "../components/hero-post";
-import Layout from "../components/layout";
-import Home from "../components/home";
-import WhatIDo from "../components/whatido";
-import { getAllPostsForHome } from "../lib/api";
+import React, { useEffect } from "react";
 import Head from "next/head";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Link from "next/link";
-import ContentfulImage from "../components/contentful-image";
-import logo from "../public/logo.jpg";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import Container from "../components/container";
+import Meta from "../components/meta";
+import Home from "../components/front-page/home";
+import WhatICan from "../components/front-page/whatican";
+import Service from "../components/front-page/service";
+import About from "../components/front-page/about";
+import Contact from "../components/front-page/contact";
+import Header from "../components/header";
 
-export default function Index({ preview, allPosts }) {
-  const heroPost = allPosts[0];
-  const morePosts = allPosts.slice(1);
-  const image = (
-    <ContentfulImage
-      width={96}
-      height={96}
-      objectFit="cover"
-      alt="logo"
-      src={logo}
-    />
-  );
+const theme = createTheme({
+  components: {
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          fontFamily: `"Gilroy-light", "Noto Sans JP"`,
+          fontSize: "unset",
+          fontWeight: "unset",
+        },
+      },
+    },
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          color: "black",
+          textDecoration: "none !important",
+        },
+      },
+    },
+    MuiToggleButton: {
+      styleOverrides: {
+        root: {
+          borderLeft: "1px solid rgba(0, 0, 0, 0.12)!important",
+          padding: "10px 25px",
+          "&.Mui-selected": {
+            borderColor: "black",
+            borderLeft: "1px solid black !important",
+            backgroundColor: "white",
+          },
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          "&:hover": {
+            backgroundColor: "rgba(230, 230, 230, 0.08)",
+          },
+        },
+      },
+    },
+  },
+});
+
+export default function Index() {
+  useEffect(() => {
+    const container = document.querySelector("#container");
+    const handleScroll = () => {
+      const name = ["home", "whatido", "about", "service", "contact"];
+      const children = name.map((e) => container.children.namedItem(e));
+      // const scroll = container.scrollTop;
+      const windowHeight = window.innerHeight;
+      const adjust = 150;
+      // const fadeIn = document.querySelectorAll(".fade .fadein");
+      children.forEach((child) => {
+        const offsetTop = child.getBoundingClientRect().top;
+        if (
+          offsetTop >= -(adjust || 0) &&
+          offsetTop <= windowHeight - (adjust || 0)
+        ) {
+          child.classList.add("fade");
+          document.querySelectorAll(".fade .fadein").forEach((e) => {
+            e.classList.add("fadeInDown");
+          });
+        }
+      });
+    };
+    container.addEventListener("scroll", handleScroll);
+    document.addEventListener("DOMContentLoaded", handleScroll);
+    handleScroll();
+  });
   return (
     <>
-      <Layout preview={preview}>
-        <Head>
-          <title> anful </title>
-        </Head>
-        <Container>
-        <Home />
-        <WhatIDo />
-          {/* {heroPost && (
-            <HeroPost
-              title={heroPost.title}
-              coverImage={heroPost.coverImage}
-              date={heroPost.date}
-              author={heroPost.author}
-              slug={heroPost.slug}
-              excerpt={heroPost.excerpt}
-            />
-          )}
-          {morePosts.length > 0 && <MoreStories posts={morePosts} />} */}
+      <Meta />
+      <Head>
+        <title>anful</title>
+      </Head>
+      <ThemeProvider theme={theme}>
+        <Header />
+        <Container id="container">
+          <Home id="home" />
+          <WhatICan id="whatido" />
+          <Service id="service" />
+          <About id="about" />
+          <Contact id="contact" />
         </Container>
-      </Layout>
+      </ThemeProvider>
     </>
   );
-}
-
-export async function getStaticProps({ preview = false }) {
-  const allPosts = (await getAllPostsForHome(preview)) ?? [];
-  return {
-    props: { preview, allPosts },
-  };
 }

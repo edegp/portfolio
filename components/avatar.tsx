@@ -1,17 +1,20 @@
-import ContentfulImage from './contentful-image'
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import ContentfulImage from "./contentful-image";
+import noImage from "../public/image/noimage.jpg";
 
 export default function Avatar({ name, picture }) {
   return (
-    <div className="flex items-center">
-      <div className="relative w-12 h-12 mr-4">
+    <Box className="inline-flex">
+      <Box className="relative w-4 h-4 mr-4 self-center">
         <ContentfulImage
-          src={picture.url}
+          src={picture ? picture.url : noImage}
           layout="fill"
           className="rounded-full"
           alt={name}
         />
-      </div>
-      <div className="text-xl font-bold">{name}</div>
-    </div>
-  )
+      </Box>
+      <Typography className="text-xs">{name}</Typography>
+    </Box>
+  );
 }
