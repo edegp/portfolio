@@ -1,5 +1,11 @@
 module.exports = {
-  content: ["./{pages,components}/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./pages/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+    "./components/*.{js,ts,jsx,tsx}",
+  ],
+  important: true,
   theme: {
     fontSize: {
       xs: "calc(0.3vw + 12px)",
