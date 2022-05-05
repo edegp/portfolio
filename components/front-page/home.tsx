@@ -1,6 +1,8 @@
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import { Link as LinkScroll } from "react-scroll";
+import * as Scroll from "react-scroll";
 import HomeTitle from "./hometitle";
 
 export default function Home() {
@@ -20,12 +22,32 @@ export default function Home() {
                       Development for your experience
                     </Typography>
                     <HomeTitle />
-                    <Button
-                      className="bg-black text-white rounded-full px-20 normal-case hover:bg-black hover:opacity-50 float-right text-sm fadein"
-                      href="#whatido"
+                    <LinkScroll
+                      containerId="container"
+                      smooth="linear"
+                      spy
+                      duration={800}
+                      delay={200}
+                      onClick={() => {
+                        if (process.browser) {
+                          const container =
+                            document.getElementById("container");
+                          container.style.scrollSnapType = "none";
+                        }
+                        setTimeout(() => {
+                          container.style.scrollSnapType = "y mandatory";
+                        }, 950);
+                      }}
+                      to="whatido"
+                      className="text-white"
                     >
-                      My History
-                    </Button>
+                      <Button
+                        className="bg-black text-white rounded-full px-20 normal-case hover:bg-black hover:opacity-50 float-right text-sm fadein"
+                        href="#whatido"
+                      >
+                        My History
+                      </Button>
+                    </LinkScroll>
                   </Box>
                 </Box>
               </Box>

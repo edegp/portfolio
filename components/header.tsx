@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { useRouter } from "next/router";
 import { Link as LinkScroll } from "react-scroll";
 import * as Scroll from "react-scroll";
 import Button from "@mui/material/Button";
@@ -12,45 +13,61 @@ import Grid from "@mui/material/Grid";
 import Slide from "@mui/material/Slide";
 import CloseIcon from "@mui/icons-material/Close";
 import DehazeIcon from "@mui/icons-material/Dehaze";
-import { Link } from "./Link";
+import Link from "./Link";
+import { useUser } from "../utils/useUser";
 import logo from "../public/image/logo.jpg";
 
-export default function Header() {
+export default function Header({ Location }) {
+  const router = useRouter();
+  const { user } = useUser();
   const [navOpen, setNavOpen] = useState(false);
   const headerLogo = useRef<HTMLAnchorElement>(null);
-  const onMouseMove = (event: React.MouseEvent<HTMLElement>) => {
+  const onMouseMove = useCallback((event: React.MouseEvent<HTMLElement>) => {
     const X = event.clientX - 80;
     const Y = event.clientY - 60;
-    if (X > -70 && X < 100 && Y > -50 && Y < 80) {
-      const translate3d = `translate3d(${X}px, ${Y}px, 0)`;
-      headerLogo.current.style.transform = translate3d;
-    } else {
-      headerLogo.current.style.transform = null;
-    }
-  };
+    X > -70 || X < 100 || Y > -50 || Y < 80
+      ? (headerLogo.current.style.transform = `translate3d(${X}px, ${Y}px, 0)`)
+      : (headerLogo.current.style.transform = null);
+  });
   const onMouseLeave = () => {
     headerLogo.current.style.transform = null;
   };
-  const handleSetActive = () => {
+  const handleSetActive = useCallback(() => {
     if (process.browser) {
-      const container = document.getElementById("container");
+      const container = document.querySelector("#container");
+      container.style.opacity = 1;
+      setNavOpen(false);
       container.style.scrollSnapType = "none";
+      setTimeout(() => {
+        container.style.scrollSnapType = "y mandatory";
+      }, 950);
     }
-    setTimeout(() => {
-      container.style.scrollSnapType = "y mandatory";
-    }, 950);
-  };
-  const toggleDrawer = () => setNavOpen(!navOpen);
+  });
 
+  const toggleDrawer = useCallback(() => {
+    setNavOpen(!navOpen);
+    if (process.browser) {
+      const container = document.querySelector("#container");
+      navOpen ? (container.style.opacity = 1) : (container.style.opacity = 0.2);
+    }
+  });
+
+  useEffect(() => {
+    window.addEventListener("resize", () => {
+      setNavOpen(false);
+      document.querySelector("#container").style.opacity = 1;
+    });
+  });
   const list = (nav) => (
-    <Box className="w-[70vw] h-full items-center flex">
+    <Box className="w-screen tablet:w-[70vw] h-full items-center flex z-32">
       <Button
         onClick={toggleDrawer}
-        className="items-center  mr-6  fixed top-h-w right-h-w p-8 z-40 mix-blend-difference text-white rounded-full"
+        open={navOpen}
+        className="items-center  mr-6  fixed top-[calc(4vw-20px)] right-h-w p-8 z-40 mix-blend-difference text-white rounded-full"
       >
-        <CloseIcon className="text-3xl" />
+        <CloseIcon className="text-2xl" />
       </Button>
-      <Grid container className="tablet:pl-vw-20 pl-vw-10">
+      <Grid container className="pl-vw-32">
         <Grid item xs={4}>
           <Typography variant="h2" className="text-lg text-[#afafaf]">
             SNS
@@ -86,59 +103,105 @@ export default function Header() {
             </Typography>
             <List>
               <ListItem className="pl-0">
-                <LinkScroll
-                  containerId="container"
-                  smooth="linear"
-                  spy
-                  duration={700}
-                  delay={200}
-                  onClick={handleSetActive}
-                  to="about"
-                  className="text-white"
-                >
-                  <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black no-underline">
-                    About
-                  </h2>
-                </LinkScroll>
+                {router.pathname === "/" ? (
+                  <LinkScroll
+                    containerId="container"
+                    smooth="linear"
+                    spy
+                    duration={700}
+                    delay={200}
+                    onClick={handleSetActive}
+                    to="about"
+                    className="text-white capitalize text-md mr-5 hover:cursor-pointer"
+                  >
+                    <h2 className="tracking-normal !font-extrabold !text-2xl leading-tight pl-0 text-black no-underline">
+                      About
+                    </h2>
+                  </LinkScroll>
+                ) : (
+                  <Link
+                    href="/#about"
+                    className="text-white capitalize text-md mr-5 hover:cursor-pointer"
+                  >
+                    <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black no-underline">
+                      About
+                    </h2>
+                  </Link>
+                )}
               </ListItem>
               <ListItem className="pl-0">
-                <LinkScroll
-                  containerId="container"
-                  smooth="linear"
-                  spy
-                  duration={700}
-                  delay={200}
-                  onClick={handleSetActive}
-                  to="whatido"
-                  className="text-white"
-                >
-                  <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black no-underline">
-                    My History
-                  </h2>
-                </LinkScroll>
+                {router.pathname === "/" ? (
+                  <LinkScroll
+                    containerId="container"
+                    smooth="linear"
+                    spy
+                    duration={700}
+                    delay={200}
+                    onClick={handleSetActive}
+                    to="whatido"
+                    className="text-white capitalize text-md mr-5 hover:cursor-pointer"
+                  >
+                    <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black no-underline">
+                      My History
+                    </h2>
+                  </LinkScroll>
+                ) : (
+                  <Link
+                    href="/#whatido"
+                    className="text-white capitalize text-md mr-5 hover:cursor-pointer"
+                  >
+                    <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black no-underline">
+                      My History
+                    </h2>
+                  </Link>
+                )}
               </ListItem>
               <ListItem className="pl-0">
-                <Link target="" href="/blog">
-                  <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black no-underline">
+                {router.pathname === "/posts" ? (
+                  <h2
+                    className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black no-underline"
+                    onClick={toggleDrawer}
+                  >
                     Blog
                   </h2>
-                </Link>
+                ) : (
+                  <Link
+                    href="/posts"
+                    className="text-white capitalize text-md mr-5 hover:cursor-pointer"
+                  >
+                    <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black no-underline">
+                      Blog
+                    </h2>
+                  </Link>
+                )}
               </ListItem>
               <ListItem className="pl-0">
-                <LinkScroll
-                  containerId="container"
-                  smooth="linear"
-                  spy
-                  duration={800}
-                  delay={200}
-                  onClick={handleSetActive}
-                  to="contact"
-                  className="text-white"
-                >
-                  <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black no-underline">
-                    Contact
-                  </h2>
-                </LinkScroll>
+                {router.pathname === "/" ? (
+                  <LinkScroll
+                    containerId="container"
+                    smooth="linear"
+                    spy
+                    duration={800}
+                    delay={200}
+                    onClick={handleSetActive}
+                    to="contact"
+                    className="text-white capitalize text-md mr-5 hover:cursor-pointer"
+                  >
+                    <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black underline">
+                      Contact
+                    </h2>
+                  </LinkScroll>
+                ) : (
+                  <Link
+                    target=""
+                    href="/#contact"
+                    className="text-white capitalize text-md mr-5 hover:cursor-pointer"
+                  >
+                    <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black underline">
+                      Contact
+                    </h2>
+                  </Link>
+                )}
               </ListItem>
             </List>
           </Grid>
@@ -149,7 +212,11 @@ export default function Header() {
 
   return (
     <header>
-      <Box className="header-logo flex items-center fixed top-h-w left-h-logo mix-blend-difference z-50">
+      <Box
+        className="header-logo flex items-center fixed tablet:top-h-w tablet:left-h-logo 
+      mix-blend-difference 
+      z-50"
+      >
         <Link
           href="/"
           target=""
@@ -164,86 +231,112 @@ export default function Header() {
           onMouseLeave={onMouseLeave}
           className="hover:brightness-75 pl-10"
         >
-          <img
-            alt="logo"
-            src={logo.src}
-            width="100"
-            height="100"
-            className="mix-blend-difference"
-          />
+          <img alt="logo" src={logo.src} width="100" height="100" />
         </Link>
       </Box>
-      <ul className="laptop:flex items-center mr-6 text-lg fixed top-h-w right-h-w px-8 z-40 pb-8 mix-blend-difference hidden">
-        <li>
-          <Button className="capitalize text-md mr-5 text-white">
-            <LinkScroll
-              containerId="container"
-              smooth="linear"
-              spy
-              duration={700}
-              delay={200}
-              onClick={handleSetActive}
-              to="about"
-              className="text-white"
-            >
-              About
-            </LinkScroll>
+      {!/^\/subscription.*$/.test(router.pathname) ||
+      router.pathname === "/subscription/signin" ||
+      router.pathname === "/subscription/signup" ? (
+        <>
+          <ul className="laptop:flex items-center mr-6 text-lg fixed top-[calc(4vw-5px)] right-h-w px-8 z-40 pb-8 mix-blend-difference hidden">
+            <li>
+              {router.pathname === "/" ? (
+                <LinkScroll
+                  containerId="container"
+                  smooth="linear"
+                  spy
+                  duration={700}
+                  delay={200}
+                  onClick={handleSetActive}
+                  to="about"
+                  className="text-white capitalize mr-10 hover:cursor-pointer"
+                >
+                  About
+                </LinkScroll>
+              ) : (
+                <Link
+                  href="/#about"
+                  className="text-white capitalize mr-10 hover:cursor-pointer"
+                >
+                  About
+                </Link>
+              )}
+            </li>
+            <li>
+              {router.pathname === "/" ? (
+                <LinkScroll
+                  containerId="container"
+                  smooth="linear"
+                  spy
+                  duration={700}
+                  delay={200}
+                  onClick={handleSetActive}
+                  to="whatido"
+                  className="text-white capitalize mr-10 hover:cursor-pointer"
+                >
+                  My History
+                </LinkScroll>
+              ) : (
+                <Link
+                  href="/#whatido"
+                  className="text-white capitalize mr-10 hover:cursor-pointer"
+                >
+                  My History
+                </Link>
+              )}
+            </li>
+            <li>
+              <Link
+                className=" capitalize mr-10 hover:cursor-pointer text-white"
+                href="/posts"
+                target=""
+              >
+                Blog
+              </Link>
+            </li>
+            <li>
+              {Location === "Home" ? (
+                <LinkScroll
+                  containerId="container"
+                  smooth="linear"
+                  spy
+                  duration={800}
+                  delay={200}
+                  onClick={handleSetActive}
+                  to="contact"
+                  className="text-white capitalize mr-10 hover:cursor-pointer"
+                >
+                  Contact
+                </LinkScroll>
+              ) : (
+                <Link
+                  href="/#contact"
+                  className="text-white capitalize mr-10 hover:cursor-pointer"
+                >
+                  Contact
+                </Link>
+              )}
+            </li>
+          </ul>
+          <Button
+            className="laptop:hidden block items-center mr-6  fixed top-[calc(4vw-5px)] right-h-w p-8 z-20 mix-blend-difference text-white rounded-full"
+            onClick={toggleDrawer}
+          >
+            <DehazeIcon />
           </Button>
-        </li>
-        <li>
-          <Button className="capitalize text-md mr-5 text-white">
-            <LinkScroll
-              containerId="container"
-              smooth="linear"
-              spy
-              duration={700}
-              delay={200}
-              onClick={handleSetActive}
-              to="whatido"
-              className="text-white"
-            >
-              My History
-            </LinkScroll>
-          </Button>
-        </li>
-        <li>
-          <Button className="capitalize text-md mr-5 text-white">
-            <Link className="text-white !font-G-bold" href="/blog" target="">
-              Blog
-            </Link>
-          </Button>
-        </li>
-        <li>
-          <Button className="capitalize text-md text-white">
-            <LinkScroll
-              containerId="container"
-              smooth="linear"
-              spy
-              duration={800}
-              delay={200}
-              onClick={handleSetActive}
-              to="contact"
-              className="text-white"
-            >
-              Contact
-            </LinkScroll>
-          </Button>
-        </li>
-      </ul>
-      <Button
-        className="laptop:hidden block items-center mr-6  fixed top-h-w right-h-w p-8 z-40 mix-blend-difference text-white rounded-full"
-        onClick={toggleDrawer}
-      >
-        <DehazeIcon />
-      </Button>
-      <Drawer
-        anchor="right"
-        open={navOpen}
-        onClose={toggleDrawer}
-        transitionDuration={500}
-      >
-        {list(navOpen)}
-      </Drawer>
+          <Drawer
+            anchor="right"
+            open={navOpen}
+            onClose={toggleDrawer}
+            transitionDuration={500}
+            className="z-30"
+          >
+            {list(navOpen)}
+          </Drawer>
+        </>
+      ) : (
+        <></>
+      )}
     </header>
   );
 }

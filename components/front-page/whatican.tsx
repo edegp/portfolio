@@ -1,11 +1,11 @@
-import React, { useRef } from "react";
+import React, { useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import Fade from "@mui/material/Fade";
+import Zoom from "@mui/material/Zoom";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import { Link } from "../Link";
+import Link from "../Link";
 import AI from "../../public/image/ai.jpg";
 import Food from "../../public/image/restaurant.jpg";
 import Analytics from "../../public/image/analytics.jpg";
@@ -15,6 +15,15 @@ import Marketing from "../../public/image/marketing.jpg";
 import WebSite from "../../public/image/website.png";
 
 export default function WhatICan() {
+  const popperURL = {
+    AI: "https://qiita.com/edegp/",
+    Food: "https://note.com/edegp/",
+    Analytics: "https://qiita.com/edegp/",
+    Ecommerce: "https://qiita.com/edegp/",
+    WebSite: "https://libebar.shop",
+    Reserve: "https://qiita.com/edegp/",
+    Marketing: "https://note.com/edegp/",
+  };
   const popperImage = {
     AI,
     Food,
@@ -28,149 +37,115 @@ export default function WhatICan() {
   const [open, setOpen] = React.useState(false);
   const ref = useRef();
   const intervalRef = useRef(null);
-  const onMouseOver = (event: React.MouseEvent<HTMLAncherElement>) => {
-    if (popper !== event.target.id) {
+  const onMouseOver = useCallback(
+    (event: React.MouseEvent<HTMLAncherElement>) => {
       setPopper(event.target.id);
-    }
-    setOpen(true);
-    ref.current.style.top = `${event.clientY - 150}px`;
-    ref.current.style.left = `${event.clientX - 150}px`;
-    intervalRef.current = setTimeout(() => {
-      setOpen(false);
-    }, 1000);
-  };
-
-  const onMouseOut = () => {
-    intervalRef.current = setTimeout(() => {
-      setOpen(false);
-    }, 300);
-  };
-
-  const handleMouseMovep = (event) => {
-    clearInterval(intervalRef.current);
-    event.currentTarget.style.top = `${event.clientY - 150}px`;
-    event.currentTarget.style.left = `${event.clientX - 150}px`;
-  };
+      setOpen(true);
+      ref.current.style.top = `${event.clientY - 100}px`;
+      ref.current.style.left = `${event.clientX - 100}px`;
+      if (intervalRef.current !== null) return;
+      intervalRef.current = setTimeout(() => setOpen(false), 1500);
+    },
+    []
+  );
+  const handleMouseMove = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      if (intervalRef.current === null) return;
+      clearTimeout(intervalRef.current);
+      intervalRef.current = null;
+      event.currentTarget.style.top = `${event.clientY - 100}px`;
+      event.currentTarget.style.left = `${event.clientX - 100}px`;
+      if (intervalRef.current !== null) return;
+      intervalRef.current = setTimeout(() => setOpen(false), 750);
+    },
+    []
+  );
+  useEffect(() => {
+    document.addEventListener("scroll", () => setOpen(false));
+  });
 
   return (
     <>
-      <Fade
+      <Zoom
         ref={ref}
-        onMouseMove={handleMouseMovep}
+        onMouseMove={handleMouseMove}
         className="pbox fixed w-60 h-60 rounded-full z-40"
         in={open}
         timeout={{ enter: 350, exit: 100 }}
       >
-        <Box>
+        <Link href={popperURL[popper]} target="">
           <Image
             src={popperImage[popper]}
             width={200}
             height={200}
-            objectFit="cover"
+            objectFit="center"
             className="rounded-full z-50 absolute"
           />
-        </Box>
-      </Fade>
+        </Link>
+      </Zoom>
       <section id="whatido" className="bg-black text-white">
-        <Container className="container-fluid pt-vw-28 pb-36">
+        <Container className="container-fluid tablet:pt-vw-28 pt-[10vh] pb-36">
           <Box className="row justify-center items-center text-center flex flex-wrap">
             <Typography
               variant="h1"
-              className="sm: col-10 z-10 !font-G-bold text-3xl tracking-tight leading-tight mb-16 fadein"
+              className="sm: col-10 z-10 !font-extrabold text-3xl tracking-tight leading-tight mb-16 fadein"
             >
               My History
             </Typography>
           </Box>
-          <Grid
-            container
-            // direction-xs-column
-            className="marquee justify-around text-center text-lg"
-          >
-            <Grid item xs={4} className="marquee__inner1">
-              <Link
-                href="https://qiita.com/edegp"
-                target="_blank"
-                className="text-white !font-G-bold inline-block w-full h-full"
-                id="AI"
-                onMouseOver={onMouseOver}
-                onMouseOut={onMouseOut}
-              >
-                AI
-              </Link>
-            </Grid>
-            <Grid item xs={4} className="marquee__inner2">
-              <Link
-                id="Food"
-                href="https://note.com/edegp"
-                target="_blank"
-                className="text-white !font-G-bold"
-                onMouseOver={onMouseOver}
-                onMouseOut={onMouseOut}
-              >
-                Food
-              </Link>
-            </Grid>
-            <Grid item xs={4} className="marquee__inner3">
-              <Link
-                id="Ecommerce"
-                href="https://qiita.com/edegp"
-                target="_blank"
-                className="text-white !font-G-bold"
-                onMouseOver={onMouseOver}
-                onMouseOut={onMouseOut}
-              >
-                E-commerce
-              </Link>
-            </Grid>
-            <Grid item xs={4} className="marquee__inner1">
-              <Link
-                id="WebSite"
-                href="https://libebar.shop"
-                target="_blank"
-                className="text-white !font-G-bold"
-                onMouseOver={onMouseOver}
-                onMouseOut={onMouseOut}
-              >
-                WebSite
-              </Link>
-            </Grid>
-            <Grid item xs={4} className="marquee__inner2">
-              <Link
-                id="Reserve"
-                href="https://qiita.com/edegp"
-                target="_blank"
-                className="text-white !font-G-bold"
-                onMouseOver={onMouseOver}
-                onMouseOut={onMouseOut}
-              >
-                Reserve System
-              </Link>
-            </Grid>
-            <Grid item xs={4} className="marquee__inner3">
-              <Link
-                id="Analytics"
-                href="https://qiita.com/edegp"
-                target="_blank"
-                className="text-white !font-G-bold"
-                onMouseOver={onMouseOver}
-                onMouseOut={onMouseOut}
-              >
-                Analytics
-              </Link>
-            </Grid>
-            <Grid item xs={4} className="marquee__inner2">
-              <Link
-                id="Marketing"
-                href="https://note.com/edegp"
-                target="_blank"
-                className="text-white !font-G-bold"
-                onMouseOver={onMouseOver}
-                onMouseOut={onMouseOut}
-              >
-                Marketing
-              </Link>
-            </Grid>
-          </Grid>
+          <Box className="marquee justify-around text-center text-lg grid grid-cols-3 justify-items-center">
+            <Typography
+              className="marquee__inner1 text-white !font-extrabold inline-block w-full"
+              id="AI"
+              onMouseOver={onMouseOver}
+            >
+              AI
+            </Typography>
+            <Typography
+              id="Food"
+              className="marquee__inner2 text-white !font-extrabold w-full"
+              onMouseOver={onMouseOver}
+            >
+              Food
+            </Typography>
+            <Typography
+              id="Ecommerce"
+              className="marquee__inner3 text-white !font-extrabold w-full"
+              onMouseOver={onMouseOver}
+            >
+              E-commerce
+            </Typography>
+            <Typography
+              id="WebSite"
+              href="https://libebar.shop"
+              target="_blank"
+              className="marquee__inner1 text-white !font-extrabold w-full"
+              onMouseOver={onMouseOver}
+            >
+              WebSite
+            </Typography>
+            <Typography
+              id="Reserve"
+              className="marquee__inner2 text-white !font-extrabold w-full"
+              onMouseOver={onMouseOver}
+            >
+              Reserve System
+            </Typography>
+            <Typography
+              id="Analytics"
+              className="marquee__inner3 text-white !font-extrabold w-full"
+              onMouseOver={onMouseOver}
+            >
+              Analytics
+            </Typography>
+            <Typography
+              id="Marketing"
+              className="marquee__inner2 text-white !font-extrabold w-full"
+              onMouseOver={onMouseOver}
+            >
+              Marketing
+            </Typography>
+          </Box>
         </Container>
       </section>
     </>

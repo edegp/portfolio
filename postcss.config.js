@@ -4,6 +4,8 @@ module.exports = {
   plugins: {
     "postcss-import": {},
     tailwindcss: {},
-    autoprefixer: { grid: true },
+    autoprefixer: {
+      grid: false,
+    },
   },
 };

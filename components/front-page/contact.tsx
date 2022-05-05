@@ -14,7 +14,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import { useForm, ValidationError } from "@formspree/react";
-import { Link } from "../Link";
+import Link from "../Link";
 
 export default function Contact() {
   const [state, handleSubmit] = useForm("xbjwkwve");
@@ -36,7 +36,7 @@ export default function Contact() {
   };
   return (
     <section id="contact">
-      <Container className="laptop:pt-vw-32 tablet:pt-vw-72 pt-vw-96 pb-36 flex">
+      <Container className="laptop:pt-vw-44 tablet:pt-vw-64 pt-[15vh] pb-30 flex">
         <Box className="w-[30%] mr-vw-8 tablet:flex items-end flex-col hidden">
           <Box className="mail mb-10 pl-[15%]">
             <Typography className="tracking-[0.3em] ">CONTACT</Typography>
@@ -104,12 +104,12 @@ export default function Contact() {
           <Typography variant="h3" className="text-xs mb-1 ml-2 fadein">
             飲食店のウェブでのブランディングやマーケティングについて
           </Typography>
-          <Typography variant="h2" className="text-xl font-bold fadein">
+          <Typography variant="h2" className="text-lg font-bold fadein">
             ご気軽にご相談ください !
           </Typography>
           <form onSubmit={handleSubmit}>
             <FormGroup>
-              <FormControl className="mt-vw-5">
+              <FormControl className="mt-3">
                 <InputLabel
                   className="text-black text-[12px] leading-5"
                   shrink
@@ -131,7 +131,7 @@ export default function Contact() {
                   errors={state.errors}
                 />
               </FormControl>
-              <FormControl className="mt-vw-5">
+              <FormControl className="mt-3">
                 <InputLabel
                   className="text-black text-[12px] leading-5"
                   shrink
@@ -152,7 +152,7 @@ export default function Contact() {
                   errors={state.errors}
                 />
               </FormControl>
-              <FormControl className="mt-vw-5">
+              <FormControl className="mt-3">
                 <InputLabel
                   className="text-black text-[12px] leading-5"
                   shrink
@@ -164,36 +164,32 @@ export default function Contact() {
                   name="badget"
                   id="badget"
                   required=""
-                  className="flex-wrap mt-4"
+                  className="flex-wrap tablet:mt-4 mt-1"
                   value={alignment}
                   exclusive
                   onChange={handleAlignment}
-                  aria-defaultValue="text formatting"
                 >
                   <ToggleButton
                     value="2"
-                    aria-defaultValue="2"
                     className="mt-1 tablet:mt-0 !rounded-[30px]"
                   >
-                    2万円以下
+                    ～¥20,000
                   </ToggleButton>
                   <ToggleButton
                     value="2-5"
-                    aria-defaultValue="2-5"
                     className="sp:!ml-[20px] mt-2 tablet:mt-0 !rounded-[30px]"
                   >
-                    2万円から5万円
+                    ¥20,000～¥50,000
                   </ToggleButton>
                   <ToggleButton
                     value="5"
-                    aria-defaultValue="5"
                     className="sp:!ml-[20px] mt-2 tablet:mt-0 !rounded-[30px]"
                   >
-                    5万円以上
+                    ¥50,000～
                   </ToggleButton>
                 </ToggleButtonGroup>
               </FormControl>
-              <FormControl className="mt-vw-5">
+              <FormControl className="mt-3">
                 <InputLabel
                   className="text-black text-[12px] leading-5"
                   shrink
@@ -202,11 +198,19 @@ export default function Contact() {
                   お問い合わせ内容
                 </InputLabel>
                 <TextField
-                  className="mt-4"
+                  className="mt-4 hidden tablet:inline-flex"
                   id="outlined-multiline-static message"
                   name="message"
                   multiline
                   rows={4}
+                  defaultValue="近頃、飲食店を開業予定でウェブサイト作成を検討…"
+                />
+                <TextField
+                  className="mt-4 inline-flex tablet:hidden"
+                  id="outlined-multiline-static message"
+                  name="message"
+                  multiline
+                  rows={1}
                   defaultValue="近頃、飲食店を開業予定でウェブサイト作成を検討…"
                 />
                 <ValidationError

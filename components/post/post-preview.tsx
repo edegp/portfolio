@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import { Link } from "../Link";
+import Link from "../Link";
 import Avatar from "../avatar";
 import DateComponent from "../date";
 import CoverImage from "../cover-image";

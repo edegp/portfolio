@@ -1,26 +1,45 @@
 import Head from "next/head";
 // import Typography from "@mui/material/Typography";
+
 import Container from "../components/container";
 import Header from "../components/header";
 import LPHome from "../components/lp/lp-home";
-// import Acheive from "../components/lp/acheive";
-// import System from "../components/lp/system";
-// import FAQ from "../components/lp/faq";
+import Acheive from "../components/lp/acheive";
+import Merit from "../components/lp/merit";
+import System from "../components/lp/system";
+import Introduce from "../components/lp/introduce";
+import FAQ from "../components/lp/faq";
+import { Product } from "../types";
+import { GetStaticPropsResult } from "next";
+import { getActiveProductsWithPrices } from "../utils/supabase-client";
 
-export default function LP() {
+interface Props {
+  products: Product[];
+}
+
+export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
+  const products = await getActiveProductsWithPrices();
+  return {
+    props: {
+      products,
+    },
+  };
+}
+
+export default function LP({ products }: Props) {
   return (
     <>
-      {/* <Meta /> */}
       <Head>
-        <title>飲食店でホームページを開設するならanful</title>
+        <title>飲食店でホームページを開設するならANful</title>
       </Head>
       <Container>
-        <Header />
+        {/* <Header /> */}
         <LPHome />
-        {/* <Acheive />
-      <System />
-      <Plan />
-      <FAQ /> */}
+        <Merit />
+        <Acheive />
+        <System />
+        <Introduce products={products} />
+        <FAQ />
       </Container>
     </>
   );

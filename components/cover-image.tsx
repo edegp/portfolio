@@ -18,7 +18,7 @@ export default function CoverImage({ title, url, slug, width, height }) {
   return (
     <div className="sm:mx-0">
       {slug ? (
-        <Link href={`posts/${slug}` || "#"} passHref>
+        <Link href={`/posts/${slug}` || "#"} passHref>
           {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
           <a aria-label={title}>{image}</a>
         </Link>

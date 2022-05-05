@@ -1,7 +1,6 @@
-$breakpoint: (
-  tab: "screen and (max-width: 767px)",
-  sp: "screen and (max-width: 480px)",
-);
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 @font-face {
   font-family: "My"; /* フォント名 */
@@ -11,20 +10,81 @@ $breakpoint: (
     format("opentype");
 }
 @font-face {
-  font-family: "Gilroy-light"; /* フォント名 */
+  font-family: "Gilroy"; /* フォント名 */
   /* フォーマットごとにパスを指定 */
   src: url("../public/font/Gilroy-Light.otf") format("opentype");
+  font-weight: 100;
 }
 @font-face {
-  font-family: "Gilroy-bold"; /* フォント名 */
+  font-family: "Gilroy"; /* フォント名 */
+  /* フォーマットごとにパスを指定 */
+  src: url("../public/font/Gilroy-Light.otf") format("opentype");
+  font-weight: 300;
+}
+@font-face {
+  font-family: "Gilroy"; /* フォント名 */
+  /* フォーマットごとにパスを指定 */
+  src: url("../public/font/Gilroy-Light.otf") format("opentype");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Gilroy"; /* フォント名 */
+  /* フォーマットごとにパスを指定 */
+  src: url("../public/font/Gilroy-Light.otf") format("opentype");
+  font-weight: 500;
+}
+@font-face {
+  font-family: "Gilroy"; /* フォント名 */
   /* フォーマットごとにパスを指定 */
   src: url("../public/font/Gilroy-ExtraBold.otf") format("opentype");
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Gilroy"; /* フォント名 */
+  /* フォーマットごとにパスを指定 */
+  src: url("../public/font/Gilroy-ExtraBold.otf") format("opentype");
+  font-weight: 900;
+}
+
+@font-face {
+  font-family: "Noto Sans JP"; /* フォント名 */
+  /* フォーマットごとにパスを指定 */
+  src: url("../public/font/Noto_Sans_JP/NotoSansJP-Black.otf")
+    format("opentype");
+  font-weight: 900;
+}
+@font-face {
+  font-family: "Noto Sans JP"; /* フォント名 */
+  /* フォーマットごとにパスを指定 */
+  src: url("../public/font/Noto_Sans_JP/NotoSansJP-Bold.otf") format("opentype");
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Noto Sans JP"; /* フォント名 */
+  /* フォーマットごとにパスを指定 */
+  src: url("../public/font/Noto_Sans_JP/NotoSansJP-Medium.otf")
+    format("opentype");
+  font-weight: 500;
 }
 @font-face {
   font-family: "Noto Sans JP"; /* フォント名 */
   /* フォーマットごとにパスを指定 */
   src: url("../public/font/Noto_Sans_JP/NotoSansJP-Regular.otf")
     format("opentype");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Noto Sans JP"; /* フォント名 */
+  /* フォーマットごとにパスを指定 */
+  src: url("../public/font/Noto_Sans_JP/NotoSansJP-Light.otf")
+    format("opentype");
+  font-weight: 300;
+}
+@font-face {
+  font-family: "Noto Sans JP"; /* フォント名 */
+  /* フォーマットごとにパスを指定 */
+  src: url("../public/font/Noto_Sans_JP/NotoSansJP-Thin.otf") format("opentype");
+  font-weight: 100;
 }
 
 *,
@@ -41,11 +101,12 @@ p,
 span,
 button {
   text-rendering: geometricprecision;
-  font-family: "Gilroy-light", "Noto Sans JP" !important;
+  font-family: "Gilroy", "Noto Sans JP" !important;
 }
 button,
 a {
-  font-family: "Gilroy-bold" !important;
+  font-family: "Gilroy";
+  font-weight: 800 !important;
 }
 *,
 ::after,
@@ -71,12 +132,12 @@ section {
 
 html {
   overflow-x: hidden;
-  font-family: "Gilroy-light" !important;
+  font-family: "Gilroy" !important;
   font-weight: 500;
   font-size: 16px;
 }
 body {
-  font-family: "Gilroy-light";
+  font-family: "Gilroy";
   position: relative;
   font-size: 10px;
   background: #fff;
@@ -99,7 +160,8 @@ body {
 #about,
 #contact,
 #home,
-#service {
+#service,
+.section {
   min-height: 100vh;
   height: 100%;
   width: 100vw;
@@ -145,17 +207,8 @@ body {
   mix-blend-mode: multiply;
 }
 
-@mixin mq($bp) {
-  @media #{map-get($breakpoint,$bp)} {
-    @content;
-  }
-}
-
 .header-logo a {
   transition: all 0.5s ease;
-}
-
-@include mq(tab) {
 }
 
 .marquee {
@@ -164,30 +217,30 @@ body {
   height: 50vh;
   --offset: 15vh;
   --move-initial: calc(35vh + var(--offset));
-  --move-final: calc(-60vh + var(--offset));
+  --move-final: calc(-35vh + var(--offset));
 }
 
 [class*="marquee__inner"] {
   animation-play-state: running;
   width: fit-content;
-  height: 50%;
+  height: 35%;
   transform: translate3d(0, var(--move-initial) 0);
   white-space: pre;
   color: #fff;
-  padding-top: 50px;
+  padding-top: 15px;
 }
 
 .marquee__inner {
   &1 {
-    animation: marquee 21s linear 0s infinite;
+    animation: marquee 23s linear 0s infinite;
     transform: translate3d(0, var(--move-initial), 0);
   }
   &2 {
-    animation: marquee 16s linear 4s infinite;
+    animation: marquee 18s linear 4s infinite;
     transform: translate3d(0, var(--move-initial), 0);
   }
   &3 {
-    animation: marquee 19s linear 2s infinite;
+    animation: marquee 21s linear 2s infinite;
     transform: translate3d(0, var(--move-initial), 0);
   }
 }
@@ -229,7 +282,7 @@ body {
 .rotate {
   display: inline-block;
   animation-play-state: running;
-  transform: translate3d(103vw, 0, 0);
+  transform: translateX(103vw);
   @for $i from 1 to 31 {
     &:nth-child(#{$i}) {
       animation: rotation 3.6s linear 0.8 * ($i - 0.8) + s forwards;
@@ -238,20 +291,16 @@ body {
 }
 @keyframes rotation {
   0% {
-    transform: translate3d(103vw, 0, 0) rotate(0);
+    transform: translateX(103vw) rotate(0deg);
   }
-  100% {
-    transform: translate3d(0, 0, 0) rotate(-360deg);
+  99.9%,
+  to {
+    transform: translateX(0vw) rotate(-360deg);
   }
 }
 .service-img {
-  perspective: 1000px;
+  perspective: 600px;
   img {
     transform: rotateX(33deg);
   }
 }
-
-// .pbox {
-//   transition: transform 0.35s, all 0.2s 0.2s, -webkit-transform 0.35s,
-//     -moz-transform 0.35s, -o-transform 0.35s;
-// }
