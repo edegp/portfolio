@@ -71,10 +71,9 @@ export default function SignUp({
         setSignin={setSignin}
       />
     );
-  // useEffect(() => {});
   return (
     <div className="flex justify-center height-screen-helper">
-      <div className="flex flex-col justify-between max-w-lg p-3 m-auto w-80 ">
+      <div className="flex flex-col justify-between max-w-lg p-3 m-auto w-80">
         <form onSubmit={handleSignup} className="flex flex-col space-y-4">
           {message.content && (
             <div

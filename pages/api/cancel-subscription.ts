@@ -1,8 +1,5 @@
 import { stripe } from "../../utils/stripe";
-import {
-  getUser,
-  withAuthRequired,
-} from "@supabase/supabase-auth-helpers/nextjs";
+import { getUser, withApiAuth } from "@supabase/supabase-auth-helpers/nextjs";
 import { createOrRetrieveCustomer } from "../../utils/supabase-admin";
 import { getURL } from "../../utils/helpers";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -14,7 +11,10 @@ const updateSubscription = async (
   if (req.method === "POST") {
     try {
       const { subscriptionId } = req.body;
-      const cancelSubscription = await stripe.subscriptions.del(subscriptionId);
+      const cancelSubscription = await stripe.subscriptions.update(
+        subscriptionId,
+        { cancel_at_period_end: true }
+      );
 
       return res.status(200).send({ cancelSubscription });
     } catch (err: any) {
@@ -29,4 +29,4 @@ const updateSubscription = async (
   }
 };
 
-export default withAuthRequired(updateSubscription);
+export default withApiAuth(updateSubscription);

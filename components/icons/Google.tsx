@@ -2,8 +2,8 @@ const Google = ({ ...props }) => {
   return (
     <>
       <svg
-        width="46px"
-        height="46px"
+        width="32px"
+        height="32px"
         viewBox="0 0 46 46"
         version="1.1"
         xmlns="http://www.w3.org/2000/svg"
@@ -87,7 +87,7 @@ const Google = ({ ...props }) => {
               transform="translate(4.000000, 4.000000)"
               filter="url(#filter-1)"
             >
-              <g id="button-bg">
+              {/* <g id="button-bg">
                 <use
                   fill="#FFFFFF"
                   fill-rule="evenodd"
@@ -97,7 +97,7 @@ const Google = ({ ...props }) => {
                 <use fill="none" xlinkHref="#path-2"></use>
                 <use fill="none" xlinkHref="#path-2"></use>
                 <use fill="none" xlinkHref="#path-2"></use>
-              </g>
+              </g> */}
             </g>
             <g
               id="logo_googleg_48dp"

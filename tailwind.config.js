@@ -1,3 +1,13 @@
+// tailwind.config.js
+function withOpacity(variableName) {
+  return ({ opacityValue }) => {
+    if (opacityValue !== undefined) {
+      return `rgba(var(${variableName}), ${opacityValue})`;
+    }
+    return `rgb(var(${variableName}))`;
+  };
+}
+
 module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx}",
@@ -6,7 +16,7 @@ module.exports = {
   important: true,
   theme: {
     fontSize: {
-      xs: "calc(0.3vw + 14px)",
+      xs: "calc(0.3vw + 12px)",
       sm: "calc(0.4vw + 14px)",
       md: "calc(0.7vw + 18px)",
       lg: "calc(1.5vw + 18px)",
@@ -31,7 +41,9 @@ module.exports = {
       colors: {
         primary: "#04ac4d",
         secondary: "#ead808",
+        color: withOpacity("--color-primary"),
       },
+      extend: {},
       spacing: {
         "h-w": "calc(4.16666667vw - 30px)",
         "h-logo": "calc(4.16666667vw - 40px)",

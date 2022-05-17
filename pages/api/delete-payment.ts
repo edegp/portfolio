@@ -1,8 +1,5 @@
 import { stripe } from "../../utils/stripe";
-import {
-  getUser,
-  withAuthRequired,
-} from "@supabase/supabase-auth-helpers/nextjs";
+import { getUser, withApiAuth } from "@supabase/supabase-auth-helpers/nextjs";
 import { createOrRetrieveCustomer } from "../../utils/supabase-admin";
 import { getURL } from "../../utils/helpers";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -33,4 +30,4 @@ const deletePayment = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withAuthRequired(deletePayment);
+export default withApiAuth(deletePayment);

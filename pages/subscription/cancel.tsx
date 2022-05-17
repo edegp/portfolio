@@ -9,23 +9,28 @@ import { getActiveProductsWithPrices } from "../../utils/supabase-client";
 import { postData } from "../../utils/helpers";
 import { useUser } from "../../utils/useUser";
 import Link from "../../components/Link";
+import { withPageAuth } from "@supabase/supabase-auth-helpers/nextjs";
+import SubscriptionLayout from "../../components/SubscriptionLayout";
 
 interface Props {
   products: Product[];
 }
 
-export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
-  const products = await getActiveProductsWithPrices();
-  return {
-    props: {
-      products,
-    },
-    revalidate: 60,
-  };
-}
-export default function Cancel({ products }) {
+export const getServerSideProps = withPageAuth({
+  getServerSideProps: async () => {
+    const products = await getActiveProductsWithPrices();
+    return {
+      props: {
+        products,
+      },
+    };
+  },
+  redirectTo: "/siginin",
+});
+
+export default function Cancel({ user, products }) {
   const router = useRouter();
-  const { user, isLoading, subscription, userDetails } = useUser();
+  const { isLoading, subscription, userDetails } = useUser();
   const Cancelhandle = async () => {
     const { cancelSubscription } = await await postData({
       url: "/api/cancel-subscription",
@@ -35,7 +40,8 @@ export default function Cancel({ products }) {
       router.push({ pahtname: "/subscription", query: "cancel" });
   };
   useEffect(() => {
-    if (!subscription && !isLoading) router.push("/subscription");
+    if (!subscription && !isLoading)
+      router.push("/subscription/cancel-complete");
   }, [subscription]);
   const subscriptionPrice =
     subscription &&
@@ -45,7 +51,7 @@ export default function Cancel({ products }) {
       minimumFractionDigits: 0,
     }).format((subscription?.prices?.unit_amount || 0) / 1);
   return (
-    <>
+    <SubscriptionLayout>
       <Typography>プランをキャンセル</Typography>
       <Typography>現在のプラン</Typography>
       <Divider />
@@ -60,6 +66,6 @@ export default function Cancel({ products }) {
       <Link href="/subscription/customer-portal">
         <Button>プランを継続する</Button>
       </Link>
-    </>
+    </SubscriptionLayout>
   );
 }

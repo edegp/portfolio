@@ -1,8 +1,5 @@
 import { stripe } from "../../utils/stripe";
-import {
-  getUser,
-  withAuthRequired,
-} from "@supabase/supabase-auth-helpers/nextjs";
+import { getUser, withApiAuth } from "@supabase/supabase-auth-helpers/nextjs";
 import { createOrRetrieveCustomer } from "../../utils/supabase-admin";
 import { getURL } from "../../utils/helpers";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -15,17 +12,18 @@ const updateSubscription = async (
     try {
       const { subscriptionId, price } = req.body;
       const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-      const updateSubscription = await stripe.subscriptions.update(
-        subscriptionId,
-        {
-          items: [
-            {
-              id: subscription.items.data[0].id,
-              price: price,
-            },
-          ],
-        }
-      );
+      if (subscription)
+        const updateSubscription = await stripe.subscriptions.update(
+          subscriptionId,
+          {
+            items: [
+              {
+                id: subscription.items.data[0].id,
+                price,
+              },
+            ],
+          }
+        );
       return res.status(200).send({ updateSubscription });
     } catch (err: any) {
       console.log(err);
@@ -39,4 +37,4 @@ const updateSubscription = async (
   }
 };
 
-export default withAuthRequired(updateSubscription);
+export default withApiAuth(updateSubscription);

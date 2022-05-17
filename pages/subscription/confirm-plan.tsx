@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { withAuthRequired } from "@supabase/supabase-auth-helpers/nextjs";
+import { withPageAuth } from "@supabase/supabase-auth-helpers/nextjs";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
@@ -9,8 +9,9 @@ import { postData } from "../../utils/helpers";
 import { getActiveProductsWithPrices } from "../../utils/supabase-client";
 import LoadingDots from "../../components/ui/LoadingDots";
 import Link from "../../components/Link";
+import SubscriptionLayout from "../../components/SubscriptionLayout";
 
-export const getServerSideProps = withAuthRequired({
+export const getServerSideProps = withPageAuth({
   getServerSideProps: async () => {
     const products = await getActiveProductsWithPrices();
     return {
@@ -33,7 +34,8 @@ export default function comfirmPlan({ user, products }) {
       url: "/api/update-subscription",
       data: { subscriptionId: subscription.id, price: product.prices[0].id },
     });
-    if (updateSubscription) router.push("/subscription/account");
+    if (updateSubscription)
+      router.push({ pathname: "/subscription/complete", query: plan });
   };
   useEffect(() => {
     if (!subscription && !isLoading) router.push("/subscription");
@@ -51,17 +53,19 @@ export default function comfirmPlan({ user, products }) {
     const nextPaymentDate = date[0] + "年" + month + "月" + day + "日";
     return (
       <>
-        <Typography>新規プランの確認</Typography>
-        <Typography>新規プラン</Typography>
-        <Divider />
-        <Typography>{product.name}</Typography>
-        <Typography>1 カ月ごとに{product.prices.unit_amount}円</Typography>
-        <Typography>次回の支払い</Typography>
-        <Typography>{nextPaymentDate}</Typography>
-        <Button onClick={updateSubscription}>変更する</Button>
-        <Link href="/subscription/change">
-          <Button>キャンセル</Button>
-        </Link>
+        <SubscriptionLayout>
+          <Typography>新規プランの確認</Typography>
+          <Typography>新規プラン</Typography>
+          <Divider />
+          <Typography>{product.name}</Typography>
+          <Typography>1 カ月ごとに{product.prices.unit_amount}円</Typography>
+          <Typography>次回の支払い</Typography>
+          <Typography>{nextPaymentDate}</Typography>
+          <Button onClick={updateSubscription}>変更する</Button>
+          <Link href="/subscription/change">
+            <Button>キャンセル</Button>
+          </Link>
+        </SubscriptionLayout>
       </>
     );
   }

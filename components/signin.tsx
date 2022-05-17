@@ -74,7 +74,12 @@ export default function SignIn({
 
   const handleOAuthSignIn = async (provider: Provider) => {
     setLoading(true);
-    const { error } = await supabaseClient.auth.signIn({ provider });
+    const { error } = await supabaseClient.auth.signIn(
+      { provider },
+      {
+        redirectTo: "http://localhost:3000/subscription",
+      }
+    );
     if (error) {
       setMessage({ type: "error", content: error.message });
     }
@@ -130,14 +135,16 @@ export default function SignIn({
                 Sign in
               </Button>
             </form>
-            <span className="pt-1 text-center text-sm">
+            <span className="pt-1 text-center text-xs">
               <span className="text-zinc-200">Don't have an account?</span>
-              {` `}
-              <Button onClick={() => setSignin(false)}>
-                <a className="text-accent-9 font-bold hover:underline cursor-pointer">
-                  Sign up.
-                </a>
-              </Button>
+              &ensp;
+              <a
+                variant="slim"
+                className="text-accent-9 font-semibold hover:underline cursor-pointer"
+                onClick={() => setSignin(false)}
+              >
+                Sign up.
+              </a>
             </span>
           </div>
 
@@ -152,27 +159,19 @@ export default function SignIn({
               aria-hidden="true"
             ></div>
           </div>
-
           <Button
-            className="mix-blend-difference"
+            className="mt-3"
             variant="slim"
-            type="submit"
-            disabled={loading}
-            onClick={() => handleOAuthSignIn("github")}
-          >
-            <GitHub />
-            <span className="ml-2">Continue with GitHub</span>
-          </Button>
-          <Button
-            className="mix-blend-difference mt-3"
             type="submit"
             disabled={loading}
             onClick={() => handleOAuthSignIn("facebook")}
           >
             <Facebook />
+            <span className="ml-2">Continue with Facebook</span>
           </Button>
           <Button
             className="mt-3"
+            variant="slim"
             type="submit"
             disabled={loading}
             onClick={() => handleOAuthSignIn("google")}

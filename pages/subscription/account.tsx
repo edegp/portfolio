@@ -2,10 +2,10 @@ import { useRouter } from "next/router";
 import { useState, ReactNode, useEffect } from "react";
 import LoadingDots from "../../components/ui/LoadingDots";
 import Button from "../../components/ui/Button";
-import { useUser, MyUserContextProvider } from "../../utils/useUser";
+import { useUser } from "../../utils/useUser";
 import { postData } from "../../utils/helpers";
 import { supabase } from "../../utils/supabase-client";
-import { withAuthRequired, User } from "@supabase/supabase-auth-helpers/nextjs";
+import { withPageAuth, User } from "@supabase/supabase-auth-helpers/nextjs";
 import Link from "../../components/Link";
 
 interface Props {
@@ -30,7 +30,7 @@ function Card({ title, description, footer, children }: Props) {
   );
 }
 
-export const getServerSideProps = withAuthRequired({
+export const getServerSideProps = withPageAuth({
   redirectTo: "/subscription/signin",
 });
 
@@ -38,19 +38,6 @@ export default function Account({ user }: { user: User }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const { isLoading, subscription, userDetails } = useUser();
-  const redirectToCustomerPortal = async () => {
-    setLoading(true);
-    const { configuration, url, error } = await postData({
-      url: "/api/create-portal-link",
-    });
-    window.location.assign(url);
-    // router.push({
-    //   pathname: "/subscription/customer-portal",
-    //   // query: { configuration: configuration },
-    // });
-    setLoading(false);
-  };
-
   const subscriptionPrice =
     subscription &&
     new Intl.NumberFormat("en-US", {
@@ -60,8 +47,10 @@ export default function Account({ user }: { user: User }) {
     }).format((subscription?.prices?.unit_amount || 0) / 100);
 
   useEffect(() => {
-    if (!subscription && !isLoading) router.push("/subscription");
-  }, [subscription]);
+    if (!subscription && !isLoading) {
+      router.push("/subscription");
+    }
+  }, [subscription, isLoading]);
   return (
     <section className="bg-black mb-32">
       <div className="max-w-6xl mx-auto pt-8 sm:pt-24 pb-8 px-4 sm:px-6 lg:px-8">
@@ -80,7 +69,7 @@ export default function Account({ user }: { user: User }) {
           description={
             subscription &&
             (subscription.status === "active" ||
-              subscription.status === "trial")
+              subscription.status === "trialing")
               ? `You are currently on the ${subscription?.prices?.products?.name} plan.`
               : ""
           }
@@ -94,7 +83,7 @@ export default function Account({ user }: { user: User }) {
                   variant="slim"
                   loading={loading}
                   disabled={loading || !subscription}
-                  onClick={redirectToCustomerPortal}
+                  // onClick={redirectToCustomerPortal}
                 >
                   Open customer portal
                 </Button>

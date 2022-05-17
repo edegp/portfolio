@@ -34,12 +34,11 @@ export interface Props {
 export const MyUserContextProvider = (props: Props) => {
   const { supabaseClient: supabase } = props;
   const { user, accessToken, isLoading: isLoadingUser } = useSupaUser();
-  const [isLoadingData, setIsloadingData] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState<booleran | false>(false);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
-  const [newsubscription, setNewSubscription] = useState<Subscription | null>(
-    null
-  );
+  const [canceled, setCanceled] = useState<Subscription | null>(null);
+
   const getUserDetails = () =>
     supabase.from<UserDetails>("users").select("*").single();
   const getSubscription = () =>
@@ -47,6 +46,13 @@ export const MyUserContextProvider = (props: Props) => {
       .from<Subscription>("subscriptions")
       .select("*, prices(*, products(*))")
       .in("status", ["trialing", "active"])
+      .single();
+  const getCancelSubscription = () =>
+    supabase
+      .from<Subscription>("subscriptions")
+      .select("*, prices(*, products(*))")
+      .in("status", ["canceled"])
+      .limit(1)
       .single();
   const updateSubscription = async (payload) => {
     const { data, error } = await supabase
@@ -58,64 +64,78 @@ export const MyUserContextProvider = (props: Props) => {
     return result;
   };
 
-  const setData = async (payload) => {
-    if (
-      !payload ||
-      (payload.status !== "trialing" && payload.status !== "active")
-    )
-      return setSubscription(null);
+  const setData = (payload) => {
+    console.log("start payload");
+    if (payload?.status !== "trialing" || payload?.status !== "active") {
+      setSubscription(null);
+      setIsLoadingData(false);
+    }
     if (payload) {
       Promise.allSettled([getUserDetails(), updateSubscription(payload)]).then(
         (results) => {
           const userDetailsPromise = results[0];
           const updateSubscriptionPromise = results[1];
           console.log(updateSubscriptionPromise);
+          console.log(updateSubscriptionPromise.value);
           if (userDetailsPromise.status === "fulfilled")
             setUserDetails(userDetailsPromise.value.data);
           if (!updateSubscriptionPromise.error) {
-            setSubscription(updateSubscriptionPromise.value);
+            if (updateSubscriptionPromise.value.status === "canceled") {
+              setCanceled(updateSubscriptionPromise.value);
+            } else {
+              setSubscription(updateSubscriptionPromise.value);
+            }
           }
-          setIsloadingData(false);
+          setIsLoadingData(false);
+          console.log(`payload end loading ${isLoadingData}`);
         }
       );
     }
   };
-
   useEffect(() => {
-    if (user && !isLoadingData && (!userDetails || !subscription)) {
-      setIsloadingData(true);
+    if (user && !isLoadingData && !subscription && !canceled) {
+      setIsLoadingData(true);
+      console.log("start");
       const update = supabase
         .from<Subscription>("subscriptions")
         .on("*", (payload) => setData(payload.new))
         .subscribe();
-      Promise.allSettled([getUserDetails(), getSubscription()]).then(
-        (results) => {
-          const userDetailsPromise = results[0];
-          const subscriptionPromise = results[1];
-          console.log(subscriptionPromise);
-          if (userDetailsPromise.status === "fulfilled")
-            setUserDetails(userDetailsPromise.value.data);
-          if (!subscriptionPromise.error) {
-            setSubscription(subscriptionPromise.value.data);
-          }
-          setIsloadingData(false);
-          return () => {
-            supabase.removeSubscription(update);
-          };
+      Promise.allSettled([
+        getUserDetails(),
+        getSubscription(),
+        getCancelSubscription(),
+      ]).then((results) => {
+        const userDetailsPromise = results[0];
+        const subscriptionPromise = results[1];
+        const canceledPromise = results[2];
+        console.log(subscriptionPromise);
+        console.log(canceledPromise);
+        if (userDetailsPromise.status === "fulfilled")
+          setUserDetails(userDetailsPromise.value.data);
+        if (!subscriptionPromise.value.error) {
+          setSubscription(subscriptionPromise.value.data);
         }
-      );
+        if (!canceledPromise.value.error) {
+          console.log(canceledPromise.value.data);
+          setCanceled(canceledPromise.value.data);
+        }
+        setIsLoadingData(false);
+        return () => {
+          supabase.removeSubscription(update);
+        };
+      });
     } else if (!user && !isLoadingUser && !isLoadingData) {
       setUserDetails(null);
       setSubscription(null);
     }
-  }, [user, isLoadingUser, subscription]);
-
+  }, [user, isLoadingUser]);
   const value = {
     accessToken,
     user,
     userDetails,
     isLoading: isLoadingUser || isLoadingData,
     subscription,
+    canceled,
   };
 
   return <UserContext.Provider value={value} {...props} />;

@@ -1,9 +1,9 @@
+import { GetStaticPropsResult } from "next";
 import { useState, useEffect } from "react";
 import { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import { useUser } from "@supabase/supabase-auth-helpers/react";
 import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
@@ -15,20 +15,29 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import MuiContainer from "@mui/material/Container";
+import InputLabel from "@mui/material/InputLabel";
+import { SliderPicker } from "react-color";
 import Container from "../../components/container";
 import Plan from "../../components/Plan";
 import Header from "../../components/header";
 import Link from "../../components/Link";
 import { Product } from ".././types";
-import { GetStaticPropsResult } from "next";
+import { useUser } from "../../utils/useUser";
 import { getActiveProductsWithPrices } from "../../utils/supabase-client";
 import { upsertInfo } from "../../utils/supabase-admin";
+import {
+  getRGBColor,
+  // ,getAccessibleColor
+} from "../../utils/color";
 import { postData } from "../../utils/helpers";
 import { updateUserName } from "../../utils/supabase-client";
 import SignUp from "../../components/signup";
 import SignIn from "../../components/signin";
+import SubscriptionLayout from "../../components/SubscriptionLayout";
 import Subscription from "../../components/subscription";
 import ToggleButton from "../../components/toggleButton";
+import { User } from "@supabase/supabase-auth-helpers/nextjs";
+import LoadingDots from "../../components/ui/LoadingDots";
 
 interface Props {
   products: Product[];
@@ -41,7 +50,7 @@ const steps = [
   },
   {
     name: "目的",
-    fields: { purpose: "ご利用目的" },
+    fields: { purpose: "主なご利用目的" },
   },
   {
     name: "お店の情報",
@@ -71,33 +80,32 @@ export default function Register({ products }) {
     email: "",
     password: "",
     purpose: "",
+    color: "#333",
     site_name: "",
     favorite: "",
     google: "",
     other: "",
   });
   const [messages, _setMessages] = useState("");
-  const [paymentIntent, setPaymentIntent] = useState("");
+  const [setupIntent, setSetupIntent] = useState("");
 
   const [message, setMessage] = useState<{ type?: string; content?: string }>({
     type: "",
     content: "",
   });
-  const { user } = useUser();
+  const { user, isLoading, subscription, canceled } = useUser();
   const [loading, setLoading] = useState(false);
+  const [clientSecret, setClientSecret] = useState(null);
+  const stripe = useStripe();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const name = event.target.name;
     const value = event.target.value;
     setInfo((prev) => ({ ...prev, [name]: value }));
   };
-  const handleNext = () => {
-    setActiveStep(activeStep + 1);
-  };
+  const handleNext = () => setActiveStep(activeStep + 1);
 
-  const handleBack = () => {
-    setActiveStep(activeStep - 1);
-  };
+  const handleBack = () => setActiveStep(activeStep - 1);
   const handleUser = () => {
     setInfo((prev) => ({
       ...prev,
@@ -106,11 +114,51 @@ export default function Register({ products }) {
     }));
     handleNext();
   };
+  const handleColor = (color, event) =>
+    setInfo((prev) => ({
+      ...prev,
+      ["color"]: color.hex,
+    }));
+  const handleRenew = async () => {
+    const price = products.find((product) => product.name === plan).prices[0];
+    let { customer, clientSecret, subscriptionId, default_payment_method } =
+      await postData({
+        url: "/api/create-subscription",
+        data: { price, canceled },
+      });
+    if (clientSecret) {
+      setClientSecret(clientSecret);
+    }
+    console.log(default_payment_method);
+    let { error } = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: default_payment_method,
+    });
+    if (error) console.log(error);
+  };
+  if (
+    !clientSecret &&
+    canceled &&
+    !isLoading &&
+    activeStep === 4 &&
+    plan &&
+    !loading
+  ) {
+    setLoading(true);
+    handleRenew();
+  }
   useEffect(() => {
-    if (paymentIntent && paymentIntent.status === "succeeded") {
+    if (
+      subscription?.status === "active" ||
+      subscription?.status === "trialing"
+    ) {
       router.push("/subscription/account");
     }
-  }, [paymentIntent]);
+  }, [subscription]);
+  useEffect(() => {
+    if (setupIntent && setupIntent.status === "succeeded") {
+      router.push("/subscription/account");
+    }
+  }, [setupIntent]);
   const jsx = steps.map((step) =>
     Object.keys(step.fields).length !== 0 ? (
       <FormGroup>
@@ -118,7 +166,7 @@ export default function Register({ products }) {
           return (
             <TextField
               key={key}
-              className="my-vw-6"
+              className="my-vw-3"
               name={key}
               label={value}
               type={
@@ -153,52 +201,77 @@ export default function Register({ products }) {
         handleUser()
       )
     ) : step === 1 ? (
-      jsx[1]
+      <>
+        {jsx[1]}
+        <Box className="my-12">
+          <Typography className="text-xs font-bold text-color" gutterBottom>
+            サイトのメインカラー
+          </Typography>
+          <SliderPicker color={info.color} onChange={handleColor} />
+        </Box>
+      </>
     ) : step === 2 ? (
       jsx[2]
     ) : step === 3 ? (
-      <Plan products={products} />
+      <Plan products={products} className="my-8" />
     ) : step === 4 ? (
       <Subscription
-        user={user}
         plan={plan}
         products={products}
         info={info}
-        setPaymentIntent={setPaymentIntent}
+        setSetupIntent={setSetupIntent}
+        activeStep={activeStep}
+        setActiveStep={setActiveStep}
       />
     ) : (
       console.log("Unknown step")
     );
-
+  let container = "";
+  if (activeStep === 1 || activeStep === 2 || activeStep === 4) {
+    container = "mt-10 max-w-lg p-3 m-auto w-90";
+  } else {
+    container = "mt-10";
+  }
+  const primaryColor = getRGBColor(info.color, "primary");
+  if (loading) {
+    return (
+      <div className="h-12 mb-6">
+        <LoadingDots />
+      </div>
+    );
+  }
   return (
     <>
       <Head>
         <title>ANful</title>
+        <style>:root {`{${primaryColor}`}</style>
       </Head>
       <Container>
         <Box className="system laptop:pt-[18vh] pt-[14vh] section">
+          <ToggleButton />
+          <Stepper activeStep={activeStep} alternativeLabel>
+            {steps.map((step) => (
+              <Step key={step.name}>
+                <StepLabel>{step.name}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
           <MuiContainer>
-            <ToggleButton />
-            <Stepper activeStep={activeStep} alternativeLabel>
-              {steps.map((step) => (
-                <Step key={step.name}>
-                  <StepLabel>{step.name}</StepLabel>
-                </Step>
-              ))}
-            </Stepper>
-            {getStepContent(activeStep)}
-            {activeStep !== 0 && activeStep !== 4 && (
-              <>
-                <Button onClick={handleBack}>Back</Button>
-                <Button
-                  variant="contained"
-                  onClick={handleNext}
-                  className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70 laptop:justify-self-end rounded-full text-sm whitespace-nowrap px-10 justify-self-center"
-                >
-                  Next
-                </Button>
-              </>
-            )}
+            <Box className={container}>
+              {getStepContent(activeStep)}
+              {activeStep !== 0 && activeStep !== 4 && (
+                <>
+                  <Button onClick={handleBack}>戻る</Button>
+                  <Button
+                    variant="contained"
+                    onClick={handleNext}
+                    className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70 laptop:justify-self-end rounded-md text-sm whitespace-nowrap px-10 justify-self-center"
+                  >
+                    続ける
+                  </Button>
+                </>
+              )}
+            </Box>
           </MuiContainer>
         </Box>
       </Container>

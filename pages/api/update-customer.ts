@@ -1,7 +1,4 @@
-import {
-  withAuthRequired,
-  getUser,
-} from "@supabase/supabase-auth-helpers/nextjs";
+import { withApiAuth, getUser } from "@supabase/supabase-auth-helpers/nextjs";
 import { createOrRetrieveCustomer } from "../../utils/supabase-admin";
 import { stripe } from "../../utils/stripe";
 import { upsertInfo } from "../../utils/supabase-admin";
@@ -41,4 +38,4 @@ const updateCustomer = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withAuthRequired(updateCustomer);
+export default withApiAuth(updateCustomer);

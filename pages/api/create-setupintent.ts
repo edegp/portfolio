@@ -1,8 +1,5 @@
 import { stripe } from "../../utils/stripe";
-import {
-  getUser,
-  withAuthRequired,
-} from "@supabase/supabase-auth-helpers/nextjs";
+import { getUser, withApiAuth } from "@supabase/supabase-auth-helpers/nextjs";
 import { createOrRetrieveCustomer } from "../../utils/supabase-admin";
 import { getURL } from "../../utils/helpers";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -30,4 +27,4 @@ export const createSetupIntent = async (
   }
 };
 
-export default withAuthRequired(createSetupIntent);
+export default withApiAuth(createSetupIntent);
