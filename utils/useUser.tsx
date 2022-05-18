@@ -66,10 +66,10 @@ export const MyUserContextProvider = (props: Props) => {
 
   const setData = (payload) => {
     console.log("start payload");
-    if (payload?.status !== "trialing" || payload?.status !== "active") {
-      setSubscription(null);
-      setIsLoadingData(false);
-    }
+    // if (payload?.status !== "trialing" || payload?.status !== "active") {
+    //   setSubscription(null);
+    //   setIsLoadingData(false);
+    // }
     if (payload) {
       Promise.allSettled([getUserDetails(), updateSubscription(payload)]).then(
         (results) => {
@@ -85,8 +85,8 @@ export const MyUserContextProvider = (props: Props) => {
             } else {
               setSubscription(updateSubscriptionPromise.value);
             }
+            setIsLoadingData(false);
           }
-          setIsLoadingData(false);
           console.log(`payload end loading ${isLoadingData}`);
         }
       );
@@ -108,16 +108,14 @@ export const MyUserContextProvider = (props: Props) => {
         const userDetailsPromise = results[0];
         const subscriptionPromise = results[1];
         const canceledPromise = results[2];
-        console.log(subscriptionPromise);
-        console.log(canceledPromise);
         if (userDetailsPromise.status === "fulfilled")
           setUserDetails(userDetailsPromise.value.data);
         if (!subscriptionPromise.value.error) {
           setSubscription(subscriptionPromise.value.data);
-        }
-        if (!canceledPromise.value.error) {
-          console.log(canceledPromise.value.data);
+          setIsLoadingData(false);
+        } else if (!canceledPromise.value.error) {
           setCanceled(canceledPromise.value.data);
+          setIsLoadingData(false);
         }
         setIsLoadingData(false);
         return () => {

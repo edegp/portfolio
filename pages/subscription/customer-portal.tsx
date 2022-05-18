@@ -121,7 +121,7 @@ export default function CustomerPortal({ user, customerId, defaultPay, data }) {
     }).format((subscription?.prices?.unit_amount || 0) / 1);
   useEffect(() => {
     if (!subscription && !isLoading) router.push("/subscription");
-  }, [subscription]);
+  }, [subscription, isLoading]);
   const logo = (target) =>
     target === "visa" ? (
       <Image src={Visa} objectFit="contain" />

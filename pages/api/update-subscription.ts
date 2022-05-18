@@ -12,18 +12,17 @@ const updateSubscription = async (
     try {
       const { subscriptionId, price } = req.body;
       const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-      if (subscription)
-        const updateSubscription = await stripe.subscriptions.update(
-          subscriptionId,
-          {
-            items: [
-              {
-                id: subscription.items.data[0].id,
-                price,
-              },
-            ],
-          }
-        );
+      const updateSubscription = await stripe.subscriptions.update(
+        subscriptionId,
+        {
+          items: [
+            {
+              id: subscription.items.data[0].id,
+              price,
+            },
+          ],
+        }
+      );
       return res.status(200).send({ updateSubscription });
     } catch (err: any) {
       console.log(err);

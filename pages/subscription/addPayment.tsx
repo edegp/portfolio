@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import {
+  useStripe,
+  useElements,
+  CardNumberElement,
+  CardExpiryElement,
+  CardCvcElement,
+} from "@stripe/react-stripe-js";
 import LoadingDots from "../../components/ui/LoadingDots";
 import { useRouter } from "next/router";
 import { getStripe } from "../../utils/stripe-client";
@@ -10,8 +16,9 @@ import { getUser, withPageAuth } from "@supabase/supabase-auth-helpers/nextjs";
 import { createOrRetrieveCustomer } from "../../utils/supabase-admin";
 import { getURL } from "../../utils/helpers";
 import { NextApiRequest, NextApiResponse } from "next";
-import { CardElementForm } from "../../components/subscription";
+import Subscription from "../../components/subscription";
 import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
 
 export const getServerSideProps = withPageAuth({
   getServerSideProps: async ({ req, res }) => {
@@ -54,55 +61,30 @@ export default function addPayment({ user, intent }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoadingIntent(true);
-    const cardElement = elements.getElement(CardElement);
+    const cardElement = elements.getElement(CardNumberElement);
     const client_secret = intent.client_secret;
     const setupIntent = await Stripe.confirmCardSetup(client_secret, {
       payment_method: {
         card: cardElement,
-        billing_details: {
-          name: name,
-        },
       },
     });
     setIntent(setupIntent);
     setIsLoadingIntent(false);
   };
-  useEffect(() => {
-    if (Intent && !isLoading) router.push("/subscription/customer-portal");
-  }, [Intent]);
-  useEffect(() => {
-    if (!subscription && !isLoading) router.push("/subscription");
-  }, [subscription]);
+  // useEffect(() => {
+  if (Intent && !isLoading) router.push("/subscription/customer-portal");
+  // }, [Intent]);
+  if (!subscription && !isLoading) router.push("/subscription");
   return (
-    <Container className="max-w-vw-64">
-      <h1 className="text-sm leading-6  my-6">
-        クレジットカード
-        <br />
-        またはデビットカードを選択
-      </h1>
-      <p className="text-sm">4242424242424242</p>
-      {/* <p className="text-sm">4000002500003155</p> */}
-      <Box className="">
-        <Image src={Credit} height={50} width={420} />
-      </Box>
-      <hr />
-      <form onSubmit={handleSubmit}>
-        <CardElementForm />
-        <button
-          loading={isLoadingIntent}
-          type="submit"
-          disabled={isLoadingIntent}
-        >
-          Subscribe
-          {isLoadingIntent && (
-            <i className="pl-2 m-0 flex">
-              <LoadingDots />
-            </i>
-          )}
-        </button>
-
-        <div>{messages}</div>
-      </form>
-    </Container>
+    <Box className="system laptop:pt-[18vh] pt-[14vh] section">
+      <Container className="mt-10 max-w-lg p-3 m-auto w-90">
+        <Subscription
+          handleSubmit={handleSubmit}
+          setIsLoadingIntent={setIsLoadingIntent}
+          setIntent={setIntent}
+          intent={intent}
+        />
+      </Container>
+    </Box>
   );
 }

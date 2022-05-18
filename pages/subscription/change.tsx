@@ -30,7 +30,7 @@ export const getServerSideProps = withPageAuth({
 
 export default function Change({ user, products }) {
   const router = useRouter();
-  const { user, isLoading, subscription, userDetails } = useUser();
+  const { isLoading, subscription, userDetails } = useUser();
   const [changePlan, setChangePlan] = useState();
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -66,10 +66,10 @@ export default function Change({ user, products }) {
         <Typography className="">1 カ月ごとに{subscriptionPrice}</Typography>
         <form onSubmit={handleSubmit}>
           <Plan products={products} />
-          <Button type="submit">続行</Button>
           <Link href="/subscription/customer-portal">
             <Button>戻る</Button>
           </Link>
+          <Button type="submit">続行</Button>
         </form>
       </SubscriptionLayout>
     </>

@@ -18,6 +18,7 @@ import { postData } from "../utils/helpers";
 import Credit from "../public/image/credit.jpg";
 import { useUser } from "../utils/useUser";
 import LoadingDots from "../components/ui/LoadingDots";
+import Link from "../components/Link";
 
 const CARD_NUMBER_OPTIONS = {
   placeholder: "",
@@ -91,12 +92,13 @@ export default function Subscription({
   setSetupIntent,
   activeStep,
   setActiveStep,
+  handleSubmit,
+  intent,
+  setIntent,
 }) {
   // const { subscription } = useUser();
   const [loading, setLoading] = useState(false);
-  const [customer, setCustomer] = useState();
-  const [clientSecret, setClientSecret] = useState();
-  const [subscriptionId, setSubscriptionId] = useState();
+
   const [paymentRequest, setPaymentRequest] = useState(null);
   const [messages, _setMessages] = useState("");
   const [errorMessage, setErrorMessage] = useState({
@@ -107,24 +109,36 @@ export default function Subscription({
   const [first, setFirst] = useState("");
   const [last, setLast] = useState("");
   const { user, subscription, isLoading, canceled } = useUser();
-  const handleElementChange = ({ complete, error }) => {
-    console.log(error);
-    error ? setErrorMessage(error.message) : setErrorMessage(null);
+  const handleElementChange = ({ elementType, error }) => {
+    console.log(error?.message);
+    if (error) {
+      elementType === "cardNumber"
+        ? setErrorMessage((prev) => ({ ...prev, ["number"]: error.message }))
+        : elementType === "cardExpiry"
+        ? setErrorMessage((prev) => ({ ...prev, ["expiry"]: error.message }))
+        : elementType === "cardCvc"
+        ? setErrorMessage((prev) => ({ ...prev, ["cvc"]: error.message }))
+        : setErrorMessage({
+            number: "",
+            expiry: "",
+            cvc: "",
+          });
+    } else {
+      setErrorMessage({
+        number: "",
+        expiry: "",
+        cvc: "",
+      });
+    }
   };
-
   const stripe = useStripe();
   const elements = useElements();
-
-  const handleBack = () => {
-    setActiveStep(activeStep - 1);
-  };
   const setMessage = (message) => {
     _setMessages(`${messages}\n\n${message}`);
   };
-
-  const price = products.find((product) => product.name === plan).prices[0];
   const getPaymentRequest = async () => {
     setLoading(true);
+    const price = products.find((product) => product.name === plan).prices[0];
     try {
       const pr = await stripe.paymentRequest({
         country: "JP",
@@ -141,7 +155,6 @@ export default function Subscription({
         console.log(result);
         if (result) {
           setPaymentRequest(pr);
-          console.log(paymentRequest);
         }
       });
     } catch (err) {
@@ -150,62 +163,14 @@ export default function Subscription({
     setLoading(false);
   };
   useEffect(() => {
-    console.log(plan);
-    if (plan && !clientSecret && !subscription) {
-      getPaymentRequest();
-    }
-  }, [plan]);
-  const handleSubmit = async (e) => {
-    setLoading(true);
-    e.preventDefault();
-    const date = new Date();
-    const trial_end = Math.floor(date.setDate(date.getDate() + 14) / 1000);
-    const cardNumberElement = elements.getElement(CardNumberElement);
-    try {
-      let { customer, clientSecret, subscriptionId } = await postData({
-        url: "/api/create-subscription",
-        data: { price },
-      });
-      if (!clientSecret) console.log("cannot post subscription");
-      if (!customer) console.log("cannot post customer");
-      if (customer) {
-        setCustomer(customer);
-      }
-      if (clientSecret) {
-        setClientSecret(clientSecret);
-      }
-      if (subscriptionId) {
-        setSubscriptionId(subscriptionId);
-      }
-      const { setupIntent } = await stripe.confirmCardSetup(clientSecret, {
-        payment_method: {
-          card: cardNumberElement,
-          billing_details: {
-            name: last + " " + first,
-          },
-        },
-      });
-      if (!setupIntent) console.log("cannot post setupIntent");
-      const update = await postData({
-        url: "/api/update-customer",
-        data: {
-          default_payment_method: setupIntent.payment_method,
-          customerId: customer,
-          info,
-        },
-      });
-      setSetupIntent(setupIntent);
-    } catch (error) {
-      if (error) return alert((error as Error).message);
-    }
-  };
-
+    if (plan && !clientSecret && !subscription) getPaymentRequest();
+  }, [plan, subscription]);
   if (!loading && paymentRequest) {
     paymentRequest.on("paymentmethod", async (ev) => {
       // Confirm the PaymentIntent without handling potential next actions (yet).
       if (clientSecret) {
-        const { paymentIntent, error: confirmError } =
-          await stripe.confirmCardPayment(
+        const { setupIntent, error: confirmError } =
+          await stripe.confirmCardSetup(
             clientSecret,
             { payment_method: ev.paymentMethod.id },
             { handleActions: false }
@@ -222,8 +187,8 @@ export default function Subscription({
             },
           });
           ev.complete("success");
-          if (paymentIntent.status === "requires_action") {
-            const { error } = await stripe.confirmCardPayment(clientSecret);
+          if (setupIntent.status === "requires_action") {
+            const { error } = await stripe.confirmCardSetup(clientSecret);
             if (error) {
               // The payment failed -- ask your customer for a new payment method.
             } else {
@@ -252,30 +217,34 @@ export default function Subscription({
         <hr />
         <form onSubmit={handleSubmit}>
           <Grid className="grid grid-cols-4 gap-x-6">
-            <TextField
-              className="col-span-2"
-              fullWidth
-              requires
-              value={last}
-              onChange={() => setLast()}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              margin="dense"
-              label="姓"
-            />
-            <TextField
-              className="col-span-2"
-              fullWidth
-              value={first}
-              requires
-              InputLabelProps={{
-                shrink: true,
-              }}
-              onChange={() => setFirst()}
-              margin="dense"
-              label="名"
-            />
+            {info && (
+              <>
+                <TextField
+                  className="col-span-2"
+                  fullWidth
+                  requires
+                  value={last}
+                  onChange={() => setLast()}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  margin="dense"
+                  label="姓"
+                />
+                <TextField
+                  className="col-span-2"
+                  fullWidth
+                  value={first}
+                  requires
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  onChange={() => setFirst()}
+                  margin="dense"
+                  label="名"
+                />
+              </>
+            )}
             <TextField
               className="col-span-4"
               fullWidth
@@ -346,20 +315,34 @@ export default function Subscription({
                 inputComponent: StripeInput,
               }}
             />
-            <Button onClick={handleBack}>戻る</Button>
-            <Button
-              type="submit"
-              variant="contained"
-              className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70 rounded-md text-sm whitespace-nowrap px-10 self-center col-start-2 col-span-2 my-8"
-            >
-              {loading ? (
-                <div className="h-12 mb-6">
-                  <LoadingDots />
-                </div>
-              ) : (
-                "無料登録する"
-              )}
-            </Button>
+            {info ? (
+              <>
+                <Button onClick={() => setActiveStep(activeStep - 1)}>
+                  戻る
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70 rounded-md text-sm whitespace-nowrap px-10 self-center col-start-2 col-span-2 my-8"
+                >
+                  {loading ? <LoadingDots /> : "無料登録する"}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button>
+                  <Link href="/subscription/customer-portal">戻る</Link>
+                </Button>
+
+                <Button
+                  type="submit"
+                  variant="contained"
+                  className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70 rounded-md text-sm whitespace-nowrap px-10 self-center col-start-2 col-span-2 my-8"
+                >
+                  {loading ? <LoadingDots /> : "追加する"}
+                </Button>
+              </>
+            )}
           </Grid>
           <div>{messages}</div>
         </form>

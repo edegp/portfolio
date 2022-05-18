@@ -32,16 +32,16 @@ export default function Cancel({ user, products }) {
   const router = useRouter();
   const { isLoading, subscription, userDetails } = useUser();
   const Cancelhandle = async () => {
-    const { cancelSubscription } = await await postData({
+    const { cancelSubscription } = await postData({
       url: "/api/cancel-subscription",
       data: { subscriptionId: subscription.id },
     });
-    if (cancelSubscription)
+    console.log(cancelSubscription);
+    cancelSubscription ??
       router.push({ pahtname: "/subscription", query: "cancel" });
   };
   useEffect(() => {
-    if (!subscription && !isLoading)
-      router.push("/subscription/cancel-complete");
+    if (!subscription) router.push("/subscription/cancel-complete");
   }, [subscription]);
   const subscriptionPrice =
     subscription &&

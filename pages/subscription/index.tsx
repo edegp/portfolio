@@ -3,7 +3,15 @@ import { useState, useEffect } from "react";
 import { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import {
+  PaymentRequestButtonElement,
+  CardElement,
+  useStripe,
+  useElements,
+  CardNumberElement,
+  CardExpiryElement,
+  CardCvcElement,
+} from "@stripe/react-stripe-js";
 import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
@@ -96,7 +104,56 @@ export default function Register({ products }) {
   const { user, isLoading, subscription, canceled } = useUser();
   const [loading, setLoading] = useState(false);
   const [clientSecret, setClientSecret] = useState(null);
+  const [customer, setCustomer] = useState();
+  const [subscriptionId, setSubscriptionId] = useState();
   const stripe = useStripe();
+  const elements = useElements();
+  const price = products.find((product) => product.name === plan).prices[0];
+
+  const handleSubmit = async (e) => {
+    setLoading(true);
+    e.preventDefault();
+    const date = new Date();
+    const trial_end = Math.floor(date.setDate(date.getDate() + 14) / 1000);
+    const cardNumberElement = elements.getElement(CardNumberElement);
+    try {
+      let { customer, clientSecret, subscriptionId } = await postData({
+        url: "/api/create-subscription",
+        data: { price },
+      });
+      if (!clientSecret) console.log("cannot post subscription");
+      if (!customer) console.log("cannot post customer");
+      if (customer) {
+        setCustomer(customer);
+      }
+      if (clientSecret) {
+        setClientSecret(clientSecret);
+      }
+      if (subscriptionId) {
+        setSubscriptionId(subscriptionId);
+      }
+      const { setupIntent } = await stripe.confirmCardSetup(clientSecret, {
+        payment_method: {
+          card: cardNumberElement,
+          billing_details: {
+            name: last + " " + first,
+          },
+        },
+      });
+      if (!setupIntent) console.log("cannot post setupIntent");
+      const update = await postData({
+        url: "/api/update-customer",
+        data: {
+          default_payment_method: setupIntent.payment_method,
+          customerId: customer,
+          info,
+        },
+      });
+      setSetupIntent(setupIntent);
+    } catch (error) {
+      if (error) return alert((error as Error).message);
+    }
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const name = event.target.name;
@@ -222,6 +279,7 @@ export default function Register({ products }) {
         setSetupIntent={setSetupIntent}
         activeStep={activeStep}
         setActiveStep={setActiveStep}
+        handleSubmit={handleSubmit}
       />
     ) : (
       console.log("Unknown step")
