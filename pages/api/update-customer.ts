@@ -6,10 +6,9 @@ import { upsertInfo } from "../../utils/supabase-admin";
 const updateCustomer = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     const { user } = await getUser({ req, res });
-    const { default_payment_method, customerId } = req.body;
+    const { default_payment_method, customerId, info } = req.body;
     let userInfo;
-    if (req.body.info) {
-      const { info } = req.body;
+    if (info) {
       userInfo = await Object.keys(info)
         .filter((key) => key !== "password")
         .reduce(
@@ -20,14 +19,20 @@ const updateCustomer = async (req: NextApiRequest, res: NextApiResponse) => {
         );
       userInfo.id = user.id;
       if (!userInfo.email) userInfo.email = user.email || "";
-      userInfo.payment_method = default_payment_method || "";
+      userInfo.payment_method =
+        default_payment_method || info.payment_method || "";
     }
+
     try {
-      const update = await stripe.customers.update(customerId, {
-        invoice_settings: { default_payment_method },
-      });
       if (req.body.info) await upsertInfo(userInfo);
-      res.status(200).json({ update });
+      if (default_payment_method) {
+        const update = await stripe.customers.update(customerId, {
+          invoice_settings: { default_payment_method },
+        });
+        return res.status(200).json({ update });
+      } else {
+        return res.status(200).json("success");
+      }
     } catch (err) {
       console.log(err);
       res.status(500).json({ error: err });

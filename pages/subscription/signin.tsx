@@ -7,12 +7,14 @@ import { Provider } from "@supabase/supabase-js";
 import TextField from "@mui/material/TextField";
 
 import Button from "@mui/material/Button";
-import GitHub from "../../components/icons/GitHub";
-import Facebook from "../../components/icons/Facebook";
-import LoadingDots from "../../components/ui/LoadingDots";
-import Logo from "../../components/icons/Logo";
+import Box from "@mui/material/Box";
 import { getURL } from "../../utils/helpers";
 import { postData } from "../../utils/helpers";
+import Facebook from "../../components/icons/Facebook";
+import Google from "../../components/icons/Google";
+import LoadingDots from "../../components/ui/LoadingDots";
+import Logo from "../../components/icons/Logo";
+import Container from "../../components/container";
 
 export default function SignIn() {
   const router = useRouter();
@@ -73,6 +75,8 @@ export default function SignIn() {
 
   if (!user && !loading)
     return (
+      // <Container>
+      //   <Box className="system laptop:pt-[18vh] pt-[14vh] section">
       <div className="flex justify-center height-screen-helper">
         <div className="flex flex-col justify-between max-w-lg p-3 m-auto w-80 ">
           <div className="flex flex-col space-y-4">
@@ -95,7 +99,7 @@ export default function SignIn() {
                 name="email"
                 placeholder="Email"
                 value={email}
-                onChange={() => setEmail}
+                onChange={() => setEmail()}
                 required
               />
               <TextField
@@ -103,26 +107,24 @@ export default function SignIn() {
                 type="password"
                 placeholder="Password"
                 value={password}
-                onChange={() => setPassword}
+                onChange={() => setPassword()}
                 required
               />
               <Button
-                className="mt-1"
-                variant="slim"
+                className="!bg-[#04ac4d] text-white hover:opacity-70 laptop:justify-self-end rounded-md text-sm whitespace-nowrap px-10 justify-self-center mt-1"
+                variant="contained"
                 type="submit"
                 loading={loading}
-                disabled={!password.length || !email.length}
+                disabled={password?.length < 8 || email?.length === 0}
               >
                 Sign in
               </Button>
             </form>
             <span className="pt-1 text-center text-sm">
-              <span className="text-zinc-200">Don't have an account?</span>
-              <Button onClick={() => setSignin(false)}>
-                <a className="text-accent-9 font-bold hover:underline cursor-pointer">
-                  Sign up.
-                </a>
-              </Button>
+              <span className="text-black">Don't have an account?</span>
+              <Link href="/subscription">
+                <Button>Sign up.</Button>
+              </Link>
             </span>
           </div>
 
@@ -137,36 +139,32 @@ export default function SignIn() {
               aria-hidden="true"
             ></div>
           </div>
-
           <Button
-            variant="slim"
-            className="mix-blend-difference"
-            type="submit"
-            disabled={loading}
-            onClick={() => handleOAuthSignIn("github")}
-          >
-            <GitHub />
-            <span className="ml-2">Continue with GitHub</span>
-          </Button>
-          <Button
-            className="mix-blend-difference  mt-3"
+            className="mt-4 py-2"
+            variant="contained"
             type="submit"
             disabled={loading}
             onClick={() => handleOAuthSignIn("facebook")}
           >
             <Facebook />
+            <span className="ml-[20px] text-gray-600">
+              SIGN IN WITH Facebook
+            </span>
           </Button>
           <Button
-            className="mt-3"
+            className="mt-3 rounded-md pl-[6px] pr-[8px] py-0 "
+            variant="contained"
             type="submit"
             disabled={loading}
             onClick={() => handleOAuthSignIn("google")}
           >
             <Google />
-            <span className="ml-2">Continue with Google</span>
+            <span className="ml-[10px] text-gray-600">SIGN IN WITH GOOGLE</span>
           </Button>
         </div>
       </div>
+      //   </Box>
+      // </Container>
     );
 
   return (

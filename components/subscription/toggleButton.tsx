@@ -1,5 +1,5 @@
 import { useUser } from "@supabase/supabase-auth-helpers/react";
-import Link from "./Link";
+import Link from "../Link";
 
 export default function ToggleButton() {
   const { user } = useUser();

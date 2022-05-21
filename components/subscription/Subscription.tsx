@@ -9,16 +9,17 @@ import {
   CardExpiryElement,
   CardCvcElement,
 } from "@stripe/react-stripe-js";
+import { withPageAuth, getUser } from "@supabase/supabase-auth-helpers/nextjs";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
-import { postData } from "../utils/helpers";
-import Credit from "../public/image/credit.jpg";
-import { useUser } from "../utils/useUser";
-import LoadingDots from "../components/ui/LoadingDots";
-import Link from "../components/Link";
+import { postData } from "../../utils/helpers";
+import { useUser } from "../../utils/useUser";
+import Credit from "../../public/image/credit.jpg";
+import LoadingDots from "../ui/LoadingDots";
+import Link from "../Link";
 
 const CARD_NUMBER_OPTIONS = {
   placeholder: "",
@@ -92,13 +93,16 @@ export default function Subscription({
   setSetupIntent,
   activeStep,
   setActiveStep,
-  handleSubmit,
+  // handleSubmit,
   intent,
   setIntent,
 }) {
-  // const { subscription } = useUser();
   const [loading, setLoading] = useState(false);
-
+  const [clientSecret, setClientSecret] = useState(null);
+  const [customer, setCustomer] = useState();
+  const [subscriptionId, setSubscriptionId] = useState();
+  const [first, setFirst] = useState("");
+  const [last, setLast] = useState("");
   const [paymentRequest, setPaymentRequest] = useState(null);
   const [messages, _setMessages] = useState("");
   const [errorMessage, setErrorMessage] = useState({
@@ -106,9 +110,63 @@ export default function Subscription({
     expiry: "",
     cvc: "",
   });
-  const [first, setFirst] = useState("");
-  const [last, setLast] = useState("");
   const { user, subscription, isLoading, canceled } = useUser();
+  const stripe = useStripe();
+  const elements = useElements();
+  if (!stripe || !elements) {
+    return "";
+  }
+  const setMessage = (message) => {
+    _setMessages(`${messages}\n\n${message}`);
+  };
+  const price = products.find((product) => product.name === plan).prices[0];
+
+  const handleSubmit = async (e) => {
+    setLoading(true);
+    e.preventDefault();
+    const date = new Date();
+    const trial_end = Math.floor(date.setDate(date.getDate() + 14) / 1000);
+    console.log(last + " " + first);
+    const cardNumberElement = elements.getElement(CardNumberElement);
+    try {
+      let { customer, clientSecret, subscriptionId } = await postData({
+        url: "/api/create-subscription",
+        data: { price },
+      });
+      if (!clientSecret) console.log("cannot post subscription");
+      if (!customer) console.log("cannot post customer");
+      if (customer) {
+        setCustomer(customer);
+      }
+      if (clientSecret) {
+        setClientSecret(clientSecret);
+      }
+      if (subscriptionId) {
+        setSubscriptionId(subscriptionId);
+      }
+      const { setupIntent } = await stripe.confirmCardSetup(clientSecret, {
+        payment_method: {
+          card: cardNumberElement,
+          billing_details: {
+            name: last + " " + first,
+          },
+        },
+      });
+      if (!setupIntent) console.log("cannot post setupIntent");
+      const update = await postData({
+        url: "/api/update-customer",
+        data: {
+          default_payment_method: setupIntent.payment_method,
+          customerId: customer,
+          info,
+        },
+      });
+      setSetupIntent(setupIntent);
+    } catch (error) {
+      if (error) return alert((error as Error).message);
+    }
+  };
+
   const handleElementChange = ({ elementType, error }) => {
     console.log(error?.message);
     if (error) {
@@ -131,11 +189,7 @@ export default function Subscription({
       });
     }
   };
-  const stripe = useStripe();
-  const elements = useElements();
-  const setMessage = (message) => {
-    _setMessages(`${messages}\n\n${message}`);
-  };
+
   const getPaymentRequest = async () => {
     setLoading(true);
     const price = products.find((product) => product.name === plan).prices[0];
@@ -163,7 +217,7 @@ export default function Subscription({
     setLoading(false);
   };
   useEffect(() => {
-    if (plan && !clientSecret && !subscription) getPaymentRequest();
+    if (plan && !subscription) getPaymentRequest();
   }, [plan, subscription]);
   if (!loading && paymentRequest) {
     paymentRequest.on("paymentmethod", async (ev) => {
@@ -224,7 +278,7 @@ export default function Subscription({
                   fullWidth
                   requires
                   value={last}
-                  onChange={() => setLast()}
+                  onChange={({ target }) => setLast(target.value)}
                   InputLabelProps={{
                     shrink: true,
                   }}
@@ -239,7 +293,7 @@ export default function Subscription({
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  onChange={() => setFirst()}
+                  onChange={({ target }) => setFirst(target.value)}
                   margin="dense"
                   label="名"
                 />
@@ -353,3 +407,7 @@ export default function Subscription({
     </>
   );
 }
+
+// export const getServerSideProps = withPageAuth({
+//   redirectTo: "/subscription/signin",
+// });

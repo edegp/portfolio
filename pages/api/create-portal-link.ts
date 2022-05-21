@@ -13,16 +13,13 @@ const createPortalLink = async (req: NextApiRequest, res: NextApiResponse) => {
         uuid: user.id || "",
         email: user.email || "",
       });
-
       if (!customer) throw Error("Could not get customer");
-      const { configuration, url } = await stripe.billingPortal.sessions.create(
-        {
-          customer,
-          return_url: `${getURL()}/customer-portal`,
-        }
-      );
-
-      return res.status(200).json({ configuration, url });
+      const { url } = await stripe.billingPortal.sessions.create({
+        customer,
+        return_url: `${getURL()}/subscription`,
+      });
+      if (!url) throw Error("Could not get url");
+      return res.status(200).json({ url });
     } catch (err: any) {
       console.log(err);
       res

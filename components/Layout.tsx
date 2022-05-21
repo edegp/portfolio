@@ -1,14 +1,12 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { ReactNode } from "react";
-
-import Navbar from "./ui/Navbar";
-import Footer from "./ui/Footer";
-import { PageMeta } from "../types";
-import Header from "./header";
-
 import { Elements } from "@stripe/react-stripe-js";
 import { getStripe } from "../utils/stripe-client";
+import { PageMeta } from "../types";
+import Navbar from "./ui/Navbar";
+import Footer from "./ui/Footer";
+import Header from "./header";
 
 interface Props {
   children: ReactNode;

@@ -3,6 +3,8 @@
   "scripts": {
     "dev": "cross-env NODE_OPTIONS='--inspect' && next dev",
     "stripe": "stripe listen --forward-to=localhost:3000/api/webhooks",
+    "add": "git add .",
+    "push": "git push origin first-promotion-dev",
     "build": "cross-env NODE_OPTIONS='--max_old_space_size=7096' && next build",
     "start": "next start",
     "setup": "node ./contentful/setup.js $CONTENTFUL_SPACE_ID $CONTENTFUL_MANAGEMENT_TOKEN"
@@ -23,12 +25,14 @@
     "clsx": "^1.1.1",
     "cross-env": "^7.0.3",
     "date-fns": "2.22.1",
+    "loaders.css": "^0.1.2",
     "next": "^12.1.6",
     "npm-force-resolutions": "^0.0.10",
     "prop-types": "^15.8.1",
     "react": "^17.0.0",
     "react-color": "^2.19.3",
     "react-dom": "^17.0.0",
+    "react-iframe": "^1.8.0",
     "react-markdown": "^7.1.1",
     "react-merge-refs": "^1.1.0",
     "react-transition-group": "^4.4.2",

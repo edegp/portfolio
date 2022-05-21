@@ -13,6 +13,8 @@ import {
   CardCvcElement,
 } from "@stripe/react-stripe-js";
 import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs";
+import { SliderPicker } from "react-color";
+import { User } from "@supabase/supabase-auth-helpers/nextjs";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import FormGroup from "@mui/material/FormGroup";
@@ -24,11 +26,6 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import MuiContainer from "@mui/material/Container";
 import InputLabel from "@mui/material/InputLabel";
-import { SliderPicker } from "react-color";
-import Container from "../../components/container";
-import Plan from "../../components/Plan";
-import Header from "../../components/header";
-import Link from "../../components/Link";
 import { Product } from ".././types";
 import { useUser } from "../../utils/useUser";
 import { getActiveProductsWithPrices } from "../../utils/supabase-client";
@@ -39,13 +36,16 @@ import {
 } from "../../utils/color";
 import { postData } from "../../utils/helpers";
 import { updateUserName } from "../../utils/supabase-client";
-import SignUp from "../../components/signup";
-import SignIn from "../../components/signin";
-import SubscriptionLayout from "../../components/SubscriptionLayout";
-import Subscription from "../../components/subscription";
-import ToggleButton from "../../components/toggleButton";
-import { User } from "@supabase/supabase-auth-helpers/nextjs";
 import LoadingDots from "../../components/ui/LoadingDots";
+import Container from "../../components/container";
+import Header from "../../components/header";
+import Link from "../../components/Link";
+import Plan from "../../components/Plan";
+import SignUp from "../../components/subscription/signup";
+import SignIn from "../../components/subscription/signin";
+import SubscriptionLayout from "../../components/subscription/SubscriptionLayout";
+import Subscription from "../../components/subscription/Subscription";
+import ToggleButton from "../../components/subscription/toggleButton";
 
 interface Props {
   products: Product[];
@@ -58,14 +58,14 @@ const steps = [
   },
   {
     name: "目的",
-    fields: { purpose: "主なご利用目的" },
+    fields: { purpose: "サイトを利用する目的をお教えください" },
   },
   {
     name: "お店の情報",
     fields: {
       site_name: "サイト名",
-      favorite: "以前見て感動、もしくはこんなサイトがいいと思ったサイトURL",
-      google: "google mapのURL",
+      favorite: "以前見て感動、もしくはこんなサイトがいいと思ったサイトのURL",
+      google: "ご自身のお店のgoogle mapのURL",
       other: "その他ご要望",
     },
   },
@@ -106,54 +106,11 @@ export default function Register({ products }) {
   const [clientSecret, setClientSecret] = useState(null);
   const [customer, setCustomer] = useState();
   const [subscriptionId, setSubscriptionId] = useState();
+  const [first, setFirst] = useState("");
+  const [last, setLast] = useState("");
   const stripe = useStripe();
   const elements = useElements();
   const price = products.find((product) => product.name === plan).prices[0];
-
-  const handleSubmit = async (e) => {
-    setLoading(true);
-    e.preventDefault();
-    const date = new Date();
-    const trial_end = Math.floor(date.setDate(date.getDate() + 14) / 1000);
-    const cardNumberElement = elements.getElement(CardNumberElement);
-    try {
-      let { customer, clientSecret, subscriptionId } = await postData({
-        url: "/api/create-subscription",
-        data: { price },
-      });
-      if (!clientSecret) console.log("cannot post subscription");
-      if (!customer) console.log("cannot post customer");
-      if (customer) {
-        setCustomer(customer);
-      }
-      if (clientSecret) {
-        setClientSecret(clientSecret);
-      }
-      if (subscriptionId) {
-        setSubscriptionId(subscriptionId);
-      }
-      const { setupIntent } = await stripe.confirmCardSetup(clientSecret, {
-        payment_method: {
-          card: cardNumberElement,
-          billing_details: {
-            name: last + " " + first,
-          },
-        },
-      });
-      if (!setupIntent) console.log("cannot post setupIntent");
-      const update = await postData({
-        url: "/api/update-customer",
-        data: {
-          default_payment_method: setupIntent.payment_method,
-          customerId: customer,
-          info,
-        },
-      });
-      setSetupIntent(setupIntent);
-    } catch (error) {
-      if (error) return alert((error as Error).message);
-    }
-  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const name = event.target.name;
@@ -186,7 +143,6 @@ export default function Register({ products }) {
     if (clientSecret) {
       setClientSecret(clientSecret);
     }
-    console.log(default_payment_method);
     let { error } = await stripe.confirmCardPayment(clientSecret, {
       payment_method: default_payment_method,
     });
@@ -204,10 +160,7 @@ export default function Register({ products }) {
     handleRenew();
   }
   useEffect(() => {
-    if (
-      subscription?.status === "active" ||
-      subscription?.status === "trialing"
-    ) {
+    if (subscription?.status === "active" || "trialing") {
       router.push("/subscription/account");
     }
   }, [subscription]);
@@ -262,7 +215,7 @@ export default function Register({ products }) {
         {jsx[1]}
         <Box className="my-12">
           <Typography className="text-xs font-bold text-color" gutterBottom>
-            サイトのメインカラー
+            あなたが希望するサイトのメインカラーを教えてください。
           </Typography>
           <SliderPicker color={info.color} onChange={handleColor} />
         </Box>
@@ -276,10 +229,14 @@ export default function Register({ products }) {
         plan={plan}
         products={products}
         info={info}
+        // first={first}
+        // last={last}
+        // setFirst={setFirst}
+        // setLast={setLast}
         setSetupIntent={setSetupIntent}
         activeStep={activeStep}
         setActiveStep={setActiveStep}
-        handleSubmit={handleSubmit}
+        // handleSubmit={handleSubmit}
       />
     ) : (
       console.log("Unknown step")
@@ -291,13 +248,6 @@ export default function Register({ products }) {
     container = "mt-10";
   }
   const primaryColor = getRGBColor(info.color, "primary");
-  if (loading) {
-    return (
-      <div className="h-12 mb-6">
-        <LoadingDots />
-      </div>
-    );
-  }
   return (
     <>
       <Head>
@@ -325,7 +275,13 @@ export default function Register({ products }) {
                     onClick={handleNext}
                     className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70 laptop:justify-self-end rounded-md text-sm whitespace-nowrap px-10 justify-self-center"
                   >
-                    続ける
+                    {loading ? (
+                      <div className="h-12 mb-6">
+                        <LoadingDots />
+                      </div>
+                    ) : (
+                      "続ける"
+                    )}
                   </Button>
                 </>
               )}

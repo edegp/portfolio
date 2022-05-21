@@ -1,12 +1,6 @@
 import cn from "classnames";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { supabase } from "../utils/supabase-client";
-import Button from "./ui/Button";
-import { postData } from "../utils/helpers";
-import { getStripe } from "../utils/stripe-client";
-import { useUser } from "../utils/useUser";
-import { Price, ProductWithPrice } from "../types";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -18,8 +12,14 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import { supabase } from "../../utils/supabase-client";
+import { postData } from "../../utils/helpers";
+import { getStripe } from "../../utils/stripe-client";
+import { useUser } from "../../utils/useUser";
+import { Price, ProductWithPrice } from "../types";
+import Button from "../ui/Button";
 
-export default function Plan (props) {
+export default function Plan(props) {
   const handleChange = (event) => {
     console.log(event.target.value);
     if (props.setPlan) props.setPlan(event.target.value);
@@ -38,8 +38,7 @@ export default function Plan (props) {
       {props.products.map((product) => {
         return (
           <Box
-          key={product.name}
-          
+            key={product.name}
             className="laptop:w-1/3 laptop:px-10 laptop:mb-0 w-full mb-[20px] grid"
           >
             <Card className="laptop:min-h-[150px] px-4 laptop:py-6 py-3 rounded-[20px]  border-gray-400 border border-solid drop-shadow-xl grid place-items-center min-h-auto laptop:mx-0 tablet:mx-[24vw]  sp:mx-vw-64 mx-vw-32">

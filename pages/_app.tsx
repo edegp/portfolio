@@ -1,5 +1,5 @@
 import { AppProps } from "next/app";
-import { useRef, useEffect, useMemo, useCallback } from "react";
+import { useRef, useEffect } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import {
@@ -10,11 +10,11 @@ import {
   usePageView,
   GoogleAnalytics,
 } from "../lib/gtag";
+import { UserProvider } from "@supabase/supabase-auth-helpers/react";
+import { MyUserContextProvider } from "../utils/useUser";
+import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs";
 import LoadingDots from "../components/ui/LoadingDots";
 import Layout from "../components/Layout";
-import { UserProvider } from "@supabase/supabase-auth-helpers/react";
-import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs";
-import { MyUserContextProvider } from "../utils/useUser";
 import "../styles/index.scss";
 
 const theme = createTheme({

@@ -21,6 +21,7 @@ const upsertInfo = async (info: UserDetails) => {
     google: info.google || "",
     other: info.other || "",
     email: info.email || "",
+    color: info.color || "",
     billing_address: info.billing_address || "",
     payment_method: info.payment_method || "",
   };

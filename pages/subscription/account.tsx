@@ -1,12 +1,21 @@
 import { useRouter } from "next/router";
 import { useState, ReactNode, useEffect } from "react";
-import LoadingDots from "../../components/ui/LoadingDots";
-import Button from "../../components/ui/Button";
+import { withPageAuth, getUser } from "@supabase/supabase-auth-helpers/nextjs";
+import Iframe from "react-iframe";
+import MuiContainer from "@mui/material/Container";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 import { useUser } from "../../utils/useUser";
 import { postData } from "../../utils/helpers";
 import { supabase } from "../../utils/supabase-client";
-import { withPageAuth, User } from "@supabase/supabase-auth-helpers/nextjs";
+import { createOrRetrieveCustomer } from "../../utils/supabase-admin";
+import Container from "../../components/container";
 import Link from "../../components/Link";
+import LoadingDots from "../../components/ui/LoadingDots";
+import Button from "../../components/ui/Button";
+import Info from "../../components/subscription/info";
 
 interface Props {
   title: string;
@@ -15,36 +24,76 @@ interface Props {
   children: ReactNode;
 }
 
-function Card({ title, description, footer, children }: Props) {
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
   return (
-    <div className="border border-zinc-700	max-w-3xl w-full p rounded-md m-auto my-8">
-      <div className="px-5 py-4">
-        <h3 className="text-2xl mb-1 font-medium">{title}</h3>
-        <p className="text-zinc-300">{description}</p>
-        {children}
-      </div>
-      <div className="border-t border-zinc-700 bg-zinc-900 p-4 text-zinc-500 rounded-b-md">
-        {footer}
-      </div>
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
     </div>
   );
 }
 
-export const getServerSideProps = withPageAuth({
-  redirectTo: "/subscription/signin",
-});
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
 
-export default function Account({ user }: { user: User }) {
+function Card({ title, description, footer, children }: Props) {
+  return (
+    <div className="border border-zinc-700	max-w-3xl w-full p rounded-md m-auto my-8">
+      <div className="px-5 py-4">
+        <h3 className="text-md mb-1 font-medium">{title}</h3>
+        <p className="text-sm text-zinc-600">{description}</p>
+        {children}
+      </div>
+      {footer ? (
+        <div className="border-t border-zinc-700 bg-zinc-900 p-4 text-zinc-500 rounded-b-md">
+          {footer}
+        </div>
+      ) : (
+        <></>
+      )}
+    </div>
+  );
+}
+
+export default function Account({ user, customer }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const { isLoading, subscription, userDetails } = useUser();
-  const subscriptionPrice =
-    subscription &&
-    new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: subscription?.prices?.currency,
-      minimumFractionDigits: 0,
-    }).format((subscription?.prices?.unit_amount || 0) / 100);
+  const [value, setValue] = useState(0);
+  const redirectToCustomerPortal = async () => {
+    setLoading(true);
+    try {
+      const { url, error } = await postData({
+        url: "/api/create-portal-link",
+      });
+      window.open(url, "_blank");
+    } catch (error) {
+      if (error) return alert((error as Error).message);
+    }
+    setLoading(false);
+  };
+  const subscriptionPrice = new Intl.NumberFormat("ja-JP", {
+    style: "currency",
+    currency: subscription?.prices?.currency || "JPY",
+    minimumFractionDigits: 0,
+  }).format(subscription?.prices?.unit_amount || 0);
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
 
   useEffect(() => {
     if (!subscription && !isLoading) {
@@ -52,87 +101,127 @@ export default function Account({ user }: { user: User }) {
     }
   }, [subscription, isLoading]);
   return (
-    <section className="bg-black mb-32">
-      <div className="max-w-6xl mx-auto pt-8 sm:pt-24 pb-8 px-4 sm:px-6 lg:px-8">
-        <div className="sm:flex sm:flex-col sm:align-center">
-          <h1 className="text-4xl font-extrabold text-white sm:text-center sm:text-6xl">
-            Account
-          </h1>
-          <p className="mt-5 text-xl text-zinc-200 sm:text-center sm:text-2xl max-w-2xl m-auto">
-            We partnered with Stripe for a simplified billing.
-          </p>
-        </div>
-      </div>
-      <div className="p-4">
-        <Card
-          title="Your Plan"
-          description={
-            subscription &&
-            (subscription.status === "active" ||
-              subscription.status === "trialing")
-              ? `You are currently on the ${subscription?.prices?.products?.name} plan.`
-              : ""
-          }
-          footer={
-            <div className="flex items-start justify-between flex-col sm:flex-row sm:items-center">
-              <p className="pb-4 sm:pb-0">
-                Manage your subscription on Stripe.
-              </p>
-              <Link href="/subscription/customer-portal">
-                <Button
-                  variant="slim"
-                  loading={loading}
-                  disabled={loading || !subscription}
-                  // onClick={redirectToCustomerPortal}
-                >
-                  Open customer portal
-                </Button>
-              </Link>
-            </div>
-          }
-        >
-          <div className="text-xl mt-8 mb-4 font-semibold">
-            {isLoading ? (
-              <div className="h-12 mb-6">
-                <LoadingDots />
-              </div>
-            ) : subscription ? (
-              `${subscriptionPrice}/${subscription?.prices?.interval}`
+    <section>
+      <Container>
+        <Box className="system laptop:pt-[18vh] pt-[14vh] section">
+          <MuiContainer>
+            {!isLoading ? (
+              <>
+                <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                  <Tabs
+                    value={value}
+                    onChange={handleChange}
+                    textColor={userDetails?.color || "primary"}
+                    indicatorColor={userDetails?.color || "primary"}
+                    aria-label="basic tabs example"
+                  >
+                    <Tab label="ご登録情報" {...a11yProps(0)} />
+                    {/* <Tab label="サブスクリプションの管理へ" {...a11yProps(1)} /> */}
+                    <Tab label="お客様情報の確認・変更" {...a11yProps(1)} />
+                    <Tab label="ヘルプ・お問い合わせ" {...a11yProps(2)} />
+                  </Tabs>
+                </Box>
+                <TabPanel value={value} index={0}>
+                  <div className="p-4">
+                    <Card
+                      title="ご登録のプラン"
+                      description={
+                        subscription?.status === "active" ||
+                        subscription?.status === "trialing"
+                          ? `${subscription?.prices?.products?.name} plan.`
+                          : ""
+                      }
+                      footer={
+                        <div className="flex items-start justify-between flex-col sm:flex-row sm:items-center">
+                          {/* <Link href="/subscription/customer-portal"> */}
+                          <Button
+                            variant="slim"
+                            loading={loading}
+                            disabled={loading || !subscription}
+                            onClick={redirectToCustomerPortal}
+                          >
+                            サブスクリプションの管理へ
+                          </Button>
+                          {/* </Link> */}
+                        </div>
+                      }
+                    >
+                      <div className="text-sm mt-8 mb-4 font-semibold">
+                        {isLoading ? (
+                          <div className="h-12 mb-6">
+                            <LoadingDots />
+                          </div>
+                        ) : subscription ? (
+                          `${subscriptionPrice}/${subscription?.prices?.interval}`
+                        ) : (
+                          <Link href="/">
+                            <a>Choose your plan</a>
+                          </Link>
+                        )}
+                      </div>
+                    </Card>
+                    <Card
+                      title="ご登録のメール"
+                      // description={user?.email}
+                      // footer={
+                      //   <Button
+                      //     variant="slim"
+                      //     loading={loading}
+                      //     disabled={loading || !subscription}
+                      //     onClick={redirectToCustomerPortal}
+                      //   >
+                      //     お客様情報の確認・変更
+                      //   </Button>
+                      // }
+                    >
+                      <p className="text-sm mt-8 mb-4 font-semibold">
+                        {user ? user.email : undefined}
+                      </p>
+                    </Card>
+                  </div>
+                </TabPanel>
+                {/* <TabPanel value={value} index={1}>
+              <Iframe src={url} />
+            </TabPanel> */}
+                <TabPanel value={value} index={1}>
+                  <Info
+                    user={user}
+                    userDetails={userDetails}
+                    customer={customer}
+                  />
+                </TabPanel>
+                <TabPanel value={value} index={2}>
+                  <Info
+                    user={user}
+                    userDetails={userDetails}
+                    customer={customer}
+                  />
+                </TabPanel>
+              </>
             ) : (
-              <Link href="/">
-                <a>Choose your plan</a>
-              </Link>
+              <LoadingDots />
             )}
-          </div>
-        </Card>
-        <Card
-          title="Your Name"
-          description="Please enter your full name, or a display name you are comfortable with."
-          footer={<p>Please use 64 characters at maximum.</p>}
-        >
-          <div className="text-xl mt-8 mb-4 font-semibold">
-            {userDetails ? (
-              `${
-                userDetails.full_name ??
-                `${userDetails.first_name} ${userDetails.last_name}`
-              }`
-            ) : (
-              <div className="h-8 mb-6">
-                <LoadingDots />
-              </div>
-            )}
-          </div>
-        </Card>
-        <Card
-          title="Your Email"
-          description="Please enter the email address you want to use to login."
-          footer={<p>We will email you to verify the change.</p>}
-        >
-          <p className="text-xl mt-8 mb-4 font-semibold">
-            {user ? user.email : undefined}
-          </p>
-        </Card>
-      </div>
+          </MuiContainer>
+        </Box>
+      </Container>
     </section>
   );
 }
+
+export const getServerSideProps = withPageAuth({
+  redirectTo: "/subscription/signin",
+  async getServerSideProps(ctx) {
+    // Access the user object
+    try {
+      const { user } = await getUser(ctx);
+      console.log(user);
+      const customer = await createOrRetrieveCustomer({
+        uuid: user.id || "",
+        email: user.email || "",
+      });
+      return { props: { customer } };
+    } catch (error) {
+      if (error) return alert((error as Error).message);
+    }
+  },
+});

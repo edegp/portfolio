@@ -66,13 +66,12 @@ export const MyUserContextProvider = (props: Props) => {
 
   const setData = (payload) => {
     console.log("start payload");
-    // if (payload?.status !== "trialing" || payload?.status !== "active") {
-    //   setSubscription(null);
-    //   setIsLoadingData(false);
-    // }
-    if (payload) {
-      Promise.allSettled([getUserDetails(), updateSubscription(payload)]).then(
-        (results) => {
+    payload.site_name
+      ? setUserDetails(payload)
+      : Promise.allSettled([
+          getUserDetails(),
+          updateSubscription(payload),
+        ]).then((results) => {
           const userDetailsPromise = results[0];
           const updateSubscriptionPromise = results[1];
           console.log(updateSubscriptionPromise);
@@ -82,22 +81,25 @@ export const MyUserContextProvider = (props: Props) => {
           if (!updateSubscriptionPromise.error) {
             if (updateSubscriptionPromise.value.status === "canceled") {
               setCanceled(updateSubscriptionPromise.value);
+              setSubscription(null);
             } else {
               setSubscription(updateSubscriptionPromise.value);
             }
             setIsLoadingData(false);
           }
           console.log(`payload end loading ${isLoadingData}`);
-        }
-      );
-    }
+        });
   };
   useEffect(() => {
     if (user && !isLoadingData && !subscription && !canceled) {
       setIsLoadingData(true);
       console.log("start");
-      const update = supabase
+      const updateSub = supabase
         .from<Subscription>("subscriptions")
+        .on("*", (payload) => setData(payload.new))
+        .subscribe();
+      const updateUser = supabase
+        .from<UserDetails>("users")
         .on("*", (payload) => setData(payload.new))
         .subscribe();
       Promise.allSettled([
@@ -115,11 +117,13 @@ export const MyUserContextProvider = (props: Props) => {
           setIsLoadingData(false);
         } else if (!canceledPromise.value.error) {
           setCanceled(canceledPromise.value.data);
+          setSubscription(null);
           setIsLoadingData(false);
         }
         setIsLoadingData(false);
         return () => {
-          supabase.removeSubscription(update);
+          supabase.removeSubscription(updateSub);
+          supabase.removeSubscription(updateUser);
         };
       });
     } else if (!user && !isLoadingUser && !isLoadingData) {

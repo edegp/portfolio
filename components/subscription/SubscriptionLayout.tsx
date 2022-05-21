@@ -1,6 +1,6 @@
-import Container from "./container";
 import MuiContainer from "@mui/material/Container";
 import Box from "@mui/material/Box";
+import Container from "../container";
 
 export default function SubscriptionLayout({ children }) {
   return (

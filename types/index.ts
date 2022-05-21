@@ -31,6 +31,7 @@ export interface UserDetails {
   google: string;
   other: string;
   email: string;
+  color: string;
   billing_address?: Stripe.Address;
   payment_method?: Stripe.PaymentMethod[Stripe.PaymentMethod.Type];
 }

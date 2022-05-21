@@ -1,5 +1,6 @@
 import Document, { Html, Head, Main, NextScript } from "next/document";
 import { GA_TRACKING_ID } from "../lib/gtag";
+import Hubspot from "../lib/hubspot";
 
 export default class MyDocument extends Document {
   render() {
@@ -10,6 +11,7 @@ export default class MyDocument extends Document {
           <Main />
           <NextScript />
         </body>
+        <Hubspot />
       </Html>
     );
   }
