@@ -4,6 +4,7 @@
     "dev": "cross-env NODE_OPTIONS='--inspect' && next dev",
     "stripe": "stripe listen --forward-to=localhost:3000/api/webhooks",
     "add": "git add .",
+    "commit": "git commit -m a",
     "push": "git push origin first-promotion-dev",
     "build": "cross-env NODE_OPTIONS='--max_old_space_size=7096' && next build",
     "start": "next start",
