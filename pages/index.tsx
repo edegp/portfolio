@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import Head from "next/head";
 import Container from "../components/container";
-import Meta from "../components/meta";
 import Home from "../components/front-page/home";
 import WhatICan from "../components/front-page/whatican";
 import Service from "../components/front-page/service";
@@ -38,7 +37,6 @@ export default function Index() {
   });
   return (
     <>
-      <Meta />
       <Head>
         <title>anful</title>
       </Head>

@@ -122,17 +122,17 @@ export default function Subscription({
   const price = products.find((product) => product.name === plan).prices[0];
 
   const handleSubmit = async (e) => {
-    setLoading(true);
     e.preventDefault();
+    setLoading(true);
     const date = new Date();
     const trial_end = Math.floor(date.setDate(date.getDate() + 14) / 1000);
-    console.log(last + " " + first);
     const cardNumberElement = elements.getElement(CardNumberElement);
     try {
-      let { customer, clientSecret, subscriptionId } = await postData({
+      let { customer, clientSecret, subscriptionId, error } = await postData({
         url: "/api/create-subscription",
         data: { price },
       });
+      if (error) return setLoading(false);
       if (!clientSecret) console.log("cannot post subscription");
       if (!customer) console.log("cannot post customer");
       if (customer) {
@@ -168,7 +168,6 @@ export default function Subscription({
   };
 
   const handleElementChange = ({ elementType, error }) => {
-    console.log(error?.message);
     if (error) {
       elementType === "cardNumber"
         ? setErrorMessage((prev) => ({ ...prev, ["number"]: error.message }))
@@ -206,7 +205,6 @@ export default function Subscription({
       });
       // Check the availability of the Payment Request API.
       await pr.canMakePayment().then((result) => {
-        console.log(result);
         if (result) {
           setPaymentRequest(pr);
         }
@@ -407,7 +405,3 @@ export default function Subscription({
     </>
   );
 }
-
-// export const getServerSideProps = withPageAuth({
-//   redirectTo: "/subscription/signin",
-// });

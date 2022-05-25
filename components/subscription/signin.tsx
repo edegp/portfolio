@@ -31,14 +31,11 @@ export default function SignIn({
   });
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target) {
-      const name = event.target.name;
-      const value = event.target.value;
-      setInfo((prev) => ({ ...prev, [name]: value }));
-    }
-  };
-
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setInfo((prev) => ({
+      ...prev,
+      [event.target?.name]: event.target?.value,
+    }));
   const handleSignin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -84,10 +81,6 @@ export default function SignIn({
     setLoading(false);
   };
 
-  useEffect(() => {
-    if (user) router.replace("/subscription");
-  }, [user]);
-
   if (!user && !loading)
     return (
       <>
@@ -130,12 +123,13 @@ export default function SignIn({
                   className="!bg-[#04ac4d] text-white hover:opacity-70 laptop:justify-self-end rounded-md text-sm whitespace-nowrap px-10 justify-self-center mt-1"
                   variant="contained"
                   type="submit"
-                  loading={loading}
                   disabled={
-                    info.password?.length < 8 || info.email?.length === 0
+                    info.password?.length < 8 ||
+                    info.email?.length === 0 ||
+                    isLoading
                   }
                 >
-                  Sign in
+                  {isLoading ? <LoadingDots /> : "Sign in"}
                 </Button>
               </form>
               <span className="pt-1 text-center text-xs">

@@ -1,6 +1,4 @@
 import Head from "next/head";
-// import Typography from "@mui/material/Typography";
-
 import Container from "../components/container";
 import Header from "../components/header";
 import LPHome from "../components/lp/lp-home";

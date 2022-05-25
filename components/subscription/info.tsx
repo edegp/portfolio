@@ -8,13 +8,21 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemButton from "@mui/material/ListItemButton";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import { upsertInfo } from "../../utils/supabase-admin";
 import { postData } from "../../utils/helpers";
 
-export default function Info({ user, userDetails, customer }) {
-  const [info, setInfo] = useState(userDetails);
-  console.log(userDetails);
-  const listclass = "text-sm text-gray-700 shrink-0 grow-0 basis-1/3";
+export default function Info({
+  user,
+  info,
+  userDetails,
+  customer,
+  updateInfo,
+  resetInfo,
+  updateColor,
+}) {
+  const [update, setUpdate] = useState(null);
+  const listclass = "text-color text-sm font-bold shrink-0 grow-0 basis-1/3";
   const customerInfo = [
     "site_name",
     "purpose",
@@ -47,16 +55,19 @@ export default function Info({ user, userDetails, customer }) {
     }));
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { update } = await postData({
+    await postData({
       url: "/api/update-customer",
       data: { customer, info },
+    }).then(() => {
+      setUpdate(true);
+      setTimeout(() => setUpdate(false), [10000]);
     });
   };
   return (
     <Container>
       <form onSubmit={handleSubmit}>
         <List className="flex flex-wrap">
-          {Object.entries(userDetails)
+          {Object.entries(info)
             .filter(
               ([key, value]) => customerInfo.findIndex((e) => key === e) !== -1
             )
@@ -70,12 +81,12 @@ export default function Info({ user, userDetails, customer }) {
                     <TextField
                       name={key}
                       value={Object.values(info).find((v) => v === value)}
-                      onChange={handleChange}
+                      onChange={updateInfo}
                     />
                   ) : (
                     <Box className="w-full">
                       {" "}
-                      <SliderPicker color={info.color} onChange={handleColor} />
+                      <SliderPicker color={info.color} onChange={updateColor} />
                     </Box>
                   )}
                 </ListItem>
@@ -84,21 +95,27 @@ export default function Info({ user, userDetails, customer }) {
         </List>
         <Box className="flex mt-10">
           <Button
-            className="hover:opacity-70 w-vw-70 laptop:justify-self-end rounded-md text-xs whitespace-nowrap px-10 justify-self-center"
-            onClick={() => setInfo(userDetails)}
+            className="text-color hover:opacity-70 w-vw-70 laptop:justify-self-end rounded-md text-xs whitespace-nowrap px-10 justify-self-center"
+            onClick={() => updateInfo(userDetails)}
           >
             はじめの情報に戻す
           </Button>
           <Button
-            className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70 laptop:justify-self-end rounded-md text-xs whitespace-nowrap px-10 justify-self-center"
+            className="!bg-color text-white hover:opacity-70 w-vw-70 laptop:justify-self-end rounded-md text-xs whitespace-nowrap px-10 justify-self-center"
             type="submit"
           >
             変更
           </Button>
+          {update && (
+            <Typography
+              align="justify"
+              className="self-center ml-10 text-color font-bold text-xs"
+            >
+              更新しました!
+            </Typography>
+          )}
         </Box>
       </form>
     </Container>
   );
 }
-
-// withPageAuth({ redirectTo: "/subscription/signin" });

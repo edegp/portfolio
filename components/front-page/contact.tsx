@@ -1,39 +1,14 @@
-import React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import TextField from "@mui/material/TextField";
-import ToggleButton from "@mui/material/ToggleButton";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import FormGroup from "@mui/material/FormGroup";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Button from "@mui/material/Button";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import InstagramIcon from "@mui/icons-material/Instagram";
-import { useForm, ValidationError } from "@formspree/react";
 import Link from "../Link";
+import ContactForm from "../contactForm";
 
 export default function Contact() {
-  const [state, handleSubmit] = useForm("xbjwkwve");
-  const [alignment, setAlignment] = React.useState<string | null>("2-5");
-  if (state.succeeded) {
-    return (
-      <section id="contact" name="contact">
-        <Container className="pt-vw-36 pb-36 flex">
-          <p>Thanks for your inquiry!</p>
-        </Container>
-      </section>
-    );
-  }
-  const handleAlignment = (
-    event: React.MouseEvent<HTMLElement>,
-    newAlignment: string | null
-  ) => {
-    setAlignment(newAlignment);
-  };
   return (
     <section id="contact">
       <Container className="laptop:pt-vw-44 tablet:pt-vw-64 pt-[15vh] pb-30 flex">
@@ -100,135 +75,7 @@ export default function Contact() {
             </List>
           </Box>
         </Box>
-        <Container className="w-[70%]">
-          <Typography variant="h3" className="text-xs mb-1 ml-2 fadein">
-            飲食店のウェブでのブランディングやマーケティングについて
-          </Typography>
-          <Typography variant="h2" className="text-lg font-bold fadein">
-            ご気軽にご相談ください !
-          </Typography>
-          <form onSubmit={handleSubmit}>
-            <FormGroup>
-              <FormControl className="mt-3">
-                <InputLabel
-                  className="text-black text-[12px] leading-5"
-                  shrink
-                  htmlFor="name"
-                >
-                  名前・会社・その他活動名
-                </InputLabel>
-                <TextField
-                  className="mt-4"
-                  className="mt-4"
-                  id="name"
-                  type="name"
-                  name="name"
-                  defaultValue="starbucks Japan 佐々木"
-                />
-                <ValidationError
-                  prefix="name"
-                  field="name"
-                  errors={state.errors}
-                />
-              </FormControl>
-              <FormControl className="mt-3">
-                <InputLabel
-                  className="text-black text-[12px] leading-5"
-                  shrink
-                  htmlFor="email"
-                >
-                  Email
-                </InputLabel>
-                <TextField
-                  className="mt-4"
-                  id="email"
-                  type="email"
-                  name="email"
-                  defaultValue="sasaki@starbucks.co.jp"
-                />
-                <ValidationError
-                  prefix="Email"
-                  field="email"
-                  errors={state.errors}
-                />
-              </FormControl>
-              <FormControl className="mt-3">
-                <InputLabel
-                  className="text-black text-[12px] leading-5"
-                  shrink
-                  htmlFor="badget"
-                >
-                  予算
-                </InputLabel>
-                <ToggleButtonGroup
-                  name="badget"
-                  id="badget"
-                  required=""
-                  className="flex-wrap tablet:mt-4 mt-1"
-                  value={alignment}
-                  exclusive
-                  onChange={handleAlignment}
-                >
-                  <ToggleButton
-                    value="2"
-                    className="mt-1 tablet:mt-0 !rounded-[30px]"
-                  >
-                    ～¥20,000
-                  </ToggleButton>
-                  <ToggleButton
-                    value="2-5"
-                    className="sp:!ml-[20px] mt-2 tablet:mt-0 !rounded-[30px]"
-                  >
-                    ¥20,000～¥50,000
-                  </ToggleButton>
-                  <ToggleButton
-                    value="5"
-                    className="sp:!ml-[20px] mt-2 tablet:mt-0 !rounded-[30px]"
-                  >
-                    ¥50,000～
-                  </ToggleButton>
-                </ToggleButtonGroup>
-              </FormControl>
-              <FormControl className="mt-3">
-                <InputLabel
-                  className="text-black text-[12px] leading-5"
-                  shrink
-                  htmlFor="お問い合わせ内容"
-                >
-                  お問い合わせ内容
-                </InputLabel>
-                <TextField
-                  className="mt-4 hidden tablet:inline-flex"
-                  id="outlined-multiline-static message"
-                  name="message"
-                  multiline
-                  rows={4}
-                  defaultValue="近頃、飲食店を開業予定でウェブサイト作成を検討…"
-                />
-                <TextField
-                  className="mt-4 inline-flex tablet:hidden"
-                  id="outlined-multiline-static message"
-                  name="message"
-                  multiline
-                  rows={1}
-                  defaultValue="近頃、飲食店を開業予定でウェブサイト作成を検討…"
-                />
-                <ValidationError
-                  prefix="Message"
-                  field="message"
-                  errors={state.errors}
-                />
-              </FormControl>
-              <Button
-                type="submit"
-                disabled={state.submitting}
-                className="bg-black text-white rounded-full px-5 normal-case hover:bg-black hover:opacity-50 mt-vw-3 w-1/2 max-w-[180px]"
-              >
-                send
-              </Button>
-            </FormGroup>
-          </form>
-        </Container>
+        <ContactForm />
       </Container>
     </section>
   );

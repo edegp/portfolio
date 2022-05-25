@@ -4,7 +4,6 @@ import ErrorPage from "next/error";
 import MuiContainer from "@mui/material/Container";
 import { getAllPostsWithSlug, getPostAndMorePosts } from "../../lib/api";
 import Container from "../../components/container";
-import SectionSeparator from "../../components/section-separator";
 import PostBody from "../../components/post/post-body";
 import MoreStories from "../../components/post/more-stories";
 import PostHeader from "../../components/post/post-header";
@@ -39,7 +38,6 @@ export default function Post({ post, morePosts }) {
               <PostBody content={post.content} />
             </MuiContainer>
           </article>
-          <SectionSeparator />
           {morePosts && morePosts.length > 0 && (
             <MoreStories posts={morePosts} />
           )}

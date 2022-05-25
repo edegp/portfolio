@@ -20,10 +20,7 @@ import { Price, ProductWithPrice } from "../types";
 import Button from "../ui/Button";
 
 export default function Plan(props) {
-  const handleChange = (event) => {
-    console.log(event.target.value);
-    if (props.setPlan) props.setPlan(event.target.value);
-  };
+  const handleChange = (e) => props.updatePlan?.(event.target.value);
   return (
     <RadioGroup
       row

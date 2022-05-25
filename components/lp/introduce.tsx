@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Image from "next/image";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
@@ -12,11 +13,15 @@ import Button from "@mui/material/Button";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
-import { useForm, ValidationError } from "@formspree/react";
 import Plan from "../Plan";
 
 export default function Introduce({ products }) {
-  const [state, handleSubmit] = useForm("xbjwkwve");
+  const [plan, setPlan] = useState("basic");
+  const updatePlan = (e) => setPlan(e.target.value);
+  const handleSubmit = () => {
+    e.preventDefault();
+    router.push({ pathname: "/subscription", params: e.target.value });
+  };
   return (
     <Box className="system laptop:pt-[15vh] pt-[9vh] section">
       <Typography className="font-bold text-primary text-2xl text-center laptop:mb-vw-5 mb-vw-2">
@@ -32,7 +37,7 @@ export default function Introduce({ products }) {
       <form onSubmit={handleSubmit}>
         <FormControl className="block">
           <Container className="grid laptop:gap-y-16 gap-y-0">
-            <Plan products={products} />
+            <Plan products={products} updatePlan={updatePlan} />
             <Button
               type="submit"
               className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70  rounded-full text-sm whitespace-nowrap px-10 mx-auto"

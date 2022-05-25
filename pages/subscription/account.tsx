@@ -1,21 +1,24 @@
 import { useRouter } from "next/router";
+import Head from "next/head";
 import { useState, ReactNode, useEffect } from "react";
 import { withPageAuth, getUser } from "@supabase/supabase-auth-helpers/nextjs";
-import Iframe from "react-iframe";
 import MuiContainer from "@mui/material/Container";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import { useUser } from "../../utils/useUser";
 import { postData } from "../../utils/helpers";
 import { supabase } from "../../utils/supabase-client";
 import { createOrRetrieveCustomer } from "../../utils/supabase-admin";
 import Container from "../../components/container";
 import Link from "../../components/Link";
+import CenteredTabs from "../../components/centeredTabs";
 import LoadingDots from "../../components/ui/LoadingDots";
-import Button from "../../components/ui/Button";
+import ContactForm from "../../components/contactForm";
 import Info from "../../components/subscription/info";
+import { getRGBColor } from "../../utils/color";
 
 interface Props {
   title: string;
@@ -59,9 +62,7 @@ function Card({ title, description, footer, children }: Props) {
         {children}
       </div>
       {footer ? (
-        <div className="border-t border-zinc-700 bg-zinc-900 p-4 text-zinc-500 rounded-b-md">
-          {footer}
-        </div>
+        <div className="p-4 text-zinc-500 rounded-b-md">{footer}</div>
       ) : (
         <></>
       )}
@@ -73,7 +74,12 @@ export default function Account({ user, customer }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const { isLoading, subscription, userDetails } = useUser();
-  const [value, setValue] = useState(0);
+  const [info, setInfo] = useState(userDetails);
+  const updateInfo = (e) =>
+    setInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const resetInfo = (userDetails) => setInfo(userDetails);
+  const updateColor = (color) =>
+    setInfo((prev) => ({ ...prev, ["color"]: color.hex }));
   const redirectToCustomerPortal = async () => {
     setLoading(true);
     try {
@@ -86,125 +92,114 @@ export default function Account({ user, customer }) {
     }
     setLoading(false);
   };
-  const subscriptionPrice = new Intl.NumberFormat("ja-JP", {
-    style: "currency",
-    currency: subscription?.prices?.currency || "JPY",
-    minimumFractionDigits: 0,
-  }).format(subscription?.prices?.unit_amount || 0);
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
-
+  const subscriptionPrice = new Intl.NumberFormat("ja-JP").format(
+    subscription?.prices?.unit_amount || 0
+  );
+  // const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  //   setValue(newValue);
+  // };
+  useEffect(() => {
+    setInfo(userDetails);
+  }, [userDetails, isLoading]);
   useEffect(() => {
     if (!subscription && !isLoading) {
       router.push("/subscription");
     }
-  }, [subscription, isLoading]);
+  }, [subscription]);
+  const primaryColor = getRGBColor(info?.color || "#333", "primary");
   return (
-    <section>
-      <Container>
-        <Box className="system laptop:pt-[18vh] pt-[14vh] section">
-          <MuiContainer>
-            {!isLoading ? (
-              <>
-                <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                  <Tabs
-                    value={value}
-                    onChange={handleChange}
-                    textColor={userDetails?.color || "primary"}
-                    indicatorColor={userDetails?.color || "primary"}
-                    aria-label="basic tabs example"
+    <>
+      <Head>
+        <Meta/>
+        <title>ANful</title>
+        <style>:root {`{${primaryColor}}`}</style>
+      </Head>
+      <section>
+        <Container>
+          <Box className="system laptop:pt-[18vh] pt-[14vh] section">
+            <MuiContainer>
+              {!isLoading ? (
+                <>
+                  <CenteredTabs
+                    color={info?.color}
+                    className="mx-24 font-light"
+                    labels={[
+                      "ご登録情報",
+                      "お客様情報の確認・変更",
+                      "ヘルプ・お問い合わせ",
+                    ]}
                   >
-                    <Tab label="ご登録情報" {...a11yProps(0)} />
-                    {/* <Tab label="サブスクリプションの管理へ" {...a11yProps(1)} /> */}
-                    <Tab label="お客様情報の確認・変更" {...a11yProps(1)} />
-                    <Tab label="ヘルプ・お問い合わせ" {...a11yProps(2)} />
-                  </Tabs>
-                </Box>
-                <TabPanel value={value} index={0}>
-                  <div className="p-4">
-                    <Card
-                      title="ご登録のプラン"
-                      description={
-                        subscription?.status === "active" ||
-                        subscription?.status === "trialing"
-                          ? `${subscription?.prices?.products?.name} plan.`
-                          : ""
-                      }
-                      footer={
-                        <div className="flex items-start justify-between flex-col sm:flex-row sm:items-center">
-                          {/* <Link href="/subscription/customer-portal"> */}
-                          <Button
-                            variant="slim"
-                            loading={loading}
-                            disabled={loading || !subscription}
-                            onClick={redirectToCustomerPortal}
-                          >
-                            サブスクリプションの管理へ
-                          </Button>
-                          {/* </Link> */}
-                        </div>
-                      }
-                    >
-                      <div className="text-sm mt-8 mb-4 font-semibold">
-                        {isLoading ? (
-                          <div className="h-12 mb-6">
-                            <LoadingDots />
+                    <div>
+                      <Card
+                        title="ご登録のプラン"
+                        description={
+                          subscription?.status === "active" ||
+                          subscription?.status === "trialing"
+                            ? `${subscription?.prices?.products?.name} plan.`
+                            : ""
+                        }
+                        footer={
+                          <div className="flex items-start justify-between flex-col sm:flex-row sm:items-center">
+                            {/* <Link href="/subscription/customer-portal"> */}
+                            <Button
+                              className="bg-black text-white"
+                              variant="slim"
+                              loading={loading}
+                              disabled={loading || !subscription}
+                              onClick={redirectToCustomerPortal}
+                            >
+                              サブスクリプションの管理へ
+                            </Button>
+                            {/* </Link> */}
                           </div>
-                        ) : subscription ? (
-                          `${subscriptionPrice}/${subscription?.prices?.interval}`
-                        ) : (
-                          <Link href="/">
-                            <a>Choose your plan</a>
-                          </Link>
-                        )}
-                      </div>
-                    </Card>
-                    <Card
-                      title="ご登録のメール"
-                      // description={user?.email}
-                      // footer={
-                      //   <Button
-                      //     variant="slim"
-                      //     loading={loading}
-                      //     disabled={loading || !subscription}
-                      //     onClick={redirectToCustomerPortal}
-                      //   >
-                      //     お客様情報の確認・変更
-                      //   </Button>
-                      // }
-                    >
-                      <p className="text-sm mt-8 mb-4 font-semibold">
-                        {user ? user.email : undefined}
-                      </p>
-                    </Card>
-                  </div>
-                </TabPanel>
-                {/* <TabPanel value={value} index={1}>
-              <Iframe src={url} />
-            </TabPanel> */}
-                <TabPanel value={value} index={1}>
-                  <Info
-                    user={user}
-                    userDetails={userDetails}
-                    customer={customer}
-                  />
-                </TabPanel>
-                <TabPanel value={value} index={2}>
-                  <Info
-                    user={user}
-                    userDetails={userDetails}
-                    customer={customer}
-                  />
-                </TabPanel>
-              </>
-            ) : (
-              <LoadingDots />
-            )}
-          </MuiContainer>
-        </Box>
-      </Container>
-    </section>
+                        }
+                      >
+                        <div className="text-xl mt-8 mb-4 font-semibold">
+                          {isLoading ? (
+                            <div className="h-12 mb-6">
+                              <LoadingDots />
+                            </div>
+                          ) : subscription ? (
+                            <Typography>
+                              {subscriptionPrice}
+                              <span className="text-xs">
+                                円/
+                                {subscription?.prices?.interval === "month" &&
+                                  "月"}
+                              </span>
+                            </Typography>
+                          ) : (
+                            <Link href="/">
+                              <a>Choose your plan</a>
+                            </Link>
+                          )}
+                        </div>
+                      </Card>
+                      <Card title="ご登録のメール">
+                        <p className="text-sm mt-8 mb-4 font-semibold">
+                          {user ? user.email : undefined}
+                        </p>
+                      </Card>
+                    </div>
+                    <Info
+                      user={user}
+                      updateInfo={updateInfo}
+                      resetInfo={resetInfo}
+                      updateColor={updateColor}
+                      info={info}
+                      customer={customer}
+                    />
+                    <ContactForm user={user} info={info} />
+                  </CenteredTabs>
+                </>
+              ) : (
+                <LoadingDots className="text-black" />
+              )}
+            </MuiContainer>
+          </Box>
+        </Container>
+      </section>
+    </>
   );
 }
 
@@ -214,7 +209,6 @@ export const getServerSideProps = withPageAuth({
     // Access the user object
     try {
       const { user } = await getUser(ctx);
-      console.log(user);
       const customer = await createOrRetrieveCustomer({
         uuid: user.id || "",
         email: user.email || "",

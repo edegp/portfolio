@@ -81,9 +81,9 @@ const steps = [
 
 export default function Register({ products }) {
   const router = useRouter();
-  const [newUser, setNewUser] = useState<User | null>(null);
   const [activeStep, setActiveStep] = useState(0);
   const [plan, setPlan] = useState("basic");
+  const updatePlan = (e) => setPlan(e.target.value);
   const [info, setInfo] = useState({
     email: "",
     password: "",
@@ -160,15 +160,16 @@ export default function Register({ products }) {
     handleRenew();
   }
   useEffect(() => {
-    if (subscription?.status === "active" || "trialing") {
+    if (
+      subscription?.status === "active" ||
+      subscription?.status === "trialing"
+    ) {
       router.push("/subscription/account");
     }
-  }, [subscription]);
-  useEffect(() => {
-    if (setupIntent && setupIntent.status === "succeeded") {
+    if (setupIntent?.status === "succeeded") {
       router.push("/subscription/account");
     }
-  }, [setupIntent]);
+  }, [subscription, setupIntent]);
   const jsx = steps.map((step) =>
     Object.keys(step.fields).length !== 0 ? (
       <FormGroup>
@@ -200,10 +201,8 @@ export default function Register({ products }) {
     step === 0 ? (
       !user ? (
         <SignUp
-          jsx={jsx}
           info={info}
           setInfo={setInfo}
-          setNewUser={setNewUser}
           activeStep={activeStep}
           setActiveStep={setActiveStep}
         />
@@ -223,20 +222,15 @@ export default function Register({ products }) {
     ) : step === 2 ? (
       jsx[2]
     ) : step === 3 ? (
-      <Plan products={products} className="my-8" />
+      <Plan products={products} className="my-8" updatePlan={updatePlan} />
     ) : step === 4 ? (
       <Subscription
         plan={plan}
         products={products}
         info={info}
-        // first={first}
-        // last={last}
-        // setFirst={setFirst}
-        // setLast={setLast}
         setSetupIntent={setSetupIntent}
         activeStep={activeStep}
         setActiveStep={setActiveStep}
-        // handleSubmit={handleSubmit}
       />
     ) : (
       console.log("Unknown step")
@@ -252,7 +246,7 @@ export default function Register({ products }) {
     <>
       <Head>
         <title>ANful</title>
-        <style>:root {`{${primaryColor}`}</style>
+        <style>:root {`{${primaryColor}}`}</style>
       </Head>
       <Container>
         <Box className="system laptop:pt-[18vh] pt-[14vh] section">

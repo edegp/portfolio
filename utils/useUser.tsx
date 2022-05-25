@@ -63,19 +63,16 @@ export const MyUserContextProvider = (props: Props) => {
     const result = { ...payload, prices };
     return result;
   };
-
   const setData = (payload) => {
-    console.log("start payload");
-    payload.site_name
-      ? setUserDetails(payload)
-      : Promise.allSettled([
-          getUserDetails(),
-          updateSubscription(payload),
-        ]).then((results) => {
+    setIsLoadingData(true);
+    if (payload.site_name) {
+      setUserDetails(payload);
+      setIsLoadingData(false);
+    } else {
+      Promise.allSettled([getUserDetails(), updateSubscription(payload)]).then(
+        (results) => {
           const userDetailsPromise = results[0];
           const updateSubscriptionPromise = results[1];
-          console.log(updateSubscriptionPromise);
-          console.log(updateSubscriptionPromise.value);
           if (userDetailsPromise.status === "fulfilled")
             setUserDetails(userDetailsPromise.value.data);
           if (!updateSubscriptionPromise.error) {
@@ -84,16 +81,17 @@ export const MyUserContextProvider = (props: Props) => {
               setSubscription(null);
             } else {
               setSubscription(updateSubscriptionPromise.value);
+              setCanceled(null);
             }
             setIsLoadingData(false);
           }
-          console.log(`payload end loading ${isLoadingData}`);
-        });
+        }
+      );
+    }
   };
   useEffect(() => {
     if (user && !isLoadingData && !subscription && !canceled) {
       setIsLoadingData(true);
-      console.log("start");
       const updateSub = supabase
         .from<Subscription>("subscriptions")
         .on("*", (payload) => setData(payload.new))
@@ -114,11 +112,10 @@ export const MyUserContextProvider = (props: Props) => {
           setUserDetails(userDetailsPromise.value.data);
         if (!subscriptionPromise.value.error) {
           setSubscription(subscriptionPromise.value.data);
-          setIsLoadingData(false);
+          setCanceled(null);
         } else if (!canceledPromise.value.error) {
           setCanceled(canceledPromise.value.data);
           setSubscription(null);
-          setIsLoadingData(false);
         }
         setIsLoadingData(false);
         return () => {
@@ -129,6 +126,7 @@ export const MyUserContextProvider = (props: Props) => {
     } else if (!user && !isLoadingUser && !isLoadingData) {
       setUserDetails(null);
       setSubscription(null);
+      setCanceled(null);
     }
   }, [user, isLoadingUser]);
   const value = {
@@ -139,7 +137,6 @@ export const MyUserContextProvider = (props: Props) => {
     subscription,
     canceled,
   };
-
   return <UserContext.Provider value={value} {...props} />;
 };
 

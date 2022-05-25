@@ -7,17 +7,17 @@ import {
 import { getURL } from "../../utils/helpers";
 import { NextApiRequest, NextApiResponse } from "next";
 
-const createSubscription = async (
+export default withApiAuth(async function createSubscription(
   req: NextApiRequest,
   res: NextApiResponse
-) => {
+) {
   if (req.method === "POST") {
     const { user } = await getUser({ req, res });
     const { price, canceled, metadata = {} } = req.body;
     try {
       const customer = await createOrRetrieveCustomer({
-        uuid: user.id || "",
-        email: user.email || "",
+        uuid: user?.id || "",
+        email: user?.email || "",
       });
       if (canceled) {
         const customerInfo = await stripe.customers.retrieve(customer);
@@ -67,6 +67,4 @@ const createSubscription = async (
     res.setHeader("Allow", "POST");
     res.status(405).end("Method Not Allowed");
   }
-};
-
-export default withApiAuth(createSubscription);
+});

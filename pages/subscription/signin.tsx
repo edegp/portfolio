@@ -42,7 +42,7 @@ export default function SignIn() {
     setLoading(true);
     setMessage({});
     const { error, user: loginUser } = await supabaseClient.auth.signIn(
-      { email: email, password: password },
+      { email, password },
       { redirectTo: getURL() }
     );
     if (error) {
@@ -75,96 +75,103 @@ export default function SignIn() {
 
   if (!user && !loading)
     return (
-      // <Container>
-      //   <Box className="system laptop:pt-[18vh] pt-[14vh] section">
-      <div className="flex justify-center height-screen-helper">
-        <div className="flex flex-col justify-between max-w-lg p-3 m-auto w-80 ">
-          <div className="flex flex-col space-y-4">
-            {message.content && (
-              <div
-                className={`${
-                  message.type === "error" ? "text-pink-500" : "text-green-500"
-                } border ${
-                  message.type === "error"
-                    ? "border-pink-500"
-                    : "border-green-500"
-                } p-3`}
-              >
-                {message.content}
+      <Container>
+        <Box className="system laptop:pt-[18vh] pt-[14vh] section">
+          <div className="flex justify-center height-screen-helper">
+            <div className="flex flex-col justify-between max-w-lg p-3 m-auto w-80 ">
+              <div className="flex flex-col space-y-4">
+                {message.content && (
+                  <div
+                    className={`${
+                      message.type === "error"
+                        ? "text-pink-500"
+                        : "text-green-500"
+                    } border ${
+                      message.type === "error"
+                        ? "border-pink-500"
+                        : "border-green-500"
+                    } p-3`}
+                  >
+                    {message.content}
+                  </div>
+                )}
+                <form
+                  onSubmit={handleSignin}
+                  className="flex flex-col space-y-4"
+                >
+                  <TextField
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={() => setEmail()}
+                    required
+                  />
+                  <TextField
+                    name="password"
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={() => setPassword()}
+                    required
+                  />
+                  <Button
+                    className="!bg-[#04ac4d] text-white hover:opacity-70 laptop:justify-self-end rounded-md text-sm whitespace-nowrap px-10 justify-self-center mt-1"
+                    variant="contained"
+                    type="submit"
+                    loading={loading}
+                    disabled={password?.length < 8 || email?.length === 0}
+                  >
+                    Sign in
+                  </Button>
+                </form>
+                <span className="pt-1 text-center text-sm">
+                  <span className="text-black">Don't have an account?</span>
+                  <Link href="/subscription">
+                    <Button>Sign up.</Button>
+                  </Link>
+                </span>
               </div>
-            )}
-            <form onSubmit={handleSignin} className="flex flex-col space-y-4">
-              <TextField
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={email}
-                onChange={() => setEmail()}
-                required
-              />
-              <TextField
-                name="password"
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={() => setPassword()}
-                required
-              />
+
+              <div className="flex items-center my-6">
+                <div
+                  className="border-t border-zinc-600 flex-grow mr-3"
+                  aria-hidden="true"
+                ></div>
+                <div className="text-zinc-400">Or</div>
+                <div
+                  className="border-t border-zinc-600 flex-grow ml-3"
+                  aria-hidden="true"
+                ></div>
+              </div>
               <Button
-                className="!bg-[#04ac4d] text-white hover:opacity-70 laptop:justify-self-end rounded-md text-sm whitespace-nowrap px-10 justify-self-center mt-1"
+                className="mt-4 py-2"
                 variant="contained"
                 type="submit"
-                loading={loading}
-                disabled={password?.length < 8 || email?.length === 0}
+                disabled={loading}
+                onClick={() => handleOAuthSignIn("facebook")}
               >
-                Sign in
+                <Facebook />
+                <span className="ml-[20px] text-gray-600">
+                  SIGN IN WITH Facebook
+                </span>
               </Button>
-            </form>
-            <span className="pt-1 text-center text-sm">
-              <span className="text-black">Don't have an account?</span>
-              <Link href="/subscription">
-                <Button>Sign up.</Button>
-              </Link>
-            </span>
+              <Button
+                className="mt-3 rounded-md pl-[6px] pr-[8px] py-0 "
+                variant="contained"
+                type="submit"
+                disabled={loading}
+                onClick={() => handleOAuthSignIn("google")}
+              >
+                <Google />
+                <span className="ml-[10px] text-gray-600">
+                  SIGN IN WITH GOOGLE
+                </span>
+              </Button>
+            </div>
           </div>
-
-          <div className="flex items-center my-6">
-            <div
-              className="border-t border-zinc-600 flex-grow mr-3"
-              aria-hidden="true"
-            ></div>
-            <div className="text-zinc-400">Or</div>
-            <div
-              className="border-t border-zinc-600 flex-grow ml-3"
-              aria-hidden="true"
-            ></div>
-          </div>
-          <Button
-            className="mt-4 py-2"
-            variant="contained"
-            type="submit"
-            disabled={loading}
-            onClick={() => handleOAuthSignIn("facebook")}
-          >
-            <Facebook />
-            <span className="ml-[20px] text-gray-600">
-              SIGN IN WITH Facebook
-            </span>
-          </Button>
-          <Button
-            className="mt-3 rounded-md pl-[6px] pr-[8px] py-0 "
-            variant="contained"
-            type="submit"
-            disabled={loading}
-            onClick={() => handleOAuthSignIn("google")}
-          >
-            <Google />
-            <span className="ml-[10px] text-gray-600">SIGN IN WITH GOOGLE</span>
-          </Button>
-        </div>
-      </div>
-      //   </Box>
-      // </Container>
+        </Box>
+      </Container>
     );
 
   return (
