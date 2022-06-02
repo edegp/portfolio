@@ -5,7 +5,7 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 
 const TabPanel = ({ children, value, index, ...other }) => {
-  return <>{value === index && <Box p={3}>{children}</Box>}</>;
+  return <>{value === index && <Box>{children}</Box>}</>;
 };
 export default function CenteredTabs({ labels, children, className, color }) {
   const [value, setValue] = useState(0);
@@ -25,11 +25,15 @@ export default function CenteredTabs({ labels, children, className, color }) {
         centered
       >
         {labels.map((label) => (
-          <Tab className="text-color font-light" label={label}></Tab>
+          <Tab
+            key={label}
+            className="text-color font-light"
+            label={label}
+          ></Tab>
         ))}
       </Tabs>
       {children.map((child, index) => (
-        <TabPanel value={value} index={index}>
+        <TabPanel key={index} value={value} index={index}>
           {child}
         </TabPanel>
       ))}

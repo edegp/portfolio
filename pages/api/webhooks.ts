@@ -32,6 +32,7 @@ const relevantEvents = new Set([
   "customer.subscription.created",
   "customer.subscription.updated",
   "customer.subscription.deleted",
+  "invoice.created",
 ]);
 
 const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -82,7 +83,12 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                 true
               );
             }
+
             break;
+          case "invoice.created":
+            const invoice = await stripe.invoices.sendInvoice(
+              event.data.object?.id
+            );
           default:
             throw new Error("Unhandled relevant event!");
         }

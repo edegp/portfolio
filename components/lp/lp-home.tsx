@@ -33,7 +33,7 @@ export default function LPHome() {
 
         <Button
           component={Link}
-          href="../signup"
+          href="../subscription"
           className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70 laptop:justify-self-end rounded-full text-sm whitespace-nowrap px-10 justify-self-center"
         >
           <span className="font-[Noto Sans JP] font-bold">

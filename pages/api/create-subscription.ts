@@ -13,14 +13,30 @@ export default withApiAuth(async function createSubscription(
 ) {
   if (req.method === "POST") {
     const { user } = await getUser({ req, res });
-    const { price, canceled, metadata = {} } = req.body;
+    const { price, metadata = {} } = req.body;
+    const customer = await createOrRetrieveCustomer({
+      uuid: user?.id || "",
+      email: user?.email || "",
+    });
     try {
-      const customer = await createOrRetrieveCustomer({
-        uuid: user?.id || "",
-        email: user?.email || "",
-      });
-      if (canceled) {
-        const customerInfo = await stripe.customers.retrieve(customer);
+      if (price.unit_amount === 1980 || price.unit_amount === 2980) {
+        const subscription = await stripe.subscriptions.create({
+          customer,
+          items: [
+            {
+              price: price.id,
+            },
+          ],
+          trial_period_days: 14,
+          payment_behavior: "default_incomplete",
+          expand: ["pending_setup_intent"],
+        });
+        return res.status(200).json({
+          customer,
+          subscriptionId: subscription.id,
+          clientSecret: subscription.pending_setup_intent.client_secret,
+        });
+      } else {
         const subscription = await stripe.subscriptions.create({
           customer,
           items: [
@@ -31,30 +47,11 @@ export default withApiAuth(async function createSubscription(
           payment_behavior: "default_incomplete",
           expand: ["latest_invoice.payment_intent"],
         });
-        return res.status(200).send({
-          customer,
-          default_payment_method:
-            customerInfo.invoice_settings.default_payment_method,
-          subscriptionId: subscription.id,
-          clientSecret:
-            subscription.latest_invoice.payment_intent.client_secret,
-        });
-      } else {
-        const subscription = await stripe.subscriptions.create({
-          customer,
-          items: [
-            {
-              price: price.id,
-            },
-          ],
-          trial_period_days: price.trial_period_days,
-          payment_behavior: "default_incomplete",
-          expand: ["pending_setup_intent"],
-        });
         return res.status(200).json({
           customer,
           subscriptionId: subscription.id,
-          clientSecret: subscription.pending_setup_intent.client_secret,
+          clientSecret:
+            subscription.latest_invoice.payment_intent.client_secret,
         });
       }
     } catch (err: any) {

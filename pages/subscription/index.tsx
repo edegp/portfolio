@@ -44,7 +44,7 @@ import Plan from "../../components/Plan";
 import SignUp from "../../components/subscription/signup";
 import SignIn from "../../components/subscription/signin";
 import SubscriptionLayout from "../../components/subscription/SubscriptionLayout";
-import Subscription from "../../components/subscription/Subscription";
+import SubscriptionForm from "../../components/subscription/Subscription";
 import ToggleButton from "../../components/subscription/toggleButton";
 
 interface Props {
@@ -82,7 +82,10 @@ const steps = [
 export default function Register({ products }) {
   const router = useRouter();
   const [activeStep, setActiveStep] = useState(0);
-  const [plan, setPlan] = useState("basic");
+  const updateActiveStep = (e) => setActiveStep(e);
+  const [plan, setPlan] = useState(
+    Object.keys(router.query).length !== 0 ? router.query : "basic"
+  );
   const updatePlan = (e) => setPlan(e.target.value);
   const [info, setInfo] = useState({
     email: "",
@@ -94,24 +97,24 @@ export default function Register({ products }) {
     google: "",
     other: "",
   });
+  const updateInfo = (key, value) =>
+    setInfo((prev) => ({ ...prev, [key]: value }));
   const [messages, _setMessages] = useState("");
-  const [setupIntent, setSetupIntent] = useState("");
-
+  const [intent, setIntent] = useState("");
+  const updateIntent = (e) => setIntent(e);
   const [message, setMessage] = useState<{ type?: string; content?: string }>({
     type: "",
     content: "",
   });
   const { user, isLoading, subscription, canceled } = useUser();
   const [loading, setLoading] = useState(false);
+  const updateLoading = () => setLoading(!loading);
   const [clientSecret, setClientSecret] = useState(null);
   const [customer, setCustomer] = useState();
   const [subscriptionId, setSubscriptionId] = useState();
-  const [first, setFirst] = useState("");
-  const [last, setLast] = useState("");
   const stripe = useStripe();
   const elements = useElements();
-  const price = products.find((product) => product.name === plan).prices[0];
-
+  const price = products.find((product) => product.name === plan)?.prices[0];
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const name = event.target.name;
     const value = event.target.value;
@@ -137,8 +140,8 @@ export default function Register({ products }) {
     const price = products.find((product) => product.name === plan).prices[0];
     let { customer, clientSecret, subscriptionId, default_payment_method } =
       await postData({
-        url: "/api/create-subscription",
-        data: { price, canceled },
+        url: "/api/update-subscription",
+        data: { price, subscriptionId: canceled.id },
       });
     if (clientSecret) {
       setClientSecret(clientSecret);
@@ -166,18 +169,18 @@ export default function Register({ products }) {
     ) {
       router.push("/subscription/account");
     }
-    if (setupIntent?.status === "succeeded") {
+    if (intent?.status === "succeeded") {
       router.push("/subscription/account");
     }
-  }, [subscription, setupIntent]);
+  }, [subscription, intent]);
   const jsx = steps.map((step) =>
     Object.keys(step.fields).length !== 0 ? (
-      <FormGroup>
+      <FormGroup className="mb-6">
         {Object.entries(step.fields).map(([key, value]) => {
           return (
             <TextField
               key={key}
-              className="my-vw-3"
+              className="my-6"
               name={key}
               label={value}
               type={
@@ -199,21 +202,30 @@ export default function Register({ products }) {
   );
   const getStepContent = (step) =>
     step === 0 ? (
-      !user ? (
+      user && !subscription && !loading && !isLoading ? (
+        handleUser()
+      ) : isLoading && loading ? (
+        <div className="h-12 mb-6">
+          <LoadingDots />
+        </div>
+      ) : (
         <SignUp
           info={info}
-          setInfo={setInfo}
+          updateInfo={updateInfo}
           activeStep={activeStep}
-          setActiveStep={setActiveStep}
+          handleNext={handleNext}
+          updateLoading={updateLoading}
+          loading={loading}
         />
-      ) : (
-        handleUser()
       )
     ) : step === 1 ? (
       <>
         {jsx[1]}
         <Box className="my-12">
-          <Typography className="text-xs font-bold text-color" gutterBottom>
+          <Typography
+            className="text-xs font-bold text-color mb-8"
+            gutterBottom
+          >
             あなたが希望するサイトのメインカラーを教えてください。
           </Typography>
           <SliderPicker color={info.color} onChange={handleColor} />
@@ -222,24 +234,28 @@ export default function Register({ products }) {
     ) : step === 2 ? (
       jsx[2]
     ) : step === 3 ? (
-      <Plan products={products} className="my-8" updatePlan={updatePlan} />
+      <Plan
+        products={products}
+        className="my-0 tablet:mb-16 mb-4"
+        updatePlan={updatePlan}
+      />
     ) : step === 4 ? (
-      <Subscription
+      <SubscriptionForm
         plan={plan}
         products={products}
         info={info}
-        setSetupIntent={setSetupIntent}
-        activeStep={activeStep}
-        setActiveStep={setActiveStep}
+        intent={intent}
+        updateIntent={updateIntent}
+        handleBack={handleBack}
       />
     ) : (
       console.log("Unknown step")
     );
   let container = "";
   if (activeStep === 1 || activeStep === 2 || activeStep === 4) {
-    container = "mt-10 max-w-lg p-3 m-auto w-90";
+    container = "tablet:my-30 sp:my-24 my-0 max-w-lg p-3 m-auto w-90";
   } else {
-    container = "mt-10";
+    container = "tablet:my-30 sp:my-24 my-0";
   }
   const primaryColor = getRGBColor(info.color, "primary");
   return (
@@ -249,39 +265,45 @@ export default function Register({ products }) {
         <style>:root {`{${primaryColor}}`}</style>
       </Head>
       <Container>
-        <Box className="system laptop:pt-[18vh] pt-[14vh] section">
-          <ToggleButton />
-          <Stepper activeStep={activeStep} alternativeLabel>
-            {steps.map((step) => (
-              <Step key={step.name}>
-                <StepLabel>{step.name}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-          <MuiContainer>
-            <Box className={container}>
-              {getStepContent(activeStep)}
-              {activeStep !== 0 && activeStep !== 4 && (
-                <>
-                  <Button onClick={handleBack}>戻る</Button>
-                  <Button
-                    variant="contained"
-                    onClick={handleNext}
-                    className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70 laptop:justify-self-end rounded-md text-sm whitespace-nowrap px-10 justify-self-center"
-                  >
-                    {loading ? (
-                      <div className="h-12 mb-6">
-                        <LoadingDots />
-                      </div>
-                    ) : (
-                      "続ける"
-                    )}
-                  </Button>
-                </>
-              )}
-            </Box>
-          </MuiContainer>
-        </Box>
+        {isLoading || loading || subscription ? (
+          <div className="text-center absolute top-[calc(50%-50px)] left-[calc(50%-50px)]">
+            <LoadingDots c="#333" s="100px" />
+          </div>
+        ) : (
+          <Box className="system tablet:pt-[18vh] sp:pt-[14vh] pt-[9vh]">
+            <ToggleButton className="items-center mr-6  fixed top-[calc(4vw-5px)] right-h-w p-8 z-20" />
+            <Stepper activeStep={activeStep} alternativeLabel>
+              {steps.map((step) => (
+                <Step key={step.name}>
+                  <StepLabel>{step.name}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+            <MuiContainer>
+              <Box className={container}>
+                {getStepContent(activeStep)}
+                {activeStep !== 0 && activeStep !== 4 && (
+                  <>
+                    <Button onClick={handleBack}>戻る</Button>
+                    <Button
+                      variant="contained"
+                      onClick={handleNext}
+                      className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70 laptop:justify-self-end rounded-md text-sm whitespace-nowrap px-10 justify-self-center"
+                    >
+                      {loading ? (
+                        <div className="h-12 mb-6">
+                          <LoadingDots />
+                        </div>
+                      ) : (
+                        "続ける"
+                      )}
+                    </Button>
+                  </>
+                )}
+              </Box>
+            </MuiContainer>
+          </Box>
+        )}
       </Container>
     </>
   );

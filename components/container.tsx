@@ -1,3 +1,7 @@
-export default function Container({ children }) {
-  return <div id="container">{children}</div>;
+export default function Container({ children, ...other }) {
+  return (
+    <div id="container" {...other}>
+      {children}
+    </div>
+  );
 }

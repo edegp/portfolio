@@ -1,6 +1,7 @@
 import { AppProps } from "next/app";
 import { useRef, useEffect } from "react";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import Head from "next/head";
+// import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Container from "../components/container";
 import Meta from "../components/meta";
@@ -32,7 +33,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Meta />
-      <GoogleAnalytics />
+      <Head>
+        <GoogleAnalytics />
+      </Head>
+      {/* <ThemeProvider theme={theme}> */}
       <Box
         ref={cursor}
         className="cursor mix-blend-exclusion z-50 before:rounded-full hidden tablet:block"
@@ -44,6 +48,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           </Layout>
         </MyUserContextProvider>
       </UserProvider>
+      {/* </ThemeProvider> */}
     </>
   );
 }

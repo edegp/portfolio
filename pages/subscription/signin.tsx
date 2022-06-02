@@ -1,15 +1,15 @@
 import Link from "next/link";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState, FormEvent } from "react";
-import { useUser } from "@supabase/supabase-auth-helpers/react";
 import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs";
 import { Provider } from "@supabase/supabase-js";
 import TextField from "@mui/material/TextField";
-
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { getURL } from "../../utils/helpers";
 import { postData } from "../../utils/helpers";
+import { useUser } from "../../utils/useUser";
 import Facebook from "../../components/icons/Facebook";
 import Google from "../../components/icons/Google";
 import LoadingDots from "../../components/ui/LoadingDots";
@@ -19,7 +19,7 @@ import Container from "../../components/container";
 export default function SignIn() {
   const router = useRouter();
   const [priceIdLoading, setPriceIdLoading] = useState<string>();
-  const { user, isLoading, subscription } = useUser();
+  const { user, isLoading, subscription, userDetails } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginUser, setloginUser] = useState(false);
@@ -28,35 +28,26 @@ export default function SignIn() {
     content: "",
   });
   const [loading, setLoading] = useState(false);
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target) {
-      const name = event.target.name;
-      const value = event.target.value;
-      setInfo((prev) => ({ ...prev, [name]: value }));
-    }
-  };
-
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setInfo((prev) => ({ ...prev, [event.target?.name]: event.target?.value }));
   const handleSignin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setMessage({});
-    const { error, user: loginUser } = await supabaseClient.auth.signIn(
-      { email, password },
-      { redirectTo: getURL() }
-    );
+    const { error, user: loginUser } = await supabaseClient.auth.signIn({
+      email,
+      password,
+    });
     if (error) {
       setMessage({ type: "error", content: error.message });
     }
     if (!password) {
       setMessage({
         type: "note",
-        content: "Check your email for the magic link.",
+        content: "パスワードを入力してください",
       });
     }
-    if (subscription) {
-      return router.push("/subscription/account");
-    }
+    subscription ?? router.push("/subscription/account");
     setLoading(false);
   };
 
@@ -69,14 +60,26 @@ export default function SignIn() {
     setLoading(false);
   };
 
-  useEffect(() => {
-    if (user) router.replace("/subscription");
-  }, [user]);
+  const handlePassword = async () => {
+    const { data, error } = await supabaseClient.auth.api.resetPasswordForEmail(
+      email
+    );
+    if (data) {
+      setMessage({
+        type: "note",
+        content: "リセット用のメールを送信しました。",
+      });
+    }
+  };
 
-  if (!user && !loading)
-    return (
+  if (user) router.replace("/subscription");
+  return (
+    <>
+      <Head>
+        <title>ANful</title>
+      </Head>
       <Container>
-        <Box className="system laptop:pt-[18vh] pt-[14vh] section">
+        <Box className="system laptop:pt-[20vh] pt-[14vh] section">
           <div className="flex justify-center height-screen-helper">
             <div className="flex flex-col justify-between max-w-lg p-3 m-auto w-80 ">
               <div className="flex flex-col space-y-4">
@@ -104,7 +107,7 @@ export default function SignIn() {
                     name="email"
                     placeholder="Email"
                     value={email}
-                    onChange={() => setEmail()}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                   <TextField
@@ -112,7 +115,7 @@ export default function SignIn() {
                     type="password"
                     placeholder="Password"
                     value={password}
-                    onChange={() => setPassword()}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                   <Button
@@ -122,14 +125,21 @@ export default function SignIn() {
                     loading={loading}
                     disabled={password?.length < 8 || email?.length === 0}
                   >
-                    Sign in
+                    {isLoading || loading ? <LoadingDots /> : "サインイン"}
                   </Button>
                 </form>
                 <span className="pt-1 text-center text-sm">
-                  <span className="text-black">Don't have an account?</span>
+                  <span className="text-black text-xs">初めての方はこちら</span>
                   <Link href="/subscription">
-                    <Button>Sign up.</Button>
+                    <Button>サインアップ</Button>
                   </Link>
+                  <Button onClick={handlePassword}>
+                    パスワードをお忘れの方はこちら
+                  </Button>
+                  <br />
+                  <span className="text-black text-[14px]">
+                    ※上のボックスにメールを入力してクリック!
+                  </span>
                 </span>
               </div>
 
@@ -145,7 +155,7 @@ export default function SignIn() {
                 ></div>
               </div>
               <Button
-                className="mt-4 py-2"
+                className="mt-4 py-2  bg-white"
                 variant="contained"
                 type="submit"
                 disabled={loading}
@@ -157,7 +167,7 @@ export default function SignIn() {
                 </span>
               </Button>
               <Button
-                className="mt-3 rounded-md pl-[6px] pr-[8px] py-0 "
+                className="mt-3 rounded-md pl-[6px] pr-[8px] py-0 bg-white"
                 variant="contained"
                 type="submit"
                 disabled={loading}
@@ -172,11 +182,6 @@ export default function SignIn() {
           </div>
         </Box>
       </Container>
-    );
-
-  return (
-    <div className="m-6">
-      <LoadingDots />
-    </div>
+    </>
   );
 }

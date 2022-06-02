@@ -127,10 +127,10 @@ export default function ContactForm({ user, info }) {
       <Container className="w-[70%]">
         {router.pathname === "/" && (
           <>
-            <Typography variant="h3" className="text-xs mb-1 ml-2 fadein">
+            <Typography variant="h3" className="text-xs mb-2 ml-2 fadein">
               飲食店のウェブでのブランディングやマーケティングについて
             </Typography>
-            <Typography variant="h2" className="text-lg font-bold fadein">
+            <Typography variant="h2" className="text-lg mb-2 font-bold fadein">
               ご気軽にご相談ください !
             </Typography>
           </>
@@ -219,9 +219,9 @@ export default function ContactForm({ user, info }) {
             ) : (
               <FormControl>
                 <FormLabel
-                  className="text-black text-sm leading-5"
+                  className="text-black text-sm leading-5 my-4"
                   shrink
-                  htmlFor="badget"
+                  htmlFor="kind"
                 >
                   お困りの内容
                 </FormLabel>
@@ -285,7 +285,7 @@ export default function ContactForm({ user, info }) {
                 お問い合わせ内容
               </InputLabel>
               <TextField
-                className="mt-4 hidden tablet:inline-flex"
+                className="mt-4 inline-flex"
                 id="outlined-multiline-static message"
                 name="message"
                 multiline
@@ -298,18 +298,19 @@ export default function ContactForm({ user, info }) {
                 value={message}
                 onChange={handleChange}
               />
-              <TextField
+              {/* <TextField
                 className="mt-4 inline-flex tablet:hidden"
                 id="outlined-multiline-static message"
                 name="message"
                 multiline
                 rows={1}
+                value={}
                 defaultValue="近頃、飲食店を開業予定でウェブサイト作成を検討…"
-              />
+              /> */}
             </FormControl>
             <Button
               type="submit"
-              className="bg-black text-white rounded-full px-5 normal-case hover:bg-black hover:opacity-50 mt-vw-3 w-1/2 max-w-[180px]"
+              className="bg-black text-white rounded-full px-5 normal-case hover:bg-black hover:opacity-50 my-6 w-1/2 max-w-[180px]"
             >
               send
             </Button>

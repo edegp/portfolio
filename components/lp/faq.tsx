@@ -17,6 +17,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import { useForm, ValidationError } from "@formspree/react";
+import Footer from "../footer";
 
 export default function FAQ() {
   const lists = [
@@ -26,7 +27,7 @@ export default function FAQ() {
       question: "利用料金の仕組みは？",
       answer: (
         <>
-          アンフルは月額定額でホームページのオーナーになれる、サブスクリプションサービスです。
+          アンフルは月額定額でホームページのオーナーになれるサブスクリプションサービスです。
           <br />
           料金は月額1980円~4980円まで。追加料金、長期契約はありません。
         </>
@@ -40,7 +41,7 @@ export default function FAQ() {
         <>
           アンフルでは、簡単に最新の技術を使用したウェブサイトが作成可能です。
           <br />
-          さらに、スタンダードプランからは、小規模な飲食店に特化した予約・自動投稿システム（今後実装予定）を利用できます。
+          さらに、スタンダードプランからは小規模な飲食店に特化した予約・自動投稿システム（今後実装予定）を利用できます。
           <br />
           アンフルでホームページを作成することで、これまで逃してきた潜在的な顧客にアプローチ可能です。
         </>
@@ -52,7 +53,8 @@ export default function FAQ() {
       question: "どうやって解約するの？",
       answer: (
         <>
-          stripeのサイトに移動していただき、解約ボタンを押した後に、確認ボタンを押すだけで解約可能です。
+          登録完了画面からstripeのサイトに移動していただき、
+          解約ボタンを押した後に、確認ボタンを押すだけで解約可能です。
           <br />
           いつ解約しても、違約金はかかりません。
         </>
@@ -120,6 +122,7 @@ export default function FAQ() {
           ))}
         </List>
       </Container>
+      <Footer />
     </Box>
   );
 }

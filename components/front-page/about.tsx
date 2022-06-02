@@ -94,24 +94,7 @@ export default function About() {
             className=" 
             laptop:text-left text-center w-[85%] mx-auto self-center  laptop:hidden block"
           >
-            {/* <LinkScroll
-              containerId="container"
-              smooth="linear"
-              spy
-              duration={800}
-              delay={200}
-              // onClick={() => {
-              //   if (process.browser) {
-              //     const container = document.getElementById("container");
-              //     container.style.scrollSnapType = "none";
-              //   }
-              //   setTimeout(() => {
-              //     container.style.scrollSnapType = "y mandatory";
-              //   }, 950);
-              // }}
-              to="contact"
-              className="text-white"
-            > */}
+
             <Button
               className="bg-white text-black rounded-full px-vw-32 normal-case whitespace-nowrap hover:bg-white hover:opacity-50 fadein"
               href="#contact"

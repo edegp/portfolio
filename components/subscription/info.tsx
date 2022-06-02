@@ -19,7 +19,6 @@ export default function Info({
   customer,
   updateInfo,
   resetInfo,
-  updateColor,
 }) {
   const [update, setUpdate] = useState(null);
   const listclass = "text-color text-sm font-bold shrink-0 grow-0 basis-1/3";
@@ -46,13 +45,12 @@ export default function Info({
       ? "その他ご要望 : "
       : null;
   const handleChange = (e) => {
-    setInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    updateInfo(e.target.name, e.target.value);
   };
-  const handleColor = (color, event) =>
-    setInfo((prev) => ({
-      ...prev,
-      ["color"]: color.hex,
-    }));
+  const handleColor = (color, event) => {
+    console.log(color);
+    updateInfo("color", color.hex);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     await postData({
@@ -81,19 +79,21 @@ export default function Info({
                     <TextField
                       name={key}
                       value={Object.values(info).find((v) => v === value)}
-                      onChange={updateInfo}
+                      onChange={(e) =>
+                        updateInfo(e.target.name, e.target.value)
+                      }
                     />
                   ) : (
                     <Box className="w-full">
                       {" "}
-                      <SliderPicker color={info.color} onChange={updateColor} />
+                      <SliderPicker color={info.color} onChange={handleColor} />
                     </Box>
                   )}
                 </ListItem>
               );
             })}
         </List>
-        <Box className="flex mt-10">
+        <Box className="flex my-8">
           <Button
             className="text-color hover:opacity-70 w-vw-70 laptop:justify-self-end rounded-md text-xs whitespace-nowrap px-10 justify-self-center"
             onClick={() => updateInfo(userDetails)}
@@ -101,7 +101,7 @@ export default function Info({
             はじめの情報に戻す
           </Button>
           <Button
-            className="!bg-color text-white hover:opacity-70 w-vw-70 laptop:justify-self-end rounded-md text-xs whitespace-nowrap px-10 justify-self-center"
+            className="bg-color text-white hover:opacity-70 w-vw-70 laptop:justify-self-end rounded-md text-xs whitespace-nowrap px-10 justify-self-center"
             type="submit"
           >
             変更

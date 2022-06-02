@@ -2,6 +2,15 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+// button,
+// [type="button"],
+// [type="reset"],
+// [type="submit"] {
+//   -webkit-appearance: button;
+//   background-color: transparent !important;
+//   background-image: none;
+// }
+
 @font-face {
   font-family: "My"; /* フォント名 */
   /* フォーマットごとにパスを指定 */
@@ -161,6 +170,7 @@ body {
 #contact,
 #home,
 #service,
+#subscription,
 .section {
   min-height: 100vh;
   height: 100%;

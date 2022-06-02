@@ -14,7 +14,7 @@ import Reserve from "../../public/image/reserve.jpg";
 import Marketing from "../../public/image/marketing.jpg";
 import WebSite from "../../public/image/website.png";
 
-export default function WhatICan() {
+export default function WhatICan({ open, setOpen }) {
   const popperURL = {
     AI: "https://qiita.com/edegp/",
     Food: "https://note.com/edegp/",
@@ -34,7 +34,7 @@ export default function WhatICan() {
     Marketing,
   };
   const [popper, setPopper] = React.useState("AI");
-  const [open, setOpen] = React.useState(false);
+
   const ref = useRef();
   const intervalRef = useRef(null);
   const onMouseOver = useCallback(
@@ -44,7 +44,7 @@ export default function WhatICan() {
       ref.current.style.top = `${event.clientY - 100}px`;
       ref.current.style.left = `${event.clientX - 100}px`;
       if (intervalRef.current !== null) return;
-      intervalRef.current = setTimeout(() => setOpen(false), 1500);
+      intervalRef.current = setTimeout(() => setOpen(false), 500);
     },
     []
   );
@@ -56,14 +56,10 @@ export default function WhatICan() {
       event.currentTarget.style.top = `${event.clientY - 100}px`;
       event.currentTarget.style.left = `${event.clientX - 100}px`;
       if (intervalRef.current !== null) return;
-      intervalRef.current = setTimeout(() => setOpen(false), 750);
+      intervalRef.current = setTimeout(() => setOpen(false), 350);
     },
     []
   );
-  useEffect(() => {
-    document.addEventListener("scroll", () => setOpen(false));
-  });
-
   return (
     <>
       <Zoom
@@ -78,7 +74,7 @@ export default function WhatICan() {
             src={popperImage[popper]}
             width={200}
             height={200}
-            objectFit="center"
+            objectFit="cover"
             className="rounded-full z-50 absolute"
           />
         </Link>

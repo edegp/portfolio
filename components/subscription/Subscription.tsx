@@ -86,25 +86,20 @@ const StripeInput = React.forwardRef((props, inputRef) => {
   );
 });
 
-export default function Subscription({
+export default function SubscriptionForm({
   products,
   plan,
   info,
-  setSetupIntent,
-  activeStep,
-  setActiveStep,
-  // handleSubmit,
+  handleBack,
   intent,
-  setIntent,
+  updateIntent,
 }) {
   const [loading, setLoading] = useState(false);
-  const [clientSecret, setClientSecret] = useState(null);
-  const [customer, setCustomer] = useState();
-  const [subscriptionId, setSubscriptionId] = useState();
-  const [first, setFirst] = useState("");
-  const [last, setLast] = useState("");
+  const [name, setName] = useState("");
   const [paymentRequest, setPaymentRequest] = useState(null);
   const [messages, _setMessages] = useState("");
+  const [clientSecret, setClientSecret] = useState("");
+  const [customer, setCustomer] = useState("");
   const [errorMessage, setErrorMessage] = useState({
     number: "",
     expiry: "",
@@ -124,49 +119,51 @@ export default function Subscription({
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const date = new Date();
-    const trial_end = Math.floor(date.setDate(date.getDate() + 14) / 1000);
     const cardNumberElement = elements.getElement(CardNumberElement);
     try {
-      let { customer, clientSecret, subscriptionId, error } = await postData({
+      let { customer, clientSecret } = await postData({
         url: "/api/create-subscription",
         data: { price },
       });
-      if (error) return setLoading(false);
-      if (!clientSecret) console.log("cannot post subscription");
-      if (!customer) console.log("cannot post customer");
-      if (customer) {
-        setCustomer(customer);
-      }
-      if (clientSecret) {
-        setClientSecret(clientSecret);
-      }
-      if (subscriptionId) {
-        setSubscriptionId(subscriptionId);
-      }
-      const { setupIntent } = await stripe.confirmCardSetup(clientSecret, {
-        payment_method: {
-          card: cardNumberElement,
-          billing_details: {
-            name: last + " " + first,
+      setCustomer(customer);
+      setClientSecret(clientSecret);
+      if (plan === "Premium") {
+        const { paymentIntent } = await stripe.confirmCardPayment(
+          clientSecret,
+          {
+            payment_method: {
+              card: cardNumberElement,
+              billing_details: {
+                name: name,
+              },
+            },
+          }
+        );
+        updateIntent(paymentIntent);
+      } else {
+        const { setupIntent } = await stripe.confirmCardSetup(clientSecret, {
+          payment_method: {
+            card: cardNumberElement,
+            billing_details: {
+              name,
+            },
           },
-        },
-      });
-      if (!setupIntent) console.log("cannot post setupIntent");
-      const update = await postData({
-        url: "/api/update-customer",
-        data: {
-          default_payment_method: setupIntent.payment_method,
-          customerId: customer,
-          info,
-        },
-      });
-      setSetupIntent(setupIntent);
+        });
+        const update = await postData({
+          url: "/api/update-customer",
+          data: {
+            default_payment_method: setupIntent?.payment_method,
+            customerId: customer,
+            info,
+          },
+        });
+        updateIntent(setupIntent);
+      }
     } catch (error) {
-      if (error) return alert((error as Error).message);
+      if (error) setMessage(error);
     }
+    setLoading(false);
   };
-
   const handleElementChange = ({ elementType, error }) => {
     if (error) {
       elementType === "cardNumber"
@@ -191,7 +188,6 @@ export default function Subscription({
 
   const getPaymentRequest = async () => {
     setLoading(true);
-    const price = products.find((product) => product.name === plan).prices[0];
     try {
       const pr = await stripe.paymentRequest({
         country: "JP",
@@ -210,7 +206,7 @@ export default function Subscription({
         }
       });
     } catch (err) {
-      // console.log(err);
+      setMessage(err);
     }
     setLoading(false);
   };
@@ -219,25 +215,39 @@ export default function Subscription({
   }, [plan, subscription]);
   if (!loading && paymentRequest) {
     paymentRequest.on("paymentmethod", async (ev) => {
-      // Confirm the PaymentIntent without handling potential next actions (yet).
+      let { customer, clientSecret } = await postData({
+        url: "/api/create-subscription",
+        data: { price },
+      });
+      setCustomer(customer);
+      setClientSecret(clientSecret);
       if (clientSecret) {
-        const { setupIntent, error: confirmError } =
-          await stripe.confirmCardSetup(
-            clientSecret,
-            { payment_method: ev.paymentMethod.id },
-            { handleActions: false }
-          );
-        if (confirmError) {
-          ev.complete("fail");
-        } else {
+        if (plan !== "Premium") {
+          const { setupIntent, error: confirmError } =
+            await stripe.confirmCardSetup(
+              clientSecret,
+              { payment_method: ev.paymentMethod.id },
+              { handleActions: false }
+            );
           const update = await postData({
             url: "/api/update-customer",
             data: {
-              default_payment_method: paymentIntent.payment_method,
+              default_payment_method: setupIntent.payment_method,
               customerId: customer,
               info,
             },
           });
+        } else {
+          const { paymentIntent, error: confirmError } =
+            await stripe.confirmCardPayment(
+              clientSecret,
+              { payment_method: ev.paymentMethod.id },
+              { handleActions: false }
+            );
+        }
+        if (confirmError) {
+          ev.complete("fail");
+        } else {
           ev.complete("success");
           if (setupIntent.status === "requires_action") {
             const { error } = await stripe.confirmCardSetup(clientSecret);
@@ -261,7 +271,7 @@ export default function Subscription({
           <br />
           またはデビットカードを選択
         </h1>
-        <p className="text-sm">4242424242424242</p>
+        {/* <p className="text-sm">4242424242424242</p> */}
         {/* <p className="text-sm">4000002500003155</p> */}
         <Box className="">
           <Image src={Credit} height={50} width={420} />
@@ -272,28 +282,18 @@ export default function Subscription({
             {info && (
               <>
                 <TextField
-                  className="col-span-2"
+                  className="col-span-4"
+                  autoComplete="cc-name"
                   fullWidth
                   requires
-                  value={last}
-                  onChange={({ target }) => setLast(target.value)}
+                  name="cardName"
+                  value={name}
+                  onChange={({ target }) => setName(target.value)}
                   InputLabelProps={{
                     shrink: true,
                   }}
                   margin="dense"
-                  label="姓"
-                />
-                <TextField
-                  className="col-span-2"
-                  fullWidth
-                  value={first}
-                  requires
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  onChange={({ target }) => setFirst(target.value)}
-                  margin="dense"
-                  label="名"
+                  label="名前"
                 />
               </>
             )}
@@ -301,6 +301,8 @@ export default function Subscription({
               className="col-span-4"
               fullWidth
               requires
+              name="cardNumber"
+              autoComplete="cc-number"
               label="カード番号"
               InputLabelProps={{
                 shrink: true,
@@ -325,6 +327,8 @@ export default function Subscription({
               className="col-span-2"
               fullWidth
               requires
+              ame="cardExpiration"
+              autoComplete="cc-exp"
               label="有効期限"
               InputLabelProps={{
                 shrink: true,
@@ -369,15 +373,19 @@ export default function Subscription({
             />
             {info ? (
               <>
-                <Button onClick={() => setActiveStep(activeStep - 1)}>
-                  戻る
-                </Button>
+                <Button onClick={() => handleBack()}>戻る</Button>
                 <Button
                   type="submit"
                   variant="contained"
+                  disabled={
+                    errorMessage.number ||
+                    errorMessage.cvc ||
+                    errorMessage.expriy ||
+                    isLoading
+                  }
                   className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70 rounded-md text-sm whitespace-nowrap px-10 self-center col-start-2 col-span-2 my-8"
                 >
-                  {loading ? <LoadingDots /> : "無料登録する"}
+                  {loading ? <LoadingDots /> : "登録する"}
                 </Button>
               </>
             ) : (
@@ -389,6 +397,7 @@ export default function Subscription({
                 <Button
                   type="submit"
                   variant="contained"
+                  disabled={s}
                   className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70 rounded-md text-sm whitespace-nowrap px-10 self-center col-start-2 col-span-2 my-8"
                 >
                   {loading ? <LoadingDots /> : "追加する"}

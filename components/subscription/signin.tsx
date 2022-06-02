@@ -15,40 +15,31 @@ import Logo from "../icons/Logo";
 
 export default function SignIn({
   info,
-  setInfo,
-  setActiveStep,
-  activeStep,
-  setSignin,
+  updateInfo,
+  updateSignin,
+  updateLoading,
+  loading,
 }) {
   const router = useRouter();
   const [priceIdLoading, setPriceIdLoading] = useState<string>();
   const { user, isLoading, subscription } = useUser();
-  const [subscriptionData, setSubscriptionData] = useState(null);
   const [loginUser, setloginUser] = useState(false);
   const [message, setMessage] = useState<{ type?: string; content?: string }>({
     type: "",
     content: "",
   });
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setInfo((prev) => ({
-      ...prev,
-      [event.target?.name]: event.target?.value,
-    }));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    updateInfo(e.target?.name, e.target?.value);
   const handleSignin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
+    !loading ?? updateLoading();
     setMessage({});
-    setInfo((prev) => ({
-      ...prev,
-      ["email"]: e.target.elements.email.value,
-      ["password"]: e.target.elements.password.value,
-    }));
-    const { error, user: loginUser } = await supabaseClient.auth.signIn(
-      { email: info.email, password: info.password },
-      { redirectTo: getURL() }
-    );
+    await updateInfo("email", e.target.elements.email.value);
+    await updateInfo("password", e.target.elements.password.value);
+    const { error, user: loginUser } = await supabaseClient.auth.signIn({
+      email: info.email,
+      password: info.password,
+    });
     if (error) {
       setMessage({ type: "error", content: error.message });
     }
@@ -58,29 +49,33 @@ export default function SignIn({
         content: "Check your email for the magic link.",
       });
     }
-    if (subscription) {
-      return router.push("/subscription/account");
-    }
-    if (loginUser) {
-      setActiveStep(activeStep + 1);
-    }
-    setLoading(false);
+    (loading && !isLoading) ?? updateLoading();
   };
-
   const handleOAuthSignIn = async (provider: Provider) => {
-    setLoading(true);
+    !loading ?? updateLoading();
     const { error } = await supabaseClient.auth.signIn(
       { provider },
       {
-        redirectTo: "/subscription",
+        redirectTo: getURL() + "/subscription",
       }
     );
     if (error) {
       setMessage({ type: "error", content: error.message });
     }
-    setLoading(false);
+    loading ?? updateLoading();
   };
 
+  const handlePassword = async () => {
+    const { data, error } = await supabaseClient.auth.api.resetPasswordForEmail(
+      email
+    );
+    if (data) {
+      setMessage({
+        type: "note",
+        content: "リセット用のメールを送信しました。",
+      });
+    }
+  };
   if (!user && !loading)
     return (
       <>
@@ -129,24 +124,31 @@ export default function SignIn({
                     isLoading
                   }
                 >
-                  {isLoading ? <LoadingDots /> : "Sign in"}
+                  {isLoading ? <LoadingDots /> : "サインイン"}
                 </Button>
               </form>
               <span className="pt-1 text-center text-xs">
-                <span className="text-zinc-200">Don't have an account?</span>
+                <span className="text-zinc-600">初めての方はこちら↓</span>
                 <br />
                 <Button
                   className="font-semibold  cursor-pointer"
-                  onClick={() => setSignin(false)}
+                  onClick={() => updateSignin(false)}
                 >
-                  Sign up.
+                  アカウントを作成
                 </Button>
+                <Button onClick={handlePassword}>
+                  パスワードをお忘れの方はこちら
+                </Button>
+                <br />
+                <span className="text-black text-[14px]">
+                  ※上のボックスにメールを入力してクリック!
+                </span>
               </span>
             </div>
 
             <div className="flex items-center my-6">
               <div
-                className="border-t border-zinc-600 flex-grow mr-3"
+                className="border-t border-zinc-600 flex-grow mr-3 "
                 aria-hidden="true"
               ></div>
               <div className="text-zinc-400">Or</div>
@@ -156,7 +158,7 @@ export default function SignIn({
               ></div>
             </div>
             <Button
-              className="mt-4  py-2"
+              className="mt-4  py-2  bg-white"
               variant="contained"
               type="submit"
               disabled={loading}
@@ -168,7 +170,7 @@ export default function SignIn({
               </span>
             </Button>
             <Button
-              className="mt-3 rounded-md pl-[6px] pr-[8px] py-0 "
+              className="mt-3 rounded-md pl-[6px] pr-[8px] py-0  bg-white"
               variant="contained"
               type="submit"
               disabled={loading}

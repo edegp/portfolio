@@ -65,39 +65,30 @@ export const MyUserContextProvider = (props: Props) => {
   };
   const setData = (payload) => {
     setIsLoadingData(true);
-    if (payload.site_name) {
-      setUserDetails(payload);
-      setIsLoadingData(false);
-    } else {
-      Promise.allSettled([getUserDetails(), updateSubscription(payload)]).then(
-        (results) => {
-          const userDetailsPromise = results[0];
-          const updateSubscriptionPromise = results[1];
-          if (userDetailsPromise.status === "fulfilled")
-            setUserDetails(userDetailsPromise.value.data);
-          if (!updateSubscriptionPromise.error) {
-            if (updateSubscriptionPromise.value.status === "canceled") {
-              setCanceled(updateSubscriptionPromise.value);
-              setSubscription(null);
-            } else {
-              setSubscription(updateSubscriptionPromise.value);
-              setCanceled(null);
-            }
-            setIsLoadingData(false);
+    Promise.allSettled([getUserDetails(), updateSubscription(payload)]).then(
+      (results) => {
+        const userDetailsPromise = results[0];
+        const updateSubscriptionPromise = results[1];
+        if (userDetailsPromise.status === "fulfilled")
+          setUserDetails(userDetailsPromise.value.data);
+        if (!updateSubscriptionPromise.error) {
+          if (updateSubscriptionPromise.value.status === "canceled") {
+            setCanceled(updateSubscriptionPromise.value);
+            setSubscription(null);
+          } else {
+            setSubscription(updateSubscriptionPromise.value);
+            setCanceled(null);
           }
+          setIsLoadingData(false);
         }
-      );
-    }
+      }
+    );
   };
   useEffect(() => {
     if (user && !isLoadingData && !subscription && !canceled) {
       setIsLoadingData(true);
       const updateSub = supabase
         .from<Subscription>("subscriptions")
-        .on("*", (payload) => setData(payload.new))
-        .subscribe();
-      const updateUser = supabase
-        .from<UserDetails>("users")
         .on("*", (payload) => setData(payload.new))
         .subscribe();
       Promise.allSettled([

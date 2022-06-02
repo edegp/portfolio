@@ -1,13 +1,13 @@
 import s from "./LoadingDots.module.css";
 
-const LoadingDots = ({ color }) => {
+const LoadingDots = ({ c = "#fff", s = "24px" }) => {
   return (
     <svg
-      width="24"
-      height="24"
+      width={s}
+      height={s}
       viewBox="0 0 38 38"
       xmlns="http://www.w3.org/2000/svg"
-      stroke="#fff"
+      stroke={c}
     >
       <g fill="none" fillRule="evenodd">
         <g transform="translate(1 1)" strokeWidth="2">

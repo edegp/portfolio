@@ -5,7 +5,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { getStripe } from "../utils/stripe-client";
 import { PageMeta } from "../types";
 import Navbar from "./ui/Navbar";
-import Footer from "./ui/Footer";
+
 import Header from "./header";
 import { useUser } from "../utils/useUser";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -77,6 +77,7 @@ export default function Layout({ children, meta: pageMeta }: Props) {
       },
     },
   });
+
   const router = useRouter();
   const meta = {
     title: "Next.js Subscription Starter",

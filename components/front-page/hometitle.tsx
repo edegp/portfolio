@@ -4,7 +4,7 @@ export default function HomeTitle() {
   return (
     <Typography
       variant="h1"
-      className="hometitle !font-extrabold text-6xl \tracking-tight leading-tight mb-16"
+      className="hometitle !font-extrabold text-5xl \tracking-tight leading-tight mb-16"
     >
       <span className="inline-block">
         <span className="rotate !font-extrabold ">W</span>

@@ -318,21 +318,23 @@ export default function Header({ Location }) {
               )}
             </li>
           </ul>
-          <Button
-            className="laptop:hidden block items-center mr-6  fixed top-[calc(4vw-5px)] right-h-w p-8 z-20 mix-blend-difference text-white rounded-full"
-            onClick={toggleDrawer}
-          >
-            <DehazeIcon />
-          </Button>
-          <Drawer
-            anchor="right"
-            open={navOpen}
-            onClose={toggleDrawer}
-            transitionDuration={500}
-            className="z-30"
-          >
-            {list(navOpen)}
-          </Drawer>
+          <>
+            <Button
+              className="laptop:hidden block items-center mr-6  fixed top-[calc(4vw-5px)] right-h-w p-8 z-20 mix-blend-difference text-white rounded-full"
+              onClick={toggleDrawer}
+            >
+              <DehazeIcon />
+            </Button>
+            <Drawer
+              anchor="right"
+              open={navOpen}
+              onClose={toggleDrawer}
+              transitionDuration={500}
+              className="z-30"
+            >
+              {list(navOpen)}
+            </Drawer>
+          </>
         </>
       ) : (
         <></>

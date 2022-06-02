@@ -19,8 +19,84 @@ import { useUser } from "../../utils/useUser";
 import { Price, ProductWithPrice } from "../types";
 import Button from "../ui/Button";
 
-export default function Plan(props) {
-  const handleChange = (e) => props.updatePlan?.(event.target.value);
+export default function Plan({
+  products = [
+    {
+      name: "basic",
+      description: "高速でシンプルなHP,予約システム× 自動更新 ×",
+      active: true,
+      image: null,
+      id: "prod_Lbj5yFsnU97dq4",
+      metadata: {},
+      prices: [
+        {
+          product_id: "prod_Lbj5yFsnU97dq4",
+          currency: "jpy",
+          billing_sheme: null,
+          unit_amount: 1980,
+          recurring: null,
+          active: true,
+          interval: "month",
+          interval_count: 1,
+          type: "recurring",
+          id: "price_1KuVdaDhR8iHUYPXA1UivciE",
+          metadata: {},
+        },
+      ],
+    },
+    {
+      name: "standard",
+      description: "自動投稿可能なHP,自動投稿○ 予約システム ×",
+      active: true,
+      image: null,
+      id: "prod_Lbk1ExK5xk4Qnm",
+      metadata: {},
+      prices: [
+        {
+          product_id: "prod_Lbk1ExK5xk4Qnm",
+          currency: "jpy",
+          billing_sheme: null,
+          unit_amount: 2980,
+          recurring: null,
+          active: true,
+          interval: "month",
+          interval_count: 1,
+          type: "recurring",
+          id: "price_1KuWXfDhR8iHUYPXcSwl6SIm",
+          metadata: {},
+        },
+      ],
+    },
+    {
+      name: "Premium",
+      description: "自動投稿も予約システムも,予約システム○ 自動更新 ○",
+      active: true,
+      image: null,
+      id: "prod_Lbk2qNYKofURFG",
+      metadata: {},
+      prices: [
+        {
+          product_id: "prod_Lbk2qNYKofURFG",
+          currency: "jpy",
+          billing_sheme: null,
+          unit_amount: 4980,
+          recurring: null,
+          active: true,
+          interval: "month",
+          interval_count: 1,
+          type: "recurring",
+          id: "price_1KuWYNDhR8iHUYPXS31HTe3f",
+          metadata: {},
+        },
+      ],
+    },
+  ],
+  updatePlan,
+  plan,
+  ...other
+}) {
+  const router = useRouter();
+  const handleChange = (e) => updatePlan?.(e);
   return (
     <RadioGroup
       row
@@ -28,66 +104,109 @@ export default function Plan(props) {
       defaultValue="basic"
       name="plan"
       className="flex flex-wrap"
-      value={props.plan}
+      value={plan}
       onChange={handleChange}
-      {...props}
+      {...other}
     >
-      {props.products.map((product) => {
-        return (
-          <Box
-            key={product.name}
-            className="laptop:w-1/3 laptop:px-10 laptop:mb-0 w-full mb-[20px] grid"
+      {products.map((product) => (
+        <Box
+          key={product.name}
+          className="tablet:w-1/3 tablet:px-2 tablet:mb-0 w-full mb-[20px] grid"
+        >
+          <Card
+            className={`tablet:min-h-[150px] px-4 tablet:py-6 sp:py-3 py-1 rounded-[20px]  border-gray-400 border border-solid drop-shadow-xl grid place-items-center min-h-auto tablet:mx-0 sp:mx-vw-64 mx-vw-40 ${
+              product.name === "standard" && "pb-5"
+            }`}
           >
-            <Card className="laptop:min-h-[150px] px-4 laptop:py-6 py-3 rounded-[20px]  border-gray-400 border border-solid drop-shadow-xl grid place-items-center min-h-auto laptop:mx-0 tablet:mx-[24vw]  sp:mx-vw-64 mx-vw-32">
+            {router.pathname !== "/" ? (
               <FormControlLabel
                 value={product.name}
-                control={<Radio className="pt-0" />}
+                control={
+                  <Radio
+                    className={`pt-0 ${
+                      router.pathname !== "/subscription" &&
+                      "tablet:block hidden"
+                    }`}
+                  />
+                }
                 label={
-                  <Typography className="text-md text-center laptop:mt-vw-3 mt-0 font-bold">
-                    {product.name}
-                    <br className="laptop:block hidden" />
+                  <Typography className="text-md text-center tablet:mt-vw-3 mt-0 font-bold">
+                    {product.name === "basic"
+                      ? "ベーシック"
+                      : product.name === "standard"
+                      ? "スタンダード"
+                      : product.name === "Premium"
+                      ? "プレミアム"
+                      : "特別"}
+                    <br className="laptop:block sp:hidden block" />
                     プラン
                   </Typography>
                 }
                 labelPlacement="bottom"
               />
-              <List>
-                {product.description && (
-                  <>
-                    {product.description.split(",").map((point) => (
-                      <ListItem key={point} className="py-0">
-                        <ListItemText
-                          primary={
-                            <Typography className="text-xs text-center font-semibold">
-                              {point}
-                            </Typography>
-                          }
-                        />
-                      </ListItem>
-                    ))}
-                  </>
-                )}
-              </List>
-              <Typography className="text-sm tablet:px-0 font-semibold tablet:whitespace-normal sp:whitespace-nowrap text-center">
-                月額&ensp;
-                <span className="text-lg font-bold">
-                  {product.prices[0].unit_amount}円
-                </span>
+            ) : (
+              <Typography className="text-md text-center tablet:mt-vw-3 mt-0 font-bold">
+                {product.name === "basic"
+                  ? "ベーシック"
+                  : product.name === "standard"
+                  ? "スタンダード"
+                  : product.name === "Premium"
+                  ? "プレミアム"
+                  : "特別"}
+                <br className="laptop:block sp:hidden block" />
+                プラン
               </Typography>
+            )}
+            <List>
+              {product.description?.split(",").map((point) => {
+                return point.includes("○") ? (
+                  <ListItem key={point} className="py-0">
+                    <ListItemText
+                      primary={
+                        <Typography className="text-xs text-center font-semibold">
+                          {point}
+                        </Typography>
+                      }
+                    />
+                  </ListItem>
+                ) : (
+                  <ListItem key={point} className="sp:block hidden py-0">
+                    <ListItemText
+                      primary={
+                        <Typography className="text-xs text-center font-semibold">
+                          {point}
+                        </Typography>
+                      }
+                    />
+                  </ListItem>
+                );
+              })}
+            </List>
+            <Typography className="text-sm tablet:px-0 font-semibold tablet:whitespace-normal sp:whitespace-nowrap text-center">
+              月額&ensp;
+              <span className="text-lg font-bold">
+                {product.prices[0]?.unit_amount | "お問い合わせください"}円
+              </span>
+            </Typography>
+            {product.name !== "Premium" ? (
               <Typography className="text-sm tablet:px-0 text-center">
                 無料期間終了後
               </Typography>
-            </Card>
-            {product.name === "スタンダード" && (
-              <Chip
-                className="my-[-25px] place-self-center w-[160px] font-bold z-40 text-xs"
-                label="お得なプラン"
-                color="primary"
-              />
+            ) : (
+              <Typography className="text-xs tablet:px-0 text-center">
+                ※無料体験対象外
+              </Typography>
             )}
-          </Box>
-        );
-      })}
+          </Card>
+          {product.name === "standard" && (
+            <Chip
+              className="my-[-25px] place-self-center w-[160px] font-bold z-40 text-xs"
+              label="お得なプラン"
+              color="primary"
+            />
+          )}
+        </Box>
+      ))}
     </RadioGroup>
   );
 }

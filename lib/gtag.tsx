@@ -52,13 +52,14 @@ export const GoogleAnalytics = () => (
   <>
     {existsGaId && (
       <>
-        <Script
-          defer
+        <script
+          // defer
+          async
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-          strategy="afterInteractive"
+          // strategy="afterInteractive"
         />
-        <Script
-          defer
+        <script
+          // defer
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
@@ -67,7 +68,7 @@ export const GoogleAnalytics = () => (
               gtag('config', '${GA_ID}');
             `,
           }}
-          strategy="afterInteractive"
+          // strategy="afterInteractive"
         />
       </>
     )}
