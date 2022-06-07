@@ -1,8 +1,16 @@
 import { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputLabel from "@mui/material/InputLabel";
+import InputAdornment from "@mui/material/InputAdornment";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import FormControl from "@mui/material/FormControl";
+import IconButton from "@mui/material/IconButton";
 import { useUser } from "../../utils/useUser";
 import SignIn from "./signin";
+import LoadingDots from "../ui/LoadingDots";
 import { updateUserName, supabase } from "../../utils/supabase-client";
 import Facebook from "../icons/Facebook";
 import Google from "../icons/Google";
@@ -28,7 +36,7 @@ export default function SignUp({
   });
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-
+  const [showPassword, setShowPassword] = useState(false);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const name = event.target.name;
     const value = event.target.value;
@@ -100,24 +108,48 @@ export default function SignUp({
                 >
                   {message.content === "User already registered"
                     ? "すでにこのメールアドレスは登録済みです"
+                    : message.content === "Signup requires a valid password"
+                    ? "有効なパスワードを入力してください"
                     : message.content}
                 </div>
               )}
               <form onSubmit={handleSignup} className="flex flex-col space-y-4">
-                <TextField
-                  id="email"
-                  name="email"
-                  label="email"
-                  type="email"
-                  onChange={handleChange}
-                />
-                <TextField
-                  id="password"
-                  name="password"
-                  label="password"
-                  type="password"
-                  onChange={handleChange}
-                />
+                <FormControl variant="outlined">
+                  <InputLabel htmlFor="outlined-email">Email</InputLabel>
+                  <OutlinedInput
+                    id="outlined-email"
+                    type="email"
+                    name="email"
+                    value={info.email}
+                    onChange={handleChange}
+                    label="Email"
+                  />
+                </FormControl>
+                <FormControl variant="outlined">
+                  <InputLabel htmlFor="outlined-adornment-password">
+                    Password
+                  </InputLabel>
+                  <OutlinedInput
+                    id="outlined-adornment-password"
+                    type={showPassword ? "text" : "password"}
+                    value={info.password}
+                    onChange={handleChange}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={() => setShowPassword(!showPassword)}
+                          onMouseDown={(e) => e.preventDefault()}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                    label="Password"
+                    name="password"
+                  />
+                </FormControl>
                 <Button
                   className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70 laptop:justify-self-end rounded-3 text-sm whitespace-nowrap px-10 justify-self-center"
                   variant="slim"

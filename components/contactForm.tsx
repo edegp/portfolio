@@ -17,17 +17,20 @@ import { postData } from "../utils/helpers";
 
 export default function ContactForm({ user, info }) {
   const [alignment, setAlignment] = useState<string | null>("2-5");
+  const router = useRouter();
   const [state, setState] = useState({
-    name: "",
+    name: router.pathname === "/" ? "starbucks Japan 佐々木" : "",
     email: "",
     design: false,
     payment: false,
     info: false,
     other: false,
-    message: "",
+    message:
+      router.pathname === "/"
+        ? "近頃、飲食店を開業予定でウェブサイト作成を検討…"
+        : "",
     sucssess: "",
   });
-  const router = useRouter();
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.target.checked
       ? setState({
@@ -155,7 +158,6 @@ export default function ContactForm({ user, info }) {
                     name="name"
                     value={name}
                     onChange={handleChange}
-                    defaultValue="starbucks Japan 佐々木"
                   />
                 </FormControl>
                 <FormControl className="mt-3">
@@ -220,7 +222,7 @@ export default function ContactForm({ user, info }) {
               <FormControl>
                 <FormLabel
                   className="text-black text-sm leading-5 my-4"
-                  shrink
+                  // shrink
                   htmlFor="kind"
                 >
                   お困りの内容
@@ -290,11 +292,6 @@ export default function ContactForm({ user, info }) {
                 name="message"
                 multiline
                 rows={4}
-                defaultValue={
-                  router.pathname === "/"
-                    ? "近頃、飲食店を開業予定でウェブサイト作成を検討…"
-                    : ""
-                }
                 value={message}
                 onChange={handleChange}
               />

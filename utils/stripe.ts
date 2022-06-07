@@ -14,5 +14,5 @@ export const stripe = new Stripe(
   }
 );
 stripe.applePayDomains.create({
-  domain_name: "97ce-116-82-128-29.ngrok.io",
+  domain_name: "anful.vercel.app",
 });

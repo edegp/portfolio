@@ -94,8 +94,8 @@ const createOrRetrieveCustomer = async ({
     if (email) customerData.email = email;
     const customer = await stripe.customers.create(customerData);
     // Now insert the customer ID into our Supabase mapping table.
-    const { error: supabaseError } = await supabaseAdmin
-      .from("customers")
+    const { data, error: supabaseError } = await supabaseAdmin
+      .from<Customer>("customers")
       .insert([{ id: uuid, stripe_customer_id: customer.id }]);
     if (supabaseError) throw supabaseError;
     console.log(`New customer created and inserted for ${uuid}.`);

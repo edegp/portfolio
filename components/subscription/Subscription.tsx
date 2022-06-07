@@ -13,13 +13,23 @@ import { withPageAuth, getUser } from "@supabase/supabase-auth-helpers/nextjs";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import Checkbox from "@mui/material/Checkbox";
+import Dialog, { DialogProps } from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import { postData } from "../../utils/helpers";
 import { useUser } from "../../utils/useUser";
 import Credit from "../../public/image/credit.jpg";
 import LoadingDots from "../ui/LoadingDots";
 import Link from "../Link";
+import Terms from "../terms";
 
 const CARD_NUMBER_OPTIONS = {
   placeholder: "",
@@ -97,7 +107,10 @@ export default function SubscriptionForm({
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [paymentRequest, setPaymentRequest] = useState(null);
-  const [messages, _setMessages] = useState("");
+  const [message, setMessage] = useState<{ type?: string; content?: string }>({
+    type: "",
+    content: "",
+  });
   const [clientSecret, setClientSecret] = useState("");
   const [customer, setCustomer] = useState("");
   const [errorMessage, setErrorMessage] = useState({
@@ -105,73 +118,129 @@ export default function SubscriptionForm({
     expiry: "",
     cvc: "",
   });
+  const [card, setCard] = useState({
+    number: false,
+    expiry: false,
+    cvc: false,
+  });
   const { user, subscription, isLoading, canceled } = useUser();
+  const [consent, setConsent] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [scroll, setScroll] = React.useState<DialogProps["scroll"]>("paper");
+
+  const handleClickOpen = (scrollType: DialogProps["scroll"]) => () => {
+    setOpen(true);
+    setScroll(scrollType);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const descriptionElementRef = React.useRef<HTMLElement>(null);
+  React.useEffect(() => {
+    if (open) {
+      const { current: descriptionElement } = descriptionElementRef;
+      if (descriptionElement !== null) {
+        descriptionElement.focus();
+      }
+    }
+  }, [open]);
   const stripe = useStripe();
   const elements = useElements();
   if (!stripe || !elements) {
     return "";
   }
-  const setMessage = (message) => {
-    _setMessages(`${messages}\n\n${message}`);
-  };
   const price = products.find((product) => product.name === plan).prices[0];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage({ type: "", content: "" });
+    if (Object.values(card).includes(false) || !consent)
+      return setMessage({
+        type: "error",
+        content: "必須項目を入力してください",
+      });
     setLoading(true);
     const cardNumberElement = elements.getElement(CardNumberElement);
-    try {
-      let { customer, clientSecret } = await postData({
-        url: "/api/create-subscription",
-        data: { price },
-      });
-      setCustomer(customer);
-      setClientSecret(clientSecret);
-      if (plan === "Premium") {
-        const { paymentIntent } = await stripe.confirmCardPayment(
-          clientSecret,
-          {
-            payment_method: {
-              card: cardNumberElement,
-              billing_details: {
-                name: name,
+    await postData({
+      url: "/api/create-subscription",
+      data: { price },
+    })
+      .then(async ({ customer, clientSecret }) => {
+        if (plan === "Premium") {
+          const { paymentIntent, error } = await stripe.confirmCardPayment(
+            clientSecret,
+            {
+              payment_method: {
+                card: cardNumberElement,
+                billing_details: {
+                  name,
+                },
               },
-            },
+            }
+          );
+          updateIntent(paymentIntent);
+          if (error) {
+            setMessage({
+              type: "error",
+              content:
+                error.message === "Internal Server Error"
+                  ? "支払エラー"
+                  : error.message,
+            });
           }
-        );
-        updateIntent(paymentIntent);
-      } else {
-        const { setupIntent } = await stripe.confirmCardSetup(clientSecret, {
-          payment_method: {
-            card: cardNumberElement,
-            billing_details: {
-              name,
-            },
-          },
-        });
-        const update = await postData({
-          url: "/api/update-customer",
-          data: {
-            default_payment_method: setupIntent?.payment_method,
-            customerId: customer,
-            info,
-          },
-        });
-        updateIntent(setupIntent);
-      }
-    } catch (error) {
-      if (error) setMessage(error);
-    }
+        } else {
+          await stripe
+            .confirmCardSetup(clientSecret, {
+              payment_method: {
+                card: cardNumberElement,
+                billing_details: {
+                  name,
+                },
+              },
+            })
+            .then(async ({ setupIntent }) => {
+              const update = await postData({
+                url: "/api/update-customer",
+                data: {
+                  default_payment_method: setupIntent?.payment_method,
+                  customerId: customer,
+                  info,
+                },
+              });
+              updateIntent(setupIntent);
+            })
+            .catch((error) =>
+              setMessage({
+                type: "error",
+                content:
+                  error.message === "Internal Server Error"
+                    ? "支払エラー"
+                    : error.message,
+              })
+            );
+        }
+      })
+      .catch((error) =>
+        setMessage({
+          type: "error",
+          content:
+            error.message === "Internal Server Error"
+              ? "サーバーエラー、サポートにお問い合わせください"
+              : error.message,
+        })
+      );
     setLoading(false);
   };
-  const handleElementChange = ({ elementType, error }) => {
+  const handleElementChange = ({ error, elementType }) => {
     if (error) {
       elementType === "cardNumber"
-        ? setErrorMessage((prev) => ({ ...prev, ["number"]: error.message }))
+        ? setErrorMessage({ ...errorMessage, ["number"]: error.message })
         : elementType === "cardExpiry"
-        ? setErrorMessage((prev) => ({ ...prev, ["expiry"]: error.message }))
+        ? setErrorMessage({ ...errorMessage, ["expiry"]: error.message })
         : elementType === "cardCvc"
-        ? setErrorMessage((prev) => ({ ...prev, ["cvc"]: error.message }))
+        ? setErrorMessage({ ...errorMessage, ["cvc"]: error.message })
         : setErrorMessage({
             number: "",
             expiry: "",
@@ -183,6 +252,23 @@ export default function SubscriptionForm({
         expiry: "",
         cvc: "",
       });
+      elementType === "cardNumber"
+        ? setCard({
+            ...card,
+            ["number"]: true,
+          })
+        : elementType === "cardExpiry"
+        ? setCard({
+            ...card,
+            ["expiry"]: true,
+          })
+        : elementType === "cardCvc"
+        ? setCard({ ...card, ["cvc"]: true })
+        : setCard({
+            number: true,
+            expiry: true,
+            cvc: true,
+          });
     }
   };
 
@@ -278,99 +364,171 @@ export default function SubscriptionForm({
         </Box>
         <hr />
         <form onSubmit={handleSubmit}>
-          <Grid className="grid grid-cols-4 gap-x-6">
-            {info && (
-              <>
-                <TextField
-                  className="col-span-4"
-                  autoComplete="cc-name"
-                  fullWidth
-                  requires
-                  name="cardName"
-                  value={name}
-                  onChange={({ target }) => setName(target.value)}
-                  InputLabelProps={{
-                    shrink: true,
+          <Grid className="grid grid-cols-4 gap-x-6 mt-2">
+            <FormControl
+              className="grid grid-cols-4 gap-x-6 col-span-4"
+              variant="standard"
+            >
+              <TextField
+                className="col-span-4"
+                autoComplete="cc-name"
+                fullWidth
+                required
+                name="cardName"
+                value={name}
+                onChange={({ target }) => setName(target.value)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                margin="dense"
+                label="名前"
+              />
+              <TextField
+                className="col-span-4"
+                fullWidth
+                required
+                name="cardNumber"
+                autoComplete="cc-number"
+                label="カード番号"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                margin="dense"
+                error={Boolean(errorMessage?.number)}
+                helperText={
+                  Boolean(errorMessage?.number)
+                    ? errorMessage.number || "Invalid"
+                    : ""
+                }
+                onChange={handleElementChange}
+                InputProps={{
+                  inputProps: {
+                    options: CARD_NUMBER_OPTIONS,
+                    component: CardNumberElement,
+                  },
+                  inputComponent: StripeInput,
+                }}
+              />
+              <TextField
+                className="col-span-2"
+                fullWidth
+                required
+                ame="cardExpiration"
+                autoComplete="cc-exp"
+                label="有効期限"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                margin="dense"
+                error={Boolean(errorMessage?.expiry)}
+                helperText={
+                  Boolean(errorMessage?.expiry)
+                    ? errorMessage.expiry || "Invalid"
+                    : ""
+                }
+                onChange={handleElementChange}
+                InputProps={{
+                  inputProps: {
+                    options: CARD_OPTIONS,
+                    component: CardExpiryElement,
+                  },
+                  inputComponent: StripeInput,
+                }}
+              />
+              <TextField
+                className="col-span-2"
+                fullWidth
+                required
+                label="セキュリティーコード"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                margin="dense"
+                error={Boolean(errorMessage?.cvc)}
+                helperText={
+                  Boolean(errorMessage?.cvc)
+                    ? errorMessage.cvc || "Invalid"
+                    : ""
+                }
+                onChange={handleElementChange}
+                InputProps={{
+                  inputProps: {
+                    options: CARD_OPTIONS,
+                    component: CardCvcElement,
+                  },
+                  inputComponent: StripeInput,
+                }}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={consent}
+                    onChange={() => setConsent(!consent)}
+                    name="consent"
+                    required
+                  />
+                }
+                className="col-span-4 mr-0"
+                label={
+                  <Typography>
+                    <Button
+                      className="col-span-1 self-center text-[#888888]"
+                      onClick={handleClickOpen("paper")}
+                    >
+                      利用規約
+                    </Button>
+                    について同意する
+                  </Typography>
+                }
+              />
+            </FormControl>
+            <Dialog
+              open={open}
+              onClose={handleClose}
+              scroll={scroll}
+              aria-labelledby="scroll-dialog-title"
+              aria-describedby="scroll-dialog-description"
+              maxWidth="lg"
+            >
+              <DialogTitle id="scroll-dialog-title">利用規約</DialogTitle>
+              <DialogContent dividers={scroll === "paper"}>
+                <DialogContentText
+                  id="scroll-dialog-description"
+                  ref={descriptionElementRef}
+                  tabIndex={-1}
+                >
+                  <Terms />
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose}>戻る</Button>
+                <Button
+                  onClick={() => {
+                    setConsent(true);
+                    handleClose();
                   }}
-                  margin="dense"
-                  label="名前"
-                />
-              </>
+                >
+                  同意する
+                </Button>
+              </DialogActions>
+            </Dialog>
+            {message.content && (
+              <div
+                className={`${
+                  message.type === "error" ? "text-pink-500" : "text-green-500"
+                } border ${
+                  message.type === "error"
+                    ? "border-pink-500"
+                    : "border-green-500"
+                } p-3 text-[13px] col-span-4`}
+              >
+                {message.content === "User already registered"
+                  ? "すでにこのメールアドレスは登録済みです"
+                  : message.content === "Signup requires a valid password"
+                  ? "有効なパスワードを入力してください"
+                  : message.content}
+              </div>
             )}
-            <TextField
-              className="col-span-4"
-              fullWidth
-              requires
-              name="cardNumber"
-              autoComplete="cc-number"
-              label="カード番号"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              margin="dense"
-              error={Boolean(errorMessage?.number)}
-              helperText={
-                Boolean(errorMessage?.number)
-                  ? errorMessage.number || "Invalid"
-                  : ""
-              }
-              onChange={handleElementChange}
-              InputProps={{
-                inputProps: {
-                  options: CARD_NUMBER_OPTIONS,
-                  component: CardNumberElement,
-                },
-                inputComponent: StripeInput,
-              }}
-            />
-            <TextField
-              className="col-span-2"
-              fullWidth
-              requires
-              ame="cardExpiration"
-              autoComplete="cc-exp"
-              label="有効期限"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              margin="dense"
-              error={Boolean(errorMessage?.expiry)}
-              helperText={
-                Boolean(errorMessage?.expiry)
-                  ? errorMessage.expiry || "Invalid"
-                  : ""
-              }
-              onChange={handleElementChange}
-              InputProps={{
-                inputProps: {
-                  options: CARD_OPTIONS,
-                  component: CardExpiryElement,
-                },
-                inputComponent: StripeInput,
-              }}
-            />
-            <TextField
-              className="col-span-2"
-              fullWidth
-              requires
-              label="セキュリティーコード"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              margin="dense"
-              error={Boolean(errorMessage?.cvc)}
-              helperText={
-                Boolean(errorMessage?.cvc) ? errorMessage.cvc || "Invalid" : ""
-              }
-              onChange={handleElementChange}
-              InputProps={{
-                inputProps: {
-                  options: CARD_OPTIONS,
-                  component: CardCvcElement,
-                },
-                inputComponent: StripeInput,
-              }}
-            />
             {info ? (
               <>
                 <Button onClick={() => handleBack()}>戻る</Button>
@@ -387,6 +545,9 @@ export default function SubscriptionForm({
                 >
                   {loading ? <LoadingDots /> : "登録する"}
                 </Button>
+                <Typography className="text-[#888888] text-xs text-center col-span-4">
+                  このサイトの情報の送信はSSL(情報暗号化技術)で保護されています
+                </Typography>
               </>
             ) : (
               <>
@@ -402,11 +563,14 @@ export default function SubscriptionForm({
                 >
                   {loading ? <LoadingDots /> : "追加する"}
                 </Button>
+                <Typography className="text-[#888888] text-xs text-center col-span-4">
+                  このサイトの情報の送信はSSL(情報暗号化技術)で保護されています
+                </Typography>
               </>
             )}
           </Grid>
-          <div>{messages}</div>
         </form>
+
         {paymentRequest && (
           <PaymentRequestButtonElement options={{ paymentRequest }} />
         )}

@@ -48,7 +48,6 @@ export default function Info({
     updateInfo(e.target.name, e.target.value);
   };
   const handleColor = (color, event) => {
-    console.log(color);
     updateInfo("color", color.hex);
   };
   const handleSubmit = async (e) => {
@@ -71,8 +70,8 @@ export default function Info({
             )
             .map(([key, value]) => {
               return (
-                <ListItem className="w-full">
-                  <ListItemText class={listclass}>
+                <ListItem key={key} className="w-full">
+                  <ListItemText className={listclass}>
                     {name(key, value)}
                   </ListItemText>
                   {key !== "color" ? (

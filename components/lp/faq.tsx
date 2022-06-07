@@ -106,9 +106,9 @@ export default function FAQ() {
       <Container>
         <List>
           {lists.map((list, index) => (
-            <Accordion className="mb-5 border-[0.5px] border-solid border-gray-300 rounded-lg">
+            <Accordion className="mb-5 rounded-lg before:hidden border-[0.5px] border-solid boder-gray-800">
               <AccordionSummary expandIcon={<ExpandMore />}>
-                <Typography className="pl-4 text-sm text-center font-semibold">
+                <Typography className="text-sm text-center font-semibold">
                   {list.question}
                 </Typography>
               </AccordionSummary>

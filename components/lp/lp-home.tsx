@@ -7,9 +7,26 @@ import HP from "../../public/image/HPowner.png";
 import IMG from "../../public/image/img.png";
 
 export default function LPHome() {
+  const lists = [
+    {
+      img: Fast,
+      dt: "即完成",
+      dd: "一週間以内にデザインを作成、最短10日でホームページ開設",
+    },
+    {
+      img: Cost,
+      dt: "2週間,本当に0円",
+      dd: "初期費用が無料、さらに無料体験で初めの2週間まで0円",
+    },
+    {
+      img: Easy,
+      dt: "手間なし",
+      dd: "簡単な質問に答えるだけで、10日以内にデザインが完成",
+    },
+  ];
   return (
     <>
-      <Box className="lp-home section contaienr-fluid  laptop:pt-[14vh] pt-[10vh] pb-vw-10 px-vw-20 grid laptop:grid-flow-col laptop:grid-rows-[55vh,5vh] laptop:grid-cols-[45%,60%] grid-flow-row grid-rows-[34vh,5.5vh,28vh]">
+      <Box className="lp-home section contaienr-fluid  laptop:pt-[14vh] pt-[10vh] pb-vw-10 px-vw-20 grid laptop:grid-flow-col laptop:grid-rows-[55vh,5vh] laptop:grid-cols-[45%,60%] grid-flow-row grid-rows-[32vh,5.5vh,23vh]">
         <Typography
           variant="h1"
           className="text-lg relative self-center leading-snug font-extrabold"

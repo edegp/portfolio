@@ -1,6 +1,7 @@
 import { AppProps } from "next/app";
 import { useRef, useEffect } from "react";
 import Head from "next/head";
+import CookieConsent, { Cookies } from "react-cookie-consent";
 // import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Container from "../components/container";
@@ -45,6 +46,21 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         <MyUserContextProvider supabaseClient={supabaseClient}>
           <Layout>
             <Component {...pageProps} />
+            <CookieConsent
+              enableDeclineButton
+              buttonText="許可する"
+              declineButtonText="使用しない"
+              buttonClasses=" bg-primary text-white"
+              declineButtonClasses="bg-black"
+              onAccept={() =>
+                window.gtag("consent", "update", {
+                  ad_storage: "denied",
+                  analytics_storage: "denied",
+                })
+              }
+            >
+              このウェブサイトではCookieを利用して、お客様により良い体験を提供しています。このウェブサイトでのCookieの使用を許可しますか？
+            </CookieConsent>
           </Layout>
         </MyUserContextProvider>
       </UserProvider>

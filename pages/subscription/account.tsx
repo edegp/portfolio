@@ -67,7 +67,6 @@ export default function Account({ user, customer }) {
       } else {
         window.open(url, "_blank");
       }
-      
     } catch (error) {
       if (error) return alert((error as Error).message);
     }
@@ -103,7 +102,11 @@ export default function Account({ user, customer }) {
             <MuiContainer>
               {subscription && (
                 <Fade in={fade} unmountOnExit={true}>
-                  <Typography className="text-color text-lg font-bold text-center mb-8">
+                  <Typography
+                    component={"span"}
+                    variant={"body2"}
+                    className="text-color text-lg font-bold text-center mb-8"
+                  >
                     ご登録ありがとうございます。
                     <br />
                     デザイン作成まで今しばらくお待ちください。
@@ -121,7 +124,11 @@ export default function Account({ user, customer }) {
                     description={
                       subscription?.status === "active" ||
                       subscription?.status === "trialing" ? (
-                        <Typography className="text-sm font-light mt-3">
+                        <Typography
+                          component={"span"}
+                          variant={"body2"}
+                          className="text-sm font-light mt-3"
+                        >
                           {plan === "basic"
                             ? "ベーシック"
                             : plan === "standard"
@@ -154,18 +161,24 @@ export default function Account({ user, customer }) {
                           <LoadingDots className="bg-black" />
                         </div>
                       ) : subscription?.status === "trialing" ? (
-                        <Typography>
+                        <Typography component={"span"} variant={"body2"}>
                           無料体験　
                           <span className="text-xs">
-                            {subscription?.trial_end
-                              .split(/-|T/, 3)
-                              .slice(1, 3)
-                              .join("/")}
-                            に終了
+                            {subscription?.canceled_at_period_end
+                              ? subscription?.trial_end
+                                  .split(/-|T/, 3)
+                                  .slice(1, 3)
+                                  .join("/") + "自動更新予定"
+                              : "キャンセル済み  " +
+                                subscription?.trial_end
+                                  .split(/-|T/, 3)
+                                  .slice(1, 3)
+                                  .join("/") +
+                                "に終了"}
                           </span>
                         </Typography>
                       ) : subscription ? (
-                        <Typography>
+                        <Typography component={"span"} variant={"body2"}>
                           {subscriptionPrice}
                           <span className="text-xs">
                             円/
@@ -173,9 +186,7 @@ export default function Account({ user, customer }) {
                           </span>
                         </Typography>
                       ) : (
-                        <Link href="/">
-                          <a>Choose your plan</a>
-                        </Link>
+                        <Link href="/">Choose your plan</Link>
                       )}
                     </div>
                   </Card>

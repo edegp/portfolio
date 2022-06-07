@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Card from "@mui/material/Card";
+import Paper from "@mui/material/Paper";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import Chip from "@mui/material/Chip";
@@ -12,6 +12,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import { supabase } from "../../utils/supabase-client";
 import { postData } from "../../utils/helpers";
 import { getStripe } from "../../utils/stripe-client";
@@ -111,10 +112,11 @@ export default function Plan({
       {products.map((product) => (
         <Box
           key={product.name}
-          className="tablet:w-1/3 tablet:px-2 tablet:mb-0 w-full mb-[20px] grid"
+          className="tablet:w-1/3 tablet:px-2 tablet:mb-0 w-full mb-[18px] grid"
         >
-          <Card
-            className={`tablet:min-h-[150px] px-4 tablet:py-6 sp:py-3 py-1 rounded-[20px]  border-gray-400 border border-solid drop-shadow-xl grid place-items-center min-h-auto tablet:mx-0 sp:mx-vw-64 mx-vw-40 ${
+          <Paper
+            elevation="2"
+            className={`tablet:min-h-[150px] px-4 tablet:py-6 sp:py-3 py-1 rounded-[20px]  border-gray-400 border border-solid grid place-items-center min-h-auto tablet:mx-0 sp:mx-vw-64 mx-vw-48 ${
               product.name === "standard" && "pb-5"
             }`}
           >
@@ -157,7 +159,7 @@ export default function Plan({
                 プラン
               </Typography>
             )}
-            <List>
+            <List className="sp:py-[8px] py-0">
               {product.description?.split(",").map((point) => {
                 return point.includes("○") ? (
                   <ListItem key={point} className="py-0">
@@ -184,20 +186,13 @@ export default function Plan({
             </List>
             <Typography className="text-sm tablet:px-0 font-semibold tablet:whitespace-normal sp:whitespace-nowrap text-center">
               月額&ensp;
-              <span className="text-lg font-bold">
+              <span className="text-lg font-bold line-through">
                 {product.prices[0]?.unit_amount | "お問い合わせください"}円
               </span>
+              <ArrowRightAltIcon />
+              0円(2週間)
             </Typography>
-            {product.name !== "Premium" ? (
-              <Typography className="text-sm tablet:px-0 text-center">
-                無料期間終了後
-              </Typography>
-            ) : (
-              <Typography className="text-xs tablet:px-0 text-center">
-                ※無料体験対象外
-              </Typography>
-            )}
-          </Card>
+          </Paper>
           {product.name === "standard" && (
             <Chip
               className="my-[-25px] place-self-center w-[160px] font-bold z-40 text-xs"

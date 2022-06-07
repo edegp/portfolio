@@ -1,35 +1,8 @@
-import Image from "next/image";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Fast from "../../public/image/fast.jpg";
-import Cost from "../../public/image/cost.jpg";
-import Easy from "../../public/image/easy.jpg";
-
-export default function Merit() {
-  const lists = [
-    {
-      img: Fast,
-      dt: "即完成",
-      dd: "一週間以内にデザインを作成、最短10日でホームページ開設",
-    },
-    {
-      img: Cost,
-      dt: "2週間,本当に0円",
-      dd: "初期費用が無料、さらに無料体験で初めの2週間まで0円",
-    },
-    {
-      img: Easy,
-      dt: "手間なし",
-      dd: "簡単な質問に答えるだけで、10日以内にデザインが完成",
-    },
-  ];
+export default function Merit2() {
   return (
     <Box className="merit  laptop:pt-[14vh] pt-[5vh] section">
       <Typography className="font-bold text-primary text-2xl text-center laptop:mb-vw-16 mb-0">
-        初期費用
-        <span className="text-4xl">無料</span>
-        、手間<span className="text-3xl">0</span>で作成
+        効率的なWebマーケティング
       </Typography>
       <Box>
         <Container className="flex flex-wrap">

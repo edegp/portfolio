@@ -36,3 +36,5 @@ yarn-error.log*
 stripe.exe
 
 .vscode
+
+/public/.well-known/

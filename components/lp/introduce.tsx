@@ -20,7 +20,7 @@ export default function Introduce({ products }) {
   const [plan, setPlan] = useState("basic");
   const updatePlan = (e) => setPlan(e.target.value);
   return (
-    <Box className="system laptop:pt-[15vh] sp:pt-[4vh] pt-0 section">
+    <Box className="system laptop:pt-[15vh] pt-[8vh] section">
       <Typography className="font-bold text-primary text-2xl text-center laptop:mb-vw-5 mb-vw-2">
         プランのご紹介
       </Typography>

@@ -1,3 +1,4 @@
+import Head from "next/head";
 import Table from "@mui/material/Table";
 import Box from "@mui/material/Box";
 import TableBody from "@mui/material/TableBody";
@@ -23,31 +24,36 @@ export default function Policy() {
       "クレジットカード：各カード会社引き落とし日、銀行振込：注文後7日以内",
   };
   return (
-    <Box className="system laptop:pt-[15vh] pt-[9vh] section">
-      <Container>
-        <Typography variant="h2" className="text-lg ml-10 mb-10">
-          特定商取引法に基づく表示
-        </Typography>
-        <Table className="tablet:max-w-[90vw]">
-          <TableBody>
-            {Object.entries(lists).map(([key, value]) => (
-              <>
-                <TableRow
-                  // key={row.name}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell key={key} component="th">
-                    {key}
-                  </TableCell>
-                  <TableCell key={value} component="th">
-                    {value}
-                  </TableCell>
-                </TableRow>
-              </>
-            ))}
-          </TableBody>
-        </Table>
-      </Container>
-    </Box>
+    <>
+      <Head>
+        <title>特定商取引法に基づく表示</title>
+      </Head>
+      <Box className="system laptop:pt-[15vh] pt-[9vh] section">
+        <Container>
+          <Typography variant="h2" className="text-lg ml-10 mb-10">
+            特定商取引法に基づく表示
+          </Typography>
+          <Table className="tablet:max-w-[90vw]">
+            <TableBody>
+              {Object.entries(lists).map(([key, value]) => (
+                <>
+                  <TableRow
+                    // key={row.name}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell key={key} component="th">
+                      {key}
+                    </TableCell>
+                    <TableCell key={value} component="th">
+                      {value}
+                    </TableCell>
+                  </TableRow>
+                </>
+              ))}
+            </TableBody>
+          </Table>
+        </Container>
+      </Box>
+    </>
   );
 }

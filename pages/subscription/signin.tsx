@@ -7,6 +7,13 @@ import { Provider } from "@supabase/supabase-js";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputLabel from "@mui/material/InputLabel";
+import InputAdornment from "@mui/material/InputAdornment";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import FormControl from "@mui/material/FormControl";
+import IconButton from "@mui/material/IconButton";
 import { getURL } from "../../utils/helpers";
 import { postData } from "../../utils/helpers";
 import { useUser } from "../../utils/useUser";
@@ -28,6 +35,7 @@ export default function SignIn() {
     content: "",
   });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setInfo((prev) => ({ ...prev, [event.target?.name]: event.target?.value }));
   const handleSignin = async (e: FormEvent<HTMLFormElement>) => {
@@ -39,7 +47,13 @@ export default function SignIn() {
       password,
     });
     if (error) {
-      setMessage({ type: "error", content: error.message });
+      setMessage({
+        type: "error",
+        content:
+          error.message === "Invalid login credentials"
+            ? "ご入力のメールアドレスは登録されていません。"
+            : "",
+      });
     }
     if (!password) {
       setMessage({
@@ -102,27 +116,46 @@ export default function SignIn() {
                   onSubmit={handleSignin}
                   className="flex flex-col space-y-4"
                 >
-                  <TextField
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                  <TextField
-                    name="password"
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
+                  <FormControl variant="outlined">
+                    <InputLabel htmlFor="outlined-email">Email</InputLabel>
+                    <OutlinedInput
+                      id="outlined-email"
+                      type="email"
+                      name="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      label="Email"
+                    />
+                  </FormControl>
+                  <FormControl variant="outlined">
+                    <InputLabel htmlFor="outlined-adornment-password">
+                      Password
+                    </InputLabel>
+                    <OutlinedInput
+                      id="outlined-adornment-password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={() => setShowPassword(!showPassword)}
+                            onMouseDown={(e) => e.preventDefault()}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                      label="Password"
+                      name="password"
+                    />
+                  </FormControl>
                   <Button
                     className="!bg-[#04ac4d] text-white hover:opacity-70 laptop:justify-self-end rounded-md text-sm whitespace-nowrap px-10 justify-self-center mt-1"
                     variant="contained"
                     type="submit"
-                    loading={loading}
                     disabled={password?.length < 8 || email?.length === 0}
                   >
                     {isLoading || loading ? <LoadingDots /> : "サインイン"}

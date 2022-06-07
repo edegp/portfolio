@@ -7,6 +7,7 @@ import { PageMeta } from "../types";
 import Navbar from "./ui/Navbar";
 
 import Header from "./header";
+// import Footer from "./footer";
 import { useUser } from "../utils/useUser";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
@@ -92,6 +93,7 @@ export default function Layout({ children, meta: pageMeta }: Props) {
         <Elements stripe={getStripe()}>
           <main id="skip">{children}</main>
         </Elements>
+        {/* <Footer /> */}
       </ThemeProvider>
     </>
   );

@@ -31,7 +31,6 @@ export default function LP({ products }: Props) {
         <title>飲食店でホームページを開設するならANful</title>
       </Head>
       <Container>
-        {/* <Header /> */}
         <LPHome />
         <Merit />
         <Acheive />

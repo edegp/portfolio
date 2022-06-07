@@ -6,6 +6,13 @@ import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs";
 import { Provider } from "@supabase/supabase-js";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputLabel from "@mui/material/InputLabel";
+import InputAdornment from "@mui/material/InputAdornment";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import FormControl from "@mui/material/FormControl";
+import IconButton from "@mui/material/IconButton";
 import Google from "../icons/Google";
 import Facebook from "../icons/Facebook";
 import { getURL } from "../../utils/helpers";
@@ -24,6 +31,7 @@ export default function SignIn({
   const [priceIdLoading, setPriceIdLoading] = useState<string>();
   const { user, isLoading, subscription } = useUser();
   const [loginUser, setloginUser] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState<{ type?: string; content?: string }>({
     type: "",
     content: "",
@@ -41,7 +49,13 @@ export default function SignIn({
       password: info.password,
     });
     if (error) {
-      setMessage({ type: "error", content: error.message });
+      setMessage({
+        type: "error",
+        content:
+          error.message === "Invalid login credentials"
+            ? "ご入力のメールアドレスは登録されていません。"
+            : error.message,
+      });
     }
     if (!info.password) {
       setMessage({
@@ -98,22 +112,42 @@ export default function SignIn({
                 </div>
               )}
               <form onSubmit={handleSignin} className="flex flex-col space-y-4">
-                <TextField
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  value={info.email}
-                  onChange={handleChange}
-                  required
-                />
-                <TextField
-                  name="password"
-                  type="password"
-                  placeholder="Password"
-                  value={info.password}
-                  onChange={handleChange}
-                  required
-                />
+                <FormControl variant="outlined">
+                  <InputLabel htmlFor="outlined-email">Email</InputLabel>
+                  <OutlinedInput
+                    id="outlined-email"
+                    type="email"
+                    name="email"
+                    value={info.email}
+                    onChange={handleChange}
+                    label="Email"
+                  />
+                </FormControl>
+                <FormControl variant="outlined">
+                  <InputLabel htmlFor="outlined-adornment-password">
+                    Password
+                  </InputLabel>
+                  <OutlinedInput
+                    id="outlined-adornment-password"
+                    type={showPassword ? "text" : "password"}
+                    value={info.password}
+                    onChange={handleChange}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={() => setShowPassword(!showPassword)}
+                          onMouseDown={(e) => e.preventDefault()}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                    label="Password"
+                    name="password"
+                  />
+                </FormControl>
                 <Button
                   className="!bg-[#04ac4d] text-white hover:opacity-70 laptop:justify-self-end rounded-md text-sm whitespace-nowrap px-10 justify-self-center mt-1"
                   variant="contained"
@@ -124,7 +158,7 @@ export default function SignIn({
                     isLoading
                   }
                 >
-                  {isLoading ? <LoadingDots /> : "サインイン"}
+                  {isLoading || subscription ? <LoadingDots /> : "サインイン"}
                 </Button>
               </form>
               <span className="pt-1 text-center text-xs">

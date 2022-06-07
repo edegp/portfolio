@@ -12,18 +12,20 @@ const updateSubscription = async (
     try {
       const { subscriptionId, price } = req.body;
       const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-      const updateSubscription = await stripe.subscriptions.update(
-        subscriptionId,
-        {
+      const { customer, clientSecret, default_payment_method } =
+        await stripe.subscriptions.update(subscriptionId, {
           items: [
             {
               id: subscription.items.data[0].id,
-              price,
+              price: price.id,
             },
           ],
-        }
-      );
-      return res.status(200).send({ updateSubscription });
+        });
+      return res.status(200).send({
+        customer,
+        clientSecret,
+        default_payment_method,
+      });
     } catch (err: any) {
       console.log(err);
       res

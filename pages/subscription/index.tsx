@@ -46,6 +46,12 @@ import SignIn from "../../components/subscription/signin";
 import SubscriptionLayout from "../../components/subscription/SubscriptionLayout";
 import SubscriptionForm from "../../components/subscription/Subscription";
 import ToggleButton from "../../components/subscription/toggleButton";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+// import DialogContent from "@mui/material/DialogContent";
+// import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Footer from "../../components/footer";
 
 interface Props {
   products: Product[];
@@ -61,7 +67,7 @@ const steps = [
     fields: { purpose: "サイトを利用する目的をお教えください" },
   },
   {
-    name: "お店の情報",
+    name: "情報",
     fields: {
       site_name: "サイト名",
       favorite: "以前見て感動、もしくはこんなサイトがいいと思ったサイトのURL",
@@ -74,7 +80,7 @@ const steps = [
     fields: {},
   },
   {
-    name: "お支払い方法",
+    name: "お支払い",
     fields: {},
   },
 ];
@@ -100,7 +106,7 @@ export default function Register({ products }) {
   const updateInfo = (key, value) =>
     setInfo((prev) => ({ ...prev, [key]: value }));
   const [messages, _setMessages] = useState("");
-  const [intent, setIntent] = useState("");
+  const [intent, setIntent] = useState(null);
   const updateIntent = (e) => setIntent(e);
   const [message, setMessage] = useState<{ type?: string; content?: string }>({
     type: "",
@@ -110,8 +116,9 @@ export default function Register({ products }) {
   const [loading, setLoading] = useState(false);
   const updateLoading = () => setLoading(!loading);
   const [clientSecret, setClientSecret] = useState(null);
-  const [customer, setCustomer] = useState();
-  const [subscriptionId, setSubscriptionId] = useState();
+  const [customer, setCustomer] = useState("");
+  const [subscriptionId, setSubscriptionId] = useState("");
+  const [update, setUpdate] = useState(false);
   const stripe = useStripe();
   const elements = useElements();
   const price = products.find((product) => product.name === plan)?.prices[0];
@@ -136,13 +143,20 @@ export default function Register({ products }) {
       ...prev,
       ["color"]: color.hex,
     }));
+  const handleUpdate = () => {
+    setUpdate(true);
+  };
+  const handleClose = () => {
+    setUpdate(false);
+    setLoading(false);
+  };
   const handleRenew = async () => {
+    setLoading(true);
     const price = products.find((product) => product.name === plan).prices[0];
-    let { customer, clientSecret, subscriptionId, default_payment_method } =
-      await postData({
-        url: "/api/update-subscription",
-        data: { price, subscriptionId: canceled.id },
-      });
+    let { customer, clientSecret, default_payment_method } = await postData({
+      url: "/api/create-subscription",
+      data: { price, subscriptionId: canceled.id },
+    });
     if (clientSecret) {
       setClientSecret(clientSecret);
     }
@@ -150,6 +164,7 @@ export default function Register({ products }) {
       payment_method: default_payment_method,
     });
     if (error) console.log(error);
+    setLoading(false);
   };
   if (
     !clientSecret &&
@@ -157,10 +172,10 @@ export default function Register({ products }) {
     !isLoading &&
     activeStep === 4 &&
     plan &&
-    !loading
+    !loading &&
+    !update
   ) {
-    setLoading(true);
-    handleRenew();
+    handleUpdate();
   }
   useEffect(() => {
     if (
@@ -175,12 +190,11 @@ export default function Register({ products }) {
   }, [subscription, intent]);
   const jsx = steps.map((step) =>
     Object.keys(step.fields).length !== 0 ? (
-      <FormGroup className="mb-6">
+      <FormGroup className="mb-6  grid gap-y-6">
         {Object.entries(step.fields).map(([key, value]) => {
           return (
             <TextField
               key={key}
-              className="my-6"
               name={key}
               label={value}
               type={
@@ -236,7 +250,7 @@ export default function Register({ products }) {
     ) : step === 3 ? (
       <Plan
         products={products}
-        className="my-0 tablet:mb-16 mb-4"
+        className="my-0 tablet:mb-16"
         updatePlan={updatePlan}
       />
     ) : step === 4 ? (
@@ -265,46 +279,65 @@ export default function Register({ products }) {
         <style>:root {`{${primaryColor}}`}</style>
       </Head>
       <Container>
-        {isLoading || loading || subscription ? (
+        {loading || subscription ? (
           <div className="text-center absolute top-[calc(50%-50px)] left-[calc(50%-50px)]">
             <LoadingDots c="#333" s="100px" />
           </div>
         ) : (
-          <Box className="system tablet:pt-[18vh] sp:pt-[14vh] pt-[9vh]">
-            <ToggleButton className="items-center mr-6  fixed top-[calc(4vw-5px)] right-h-w p-8 z-20" />
-            <Stepper activeStep={activeStep} alternativeLabel>
-              {steps.map((step) => (
-                <Step key={step.name}>
-                  <StepLabel>{step.name}</StepLabel>
-                </Step>
-              ))}
-            </Stepper>
-            <MuiContainer>
-              <Box className={container}>
-                {getStepContent(activeStep)}
-                {activeStep !== 0 && activeStep !== 4 && (
-                  <>
-                    <Button onClick={handleBack}>戻る</Button>
-                    <Button
-                      variant="contained"
-                      onClick={handleNext}
-                      className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70 laptop:justify-self-end rounded-md text-sm whitespace-nowrap px-10 justify-self-center"
-                    >
-                      {loading ? (
-                        <div className="h-12 mb-6">
-                          <LoadingDots />
-                        </div>
-                      ) : (
-                        "続ける"
-                      )}
-                    </Button>
-                  </>
-                )}
-              </Box>
-            </MuiContainer>
-          </Box>
+          <>
+            <Box className="system tablet:pt-[18vh] sp:pt-[14vh] pt-[9vh]">
+              <ToggleButton className="items-center mr-6  fixed top-[calc(4vw-5px)] right-h-w p-8 z-20" />
+              <Stepper activeStep={activeStep} alternativeLabel>
+                {steps.map((step) => (
+                  <Step key={step.name}>
+                    <StepLabel>{step.name}</StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
+              <MuiContainer>
+                <Box className={container}>
+                  {getStepContent(activeStep)}
+                  {activeStep !== 0 && activeStep !== 4 && (
+                    <>
+                      <Button onClick={handleBack}>戻る</Button>
+                      <Button
+                        variant="contained"
+                        onClick={handleNext}
+                        className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70 laptop:justify-self-end rounded-md text-sm whitespace-nowrap px-10 justify-self-center"
+                      >
+                        {loading ? (
+                          <div className="h-12 mb-6">
+                            <LoadingDots />
+                          </div>
+                        ) : (
+                          "続ける"
+                        )}
+                      </Button>
+                    </>
+                  )}
+                  <Footer />
+                </Box>
+              </MuiContainer>
+            </Box>
+          </>
         )}
       </Container>
+      <Dialog
+        open={update}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title" className="text-sm">
+          {`お帰りなさい。${plan}プランで再度登録しますか？`}
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={handleClose}>キャンセル</Button>
+          <Button onClick={handleRenew} autoFocus>
+            登録する
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

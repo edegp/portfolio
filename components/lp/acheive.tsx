@@ -13,7 +13,7 @@ import Vercel from "../../public/image/Vercel.jpg";
 export default function Acheive() {
   const lists = [WP, Shopify, CsCart, GA, Next, Contentful, Vercel];
   return (
-    <Box className="archive laptop:pt-[14vh] pt-[10vh] section px-vw-20">
+    <Box className="archive pt-[14vh] section px-vw-20">
       <Typography className="font-bold text-primary text-2xl text-center mb-[10px]">
         多様なサービスの運用実績
       </Typography>
@@ -22,20 +22,24 @@ export default function Acheive() {
           let CN = "";
           list === Vercel
             ? (CN =
-                "tablet:mt-vw-8 laptop:col-span-3 tablet:col-span-2 col-span-1")
+                "laptop:w-[24vw] tablet:w-[30vw] w-[40vw] tablet:mt-vw-8 laptop:col-span-3 tablet:col-span-2 col-span-1")
+            : list === GA
+            ? (CN = "laptop:w-[33vw] w-[45vw]  z-[-4]")
             : list === CsCart
-            ? (CN = "laptop:my-[-3vw] my-[-4vw] z-[-4]")
+            ? (CN = "laptop:w-[20vw] tablet:w-[28vw] w-[35vw] z-[20]")
             : list === Contentful
-            ? (CN = "laptop:my-[-4.5vw] tablet:my-[-8.5vw] my-[-15vw] z-[-5]")
+            ? (CN =
+                "laptop:w-[20vw] tablet:w-[30vw] w-[40vw] laptop:my-[-4.5vw] tablet:my-[-8.5vw] my-[-10vw] z-[-5]")
             : list === WP
-            ? (CN = "tablet:mt-vw-8 sp:my-[-7px] z-[-3]")
+            ? (CN =
+                "laptop:w-[25vw] tablet:w-[35vw] w-[45vw] tablet:mt-vw-8 z-[-3]")
             : list === Next
-            ? (CN = "tablet:mt-vw-8 sp:my-[-5vw] z-[-2]")
-            : (CN = "tablet:mt-vw-8  z-[-3]");
+            ? (CN =
+                "laptop:w-[15vw] tablet:w-[18vw] w-[30vw] tablet:mt-vw-4 sp:my-[-3vw] z-[-2]")
+            : (CN =
+                "laptop:w-[20vw] tablet:w-[30vw] w-[40vw] tablet:mt-vw-8  z-[-3]");
           return (
-            <Box
-              className={`mx-auto text-center laptop:w-[28vw] tablet:w-[40vw] w-[50vw] ${CN}`}
-            >
+            <Box className={`mx-auto text-center ${CN}`}>
               <Image src={list} objectFit={"cover"} />
             </Box>
           );

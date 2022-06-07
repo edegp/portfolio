@@ -5,7 +5,7 @@ export default function ToggleButton() {
   const { user } = useUser();
   return (
     <>
-      <div className="flex items-center mr-6 text-sm fixed top-[calc(4vw-5px)] right-h-w px-8 z-40 pb-8 mix-blend-difference">
+      <div className="flex items-center mr-6 text-sm fixed top-[calc(4vw-5px)] right-h-w p-8 z-20 mix-blend-difference">
         {user ? (
           <Link
             href="/api/auth/logout"

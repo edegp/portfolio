@@ -66,6 +66,11 @@ export const GoogleAnalytics = () => (
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());    
               gtag('config', '${GA_ID}');
+              gtag('consent', 'default', {
+  'ad_storage': 'granted' ,
+  'analytics_storage': 'granted' ,
+});
+
             `,
           }}
           // strategy="afterInteractive"
