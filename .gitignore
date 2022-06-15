@@ -38,3 +38,6 @@ stripe.exe
 .vscode
 
 /public/.well-known/
+
+.vscode
+.package.json
