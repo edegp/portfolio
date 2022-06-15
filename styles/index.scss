@@ -314,3 +314,29 @@ body {
     transform: rotateX(33deg);
   }
 }
+
+.post-body {
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  ul,
+  li {
+    @apply leading-10;
+    font-family: "游明朝体", "Yu Mincho", YuMincho, "Hiragino Kaku Gothic ProN",
+      "Hiragino Kaku Gothic Pro", "メイリオ", Meiryo, "MS ゴシック", sans-serif !important;
+  }
+  p {
+    @apply text-sm my-10;
+  }
+  h3 {
+    @apply text-lg my-16;
+    line-height: 1.8;
+  }
+  h4 {
+    @apply text-md my-12;
+  }
+}

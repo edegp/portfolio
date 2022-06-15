@@ -6,7 +6,7 @@ import noImage from "../public/image/noimage.jpg";
 export default function Avatar({ name, picture }) {
   return (
     <Box className="inline-flex">
-      <Box className="relative w-4 h-4 mr-4 self-center">
+      <Box className="relative w-vw-4 h-vw-4 mr-vw-4 self-center">
         <ContentfulImage
           src={picture ? picture.url : noImage}
           layout="fill"

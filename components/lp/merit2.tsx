@@ -1,4 +1,21 @@
 export default function Merit2() {
+  const lists = [
+    {
+      img: Fast,
+      dt: "即完成",
+      dd: "ウェブサイトを経由して予約・注文した方にgoogleビジネスへの口コミの書き込みを自動依頼することで、レビュー数を増やしMEO対策が可能",
+    },
+    {
+      img: Cost,
+      dt: "2週間,本当に0円",
+      dd: "前回の予約情報を元に、メッセージを送信可能に",
+    },
+    {
+      img: Easy,
+      dt: "手間なし",
+      dd: "希望のお客様に、キャッシュレス決済の申し込み代行も行っております。",
+    },
+  ];
   return (
     <Box className="merit  laptop:pt-[14vh] pt-[5vh] section">
       <Typography className="font-bold text-primary text-2xl text-center laptop:mb-vw-16 mb-0">

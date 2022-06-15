@@ -40,7 +40,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       {/* <ThemeProvider theme={theme}> */}
       <Box
         ref={cursor}
-        className="cursor mix-blend-exclusion z-50 before:rounded-full hidden tablet:block"
+        className="cursor mix-blend-exclusion z-50 before:rounded-full hidden laptop:block"
       />
       <UserProvider supabaseClient={supabaseClient}>
         <MyUserContextProvider supabaseClient={supabaseClient}>

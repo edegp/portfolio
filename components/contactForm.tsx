@@ -19,16 +19,13 @@ export default function ContactForm({ user, info }) {
   const [alignment, setAlignment] = useState<string | null>("2-5");
   const router = useRouter();
   const [state, setState] = useState({
-    name: router.pathname === "/" ? "starbucks Japan 佐々木" : "",
+    name: "",
     email: "",
     design: false,
     payment: false,
     info: false,
     other: false,
-    message:
-      router.pathname === "/"
-        ? "近頃、飲食店を開業予定でウェブサイト作成を検討…"
-        : "",
+    message: "",
     sucssess: "",
   });
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,6 +148,7 @@ export default function ContactForm({ user, info }) {
                     名前・会社・その他活動名
                   </InputLabel>
                   <TextField
+                    placeholder="starbucks Japan 佐々木"
                     className="mt-4"
                     className="mt-4"
                     id="name"
@@ -169,13 +167,13 @@ export default function ContactForm({ user, info }) {
                     Email
                   </InputLabel>
                   <TextField
+                    placeholder="sasaki@starbucks.co.jp"
                     className="mt-4"
                     id="email"
                     type="email"
                     name="email"
                     value={email}
                     onChange={handleChange}
-                    defaultValue="sasaki@starbucks.co.jp"
                   />
                 </FormControl>
               </>
@@ -287,6 +285,7 @@ export default function ContactForm({ user, info }) {
                 お問い合わせ内容
               </InputLabel>
               <TextField
+                placeholder="近頃、飲食店を開業予定でウェブサイト作成を検討…"
                 className="mt-4 inline-flex"
                 id="outlined-multiline-static message"
                 name="message"

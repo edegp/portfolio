@@ -1,0 +1,122 @@
+diff --git a/node_modules/react-bookmark/lib/index.js b/node_modules/react-bookmark/lib/index.js
+index cd7b21c..c2144cb 100644
+--- a/node_modules/react-bookmark/lib/index.js
++++ b/node_modules/react-bookmark/lib/index.js
+@@ -75,13 +75,14 @@ var Bookmark = exports.Bookmark = function (_Component) {
+           className = _this$props2.className,
+           linkClassName = _this$props2.linkClassName,
+           title = _this$props2.title,
++          innerText = _this$props2.innerText,
+           href = _this$props2.href;
+ 
+       var addToBookmarkLink = function addToBookmarkLink(props) {
+         return _react2.default.createElement(
+           'a',
+           _extends({ className: linkClassName, onClick: _this.handleAddBookmark }, props),
+-          'Add this page to your bookmarks'
++          `${innerText}`
+         );
+       };
+ 
+@@ -95,7 +96,8 @@ var Bookmark = exports.Bookmark = function (_Component) {
+         var props = {
+           href: href,
+           rel: 'sidebar',
+-          title: title
++          title: title,
++          innerText:innerText
+         };
+         bookmarkLink = addToBookmarkLink(props);
+       }
+@@ -116,37 +118,32 @@ var Bookmark = exports.Bookmark = function (_Component) {
+             commandButton,
+             ' + D'
+           ),
+-          ' to add this page to your bookmarks.'
++         `${innerText}`
+         )
+       );
+     }, _this.renderMobile = function (content) {
+-      var className = _this.props.className;
++      var className = _this.props.className,
++          innerText = _this.props.innerText;
+ 
+       var newContent = content;
+ 
+       if (_platform2.default.name && _platform2.default.manufacturer && _platform2.default.name.includes('Safari') && _platform2.default.manufacturer.includes('Apple')) {
+         newContent = _react2.default.createElement(
+-          'div',
+-          null,
+-          'Press ',
+           _react2.default.createElement(MobileImage, { src: _images.SAFARI_SHARE }),
+-          ' then ',
++          'を押して',
+           _react2.default.createElement(
+             'strong',
+             null,
+-            'Add to Home Screen'
++            'お気に入りに追加'
+           ),
+-          ' to add this page to your home screen.'
++          'このページをお気に入りに追加'
+         );
+       } else if (_platform2.default.name && (_platform2.default.name.includes('Chrome') || _platform2.default.name.includes('Firefox'))) {
+         newContent = _react2.default.createElement(
+-          'div',
+-          null,
+-          'Press ',
+           _react2.default.createElement(Icon, { src: _images.MENU_ICON }),
+-          ' then ',
++          '押して ',
+           _react2.default.createElement(Icon, { src: _images.STAR_ICON }),
+-          ' to add this page to your bookmarks.'
++          `${innerText}`
+         );
+       }
+ 
+@@ -156,17 +153,15 @@ var Bookmark = exports.Bookmark = function (_Component) {
+         newContent
+       );
+     }, _this.renderTablet = function (content) {
+-      var className = _this.props.className;
++      var className = _this.props.className,
++          innerText = _this.props.innerText;
+ 
+       var newContent = content;
+ 
+       if (_platform2.default.name && (_platform2.default.name.includes('Chrome') || _platform2.default.name.includes('Firefox'))) {
+         newContent = _react2.default.createElement(
+-          'div',
+-          null,
+-          'Press ',
+           _react2.default.createElement(Icon, { src: _images.STAR_ICON }),
+-          ' next to the address bar to add this page to your bookmarks.'
++          `${innerText}`
+         );
+       }
+ 
+@@ -184,7 +179,7 @@ var Bookmark = exports.Bookmark = function (_Component) {
+       var content = _react2.default.createElement(
+         'div',
+         null,
+-        'Remember to add this page to your bookmarks!'
++        `${innerText}`
+       );
+       if (/Mobile/i.test(navigator.userAgent)) {
+         return this.renderMobile(content);
+@@ -203,6 +198,7 @@ Bookmark.propTypes = {
+   linkClassName: _propTypes2.default.string,
+   title: _propTypes2.default.string,
+   href: _propTypes2.default.string,
++  innerText: _propTypes2.default.string,
+   onAddBookmark: _propTypes2.default.func
+ };
+ 
+@@ -211,6 +207,7 @@ Bookmark.defaultProps = {
+   linkClassName: '',
+   title: '',
+   href: '#',
++  innerText:'ブックマークする',
+   onAddBookmark: function onAddBookmark() {}
+ };
+ 

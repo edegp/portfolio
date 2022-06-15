@@ -1,6 +1,7 @@
 {
   "private": true,
   "scripts": {
+    "postinstall": "patch-package",
     "dev": "cross-env NODE_OPTIONS='--inspect' && next dev",
     "stripe": "stripe listen --forward-to=localhost:3000/api/webhooks",
     "vercel pro": "npx vercel --prod",
@@ -24,15 +25,19 @@
     "@types/react-scroll": "^1.8.3",
     "classnames": "2.3.1",
     "clsx": "^1.1.1",
+    "contentful-management": "^10.6.2",
     "cross-env": "^7.0.3",
     "date-fns": "2.22.1",
+    "instagram-graph-api": "^3.0.0",
     "loaders.css": "^0.1.2",
     "next": "^12.1.6",
     "npm-force-resolutions": "^0.0.10",
     "prop-types": "^15.8.1",
     "react": "^18.1.0",
+    "react-bookmark": "^0.8.2",
     "react-color": "^2.19.3",
     "react-cookie-consent": "^7.4.1",
+    "react-device-detect": "^2.2.2",
     "react-dom": "^18.1.0",
     "react-markdown": "^7.1.1",
     "react-merge-refs": "^1.1.0",
@@ -61,11 +66,13 @@
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.29.3",
     "eslint-plugin-react-hooks": "^4.3.0",
+    "patch-package": "^6.4.7",
     "postcss": "^8.4.12",
     "postcss-import": "^14.1.0",
     "react-scroll": "^1.8.6",
     "tailwindcss": "^3.0.23",
     "tailwindcss-fluid-spacing": "^0.4.0",
+    "tailwindcss-textshadow": "^2.1.3",
     "typescript": "^4.5.4"
   }
 }

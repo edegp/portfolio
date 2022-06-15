@@ -19,7 +19,6 @@ export default function Blog({ preview, allPosts }) {
       <Head>
         <title>anfulのBlog</title>
       </Head>
-      <Header Location="blog" />
       <Container>
         <MuiContainer>
           {heroPost && (
@@ -41,7 +40,7 @@ export default function Blog({ preview, allPosts }) {
                   }}
                 >
                   <Typography
-                    className="mb-4 text-4xl leading-tight 
+                    className="mb-4 text-2xl leading-tight 
                     mix-blend-difference 
                   text-white
                   text-center
@@ -59,6 +58,7 @@ export default function Blog({ preview, allPosts }) {
     </>
   );
 }
+
 export async function getStaticProps({ preview = false }) {
   const allPosts = (await getAllPostsForHome(preview)) ?? [];
   return {

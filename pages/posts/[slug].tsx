@@ -3,6 +3,7 @@ import Head from "next/head";
 import ErrorPage from "next/error";
 import MuiContainer from "@mui/material/Container";
 import { getAllPostsWithSlug, getPostAndMorePosts } from "../../lib/api";
+// import { pageMediaRequest } from "../api/instagram";
 import Container from "../../components/container";
 import PostBody from "../../components/post/post-body";
 import MoreStories from "../../components/post/more-stories";
@@ -15,7 +16,6 @@ export default function Post({ post, morePosts }) {
   if (!router.isFallback && !post) {
     return <ErrorPage statusCode={404} />;
   }
-
   return (
     <Container>
       {router.isFallback ? (
@@ -55,9 +55,9 @@ export async function getStaticProps({ params, preview = false }) {
       post: data?.post ?? null,
       morePosts: data?.morePosts ?? null,
     },
+    revalidate: 60,
   };
 }
-
 export async function getStaticPaths() {
   const allPosts = await getAllPostsWithSlug();
   return {

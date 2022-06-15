@@ -1,11 +1,15 @@
+import { useContext } from "react";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { Link as LinkScroll } from "react-scroll";
 import * as Scroll from "react-scroll";
 import HomeTitle from "./hometitle";
+import Link from "../Link";
+import { context } from "../container";
 
 export default function Home() {
+  // const container = useContext(context);
   return (
     <section id="home">
       <Box id="app" className="w-full">
@@ -41,10 +45,7 @@ export default function Home() {
                       to="whatido"
                       className="text-white"
                     >
-                      <Button
-                        className="bg-black text-white rounded-full px-20 normal-case hover:bg-black hover:opacity-50 float-right text-sm fadein"
-                        href="#whatido"
-                      >
+                      <Button className="bg-black text-white rounded-full px-20 normal-case hover:bg-black hover:opacity-50 float-right text-sm fadein">
                         My History
                       </Button>
                     </LinkScroll>
@@ -52,7 +53,7 @@ export default function Home() {
                 </Box>
               </Box>
               <Box className="scroll absolute bottom-h-w  left-h-logo fadein">
-                <a href="#whatido" className="p-8 block">
+                <Link href="#whatido" className="p-8 block">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="20.451"
@@ -129,7 +130,7 @@ export default function Home() {
                       </g>
                     </g>
                   </svg>
-                </a>
+                </Link>
               </Box>
             </Box>
           </Box>

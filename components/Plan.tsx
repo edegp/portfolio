@@ -26,22 +26,11 @@ export default function Plan({
       name: "basic",
       description: "高速でシンプルなHP,予約システム× 自動更新 ×",
       active: true,
-      image: null,
-      id: "prod_Lbj5yFsnU97dq4",
-      metadata: {},
       prices: [
         {
-          product_id: "prod_Lbj5yFsnU97dq4",
-          currency: "jpy",
-          billing_sheme: null,
-          unit_amount: 1980,
-          recurring: null,
+          unit_amount: 980,
           active: true,
           interval: "month",
-          interval_count: 1,
-          type: "recurring",
-          id: "price_1KuVdaDhR8iHUYPXA1UivciE",
-          metadata: {},
         },
       ],
     },
@@ -49,22 +38,12 @@ export default function Plan({
       name: "standard",
       description: "自動投稿可能なHP,自動投稿○ 予約システム ×",
       active: true,
-      image: null,
-      id: "prod_Lbk1ExK5xk4Qnm",
-      metadata: {},
       prices: [
         {
-          product_id: "prod_Lbk1ExK5xk4Qnm",
-          currency: "jpy",
-          billing_sheme: null,
-          unit_amount: 2980,
-          recurring: null,
+          unit_amount: 1980,
           active: true,
           interval: "month",
-          interval_count: 1,
-          type: "recurring",
           id: "price_1KuWXfDhR8iHUYPXcSwl6SIm",
-          metadata: {},
         },
       ],
     },
@@ -72,22 +51,11 @@ export default function Plan({
       name: "Premium",
       description: "自動投稿も予約システムも,予約システム○ 自動更新 ○",
       active: true,
-      image: null,
-      id: "prod_Lbk2qNYKofURFG",
-      metadata: {},
       prices: [
         {
-          product_id: "prod_Lbk2qNYKofURFG",
-          currency: "jpy",
-          billing_sheme: null,
-          unit_amount: 4980,
-          recurring: null,
+          unit_amount: 3980,
           active: true,
           interval: "month",
-          interval_count: 1,
-          type: "recurring",
-          id: "price_1KuWYNDhR8iHUYPXS31HTe3f",
-          metadata: {},
         },
       ],
     },
@@ -115,7 +83,7 @@ export default function Plan({
           className="tablet:w-1/3 tablet:px-2 tablet:mb-0 w-full mb-[18px] grid"
         >
           <Paper
-            elevation="2"
+            elevation={2}
             className={`tablet:min-h-[150px] px-4 tablet:py-6 sp:py-3 py-1 rounded-[20px]  border-gray-400 border border-solid grid place-items-center min-h-auto tablet:mx-0 sp:mx-vw-64 mx-vw-48 ${
               product.name === "standard" && "pb-5"
             }`}

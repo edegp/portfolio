@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import Image from "next/image";
 import { Link as LinkScroll } from "react-scroll";
 import * as Scroll from "react-scroll";
@@ -5,6 +6,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
+import { context } from "../container";
 import Link from "../Link";
 import Homepage from "../../public/image/homepage.jpg";
 import Code from "../../public/image/code.jpg";
@@ -67,15 +69,11 @@ export default function About() {
               to="contact"
               className="text-white"
             >
+              {/* <Link href="#contact" target="_blank" className="!font-extrabold"> */}
               <Button className="bg-white text-black rounded-full px-vw-32 normal-case whitespace-nowrap hover:bg-white hover:opacity-50 fadein mt-vw-16 laptop:block hidden">
-                <Link
-                  href="#contact"
-                  target="_blank"
-                  className="!font-extrabold"
-                >
-                  Contact me!
-                </Link>
+                Contact me!
               </Button>
+              {/* </Link> */}
             </LinkScroll>
           </Grid>
           <Grid
@@ -94,7 +92,6 @@ export default function About() {
             className=" 
             laptop:text-left text-center w-[85%] mx-auto self-center  laptop:hidden block"
           >
-
             <Button
               className="bg-white text-black rounded-full px-vw-32 normal-case whitespace-nowrap hover:bg-white hover:opacity-50 fadein"
               href="#contact"

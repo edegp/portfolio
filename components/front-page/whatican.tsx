@@ -35,7 +35,7 @@ export default function WhatICan({ open, setOpen }) {
   };
   const [popper, setPopper] = React.useState("AI");
 
-  const ref = useRef();
+  const ref = useRef(null);
   const intervalRef = useRef(null);
   const onMouseOver = useCallback(
     (event: React.MouseEvent<HTMLAncherElement>) => {
@@ -81,7 +81,7 @@ export default function WhatICan({ open, setOpen }) {
       </Zoom>
       <section id="whatido" className="bg-black text-white">
         <Container className="container-fluid tablet:pt-vw-28 pt-[10vh] pb-36">
-          <Box className="row justify-center items-center text-center flex flex-wrap">
+          <Box className="row justify-center items-center text-center flex flex-wrap ">
             <Typography
               variant="h1"
               className="sm: col-10 z-10 !font-extrabold text-3xl tracking-tight leading-tight mb-16 fadein"
@@ -91,7 +91,7 @@ export default function WhatICan({ open, setOpen }) {
           </Box>
           <Box className="marquee justify-around text-center text-lg grid grid-cols-3 justify-items-center">
             <Typography
-              className="marquee__inner1 text-white !font-extrabold inline-block w-full"
+              className="marquee__inner1 text-white !font-extrabold inline-block w-full hover:cursor-pointer"
               id="AI"
               onMouseOver={onMouseOver}
             >
@@ -99,14 +99,14 @@ export default function WhatICan({ open, setOpen }) {
             </Typography>
             <Typography
               id="Food"
-              className="marquee__inner2 text-white !font-extrabold w-full"
+              className="marquee__inner2 text-white !font-extrabold w-full hover:cursor-pointer"
               onMouseOver={onMouseOver}
             >
               Food
             </Typography>
             <Typography
               id="Ecommerce"
-              className="marquee__inner3 text-white !font-extrabold w-full"
+              className="marquee__inner3 text-white !font-extrabold w-full hover:cursor-pointer"
               onMouseOver={onMouseOver}
             >
               E-commerce
@@ -115,28 +115,28 @@ export default function WhatICan({ open, setOpen }) {
               id="WebSite"
               href="https://libebar.shop"
               target="_blank"
-              className="marquee__inner1 text-white !font-extrabold w-full"
+              className="marquee__inner1 text-white !font-extrabold w-full hover:cursor-pointer"
               onMouseOver={onMouseOver}
             >
               WebSite
             </Typography>
             <Typography
               id="Reserve"
-              className="marquee__inner2 text-white !font-extrabold w-full"
+              className="marquee__inner2 text-white !font-extrabold w-full hover:cursor-pointer"
               onMouseOver={onMouseOver}
             >
               Reserve System
             </Typography>
             <Typography
               id="Analytics"
-              className="marquee__inner3 text-white !font-extrabold w-full"
+              className="marquee__inner3 text-white !font-extrabold w-full hover:cursor-pointer"
               onMouseOver={onMouseOver}
             >
               Analytics
             </Typography>
             <Typography
               id="Marketing"
-              className="marquee__inner2 text-white !font-extrabold w-full"
+              className="marquee__inner2 text-white !font-extrabold w-full hover:cursor-pointer"
               onMouseOver={onMouseOver}
             >
               Marketing

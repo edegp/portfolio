@@ -1,6 +1,9 @@
 const path = require("path");
 
 module.exports = {
+  images:{
+    domains:["b.st-hatena.com"]
+  },
   sassOptions: {
     reactStrictMode: true,
     includePaths: [path.join(__dirname, "styles")],

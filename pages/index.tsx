@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import Head from "next/head";
 import Container from "../components/container";
 import Home from "../components/front-page/home";
@@ -12,9 +12,9 @@ import Footer from "../components/Footer";
 
 export default function Index() {
   const [open, setOpen] = useState(false);
-  const handleScroll = (event) => {
-    const container = event.target ? event.target : event;
-    setOpen(false);
+  const handleScroll = (e) => {
+    const conteiner = e;
+    if (!open) setOpen(false);
     const name = [
       "home",
       "whatido",

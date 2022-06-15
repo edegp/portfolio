@@ -10,7 +10,7 @@ import Header from "../header";
 export default function PostHeader({ title, coverImage, date, author, slug }) {
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <Box className="hidden md:block md:mb-12">
         {author && <Avatar name={author.name} picture={author.picture} />}
       </Box>

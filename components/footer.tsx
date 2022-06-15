@@ -9,7 +9,7 @@ export default function Footer() {
   const li = "w-auto p-0 pr-2";
   const liLink = "text-[#888888] font-normal";
   return (
-    <footer className="bg-white h-[5vh] my-6">
+    <footer className="bg-white h-[5vh] tablet:my-10 my-6">
       <List className="text-[#888888] text-xs flex flex-nowrap p-0 justify-center">
         <ListItem className={li}>
           <Link href={getURL() + "/trade"} className={liLink}>

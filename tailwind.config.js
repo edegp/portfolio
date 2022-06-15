@@ -55,5 +55,8 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-fluid-spacing")],
+  plugins: [
+    require("tailwindcss-fluid-spacing"),
+    require("tailwindcss-textshadow"),
+  ],
 };

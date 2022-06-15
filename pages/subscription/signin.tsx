@@ -14,8 +14,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import FormControl from "@mui/material/FormControl";
 import IconButton from "@mui/material/IconButton";
-import { getURL } from "../../utils/helpers";
-import { postData } from "../../utils/helpers";
+import { getURL,postData  } from "../../utils/helpers";
 import { useUser } from "../../utils/useUser";
 import Facebook from "../../components/icons/Facebook";
 import Google from "../../components/icons/Google";
@@ -67,7 +66,12 @@ export default function SignIn() {
 
   const handleOAuthSignIn = async (provider: Provider) => {
     setLoading(true);
-    const { error } = await supabaseClient.auth.signIn({ provider });
+    const { error } = await supabaseClient.auth.signIn({
+      provider},
+      {
+        redirectTo: getURL()+"/subscription"
+      }
+    );
     if (error) {
       setMessage({ type: "error", content: error.message });
     }
@@ -93,7 +97,7 @@ export default function SignIn() {
         <title>ANful</title>
       </Head>
       <Container>
-        <Box className="system laptop:pt-[20vh] pt-[14vh] section">
+        <Box className="system py-[20vh] section">
           <div className="flex justify-center height-screen-helper">
             <div className="flex flex-col justify-between max-w-lg p-3 m-auto w-80 ">
               <div className="flex flex-col space-y-4">

@@ -3,38 +3,21 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Link from "../Link";
-import HP from "../../public/image/HPowner.png";
+import HP from "../../public/image/HP.png";
 import IMG from "../../public/image/img.png";
 
 export default function LPHome() {
-  const lists = [
-    {
-      img: Fast,
-      dt: "即完成",
-      dd: "一週間以内にデザインを作成、最短10日でホームページ開設",
-    },
-    {
-      img: Cost,
-      dt: "2週間,本当に0円",
-      dd: "初期費用が無料、さらに無料体験で初めの2週間まで0円",
-    },
-    {
-      img: Easy,
-      dt: "手間なし",
-      dd: "簡単な質問に答えるだけで、10日以内にデザインが完成",
-    },
-  ];
   return (
     <>
       <Box className="lp-home section contaienr-fluid  laptop:pt-[14vh] pt-[10vh] pb-vw-10 px-vw-20 grid laptop:grid-flow-col laptop:grid-rows-[55vh,5vh] laptop:grid-cols-[45%,60%] grid-flow-row grid-rows-[32vh,5.5vh,23vh]">
         <Typography
           variant="h1"
-          className="text-lg relative self-center leading-snug font-extrabold"
+          className="text-lg relative self-center leading-snug font-bold text-shadow-md"
         >
           <Box className=" absolute top-[-60px] w-vw-56 min-w-[100px] max-w-[220px] laptop:right-[calc(8vw-120px)] sp:right-[calc(15vw-60px)] right-[calc(5vw-20px)]">
             <Image src={HP} />
           </Box>
-          新規会員<span className="text-2xl text-secondary">限定！</span>
+          新規会員<span className="text-2xl">限定！</span>
           <br />
           <span className="text-primary">
             2週間
@@ -45,7 +28,7 @@ export default function LPHome() {
           小規模<span className="text-primary text-2xl">飲食店</span>に特化した
           <br />
           ホームページで
-          <span className="text-2xl text-secondary">利益</span>アップ！
+          <span className="text-2xl">利益</span>アップ！
         </Typography>
 
         <Button
