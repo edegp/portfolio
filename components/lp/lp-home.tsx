@@ -20,15 +20,15 @@ export default function LPHome() {
           新規会員<span className="text-2xl">限定！</span>
           <br />
           <span className="text-primary">
-            2週間
+            1か月
             <span className="text-5xl font-black">無料</span>
             体験
           </span>
           <br />
           小規模<span className="text-primary text-2xl">飲食店</span>に特化した
           <br />
-          ホームページで
-          <span className="text-2xl">利益</span>アップ！
+          <span className="text-primary text-2xl">スマホだけ</span>
+          でホームページ作成
         </Typography>
 
         <Button

@@ -26,13 +26,13 @@ export default function Introduce({ products }) {
       </Typography>
       <Typography className="font-medium text-sm text-center mb-vw-6 px-vw-24">
         <span className="tablet:block hidden whitespace-nowrap">
-          新規会員様は2週間の
+          新規会員様は1か月の
         </span>
         無料期間終了後、
         <span className="tablet:block hidden">
-          スタンダードプランなら たった
+          サイト作成プランなら 一か月
           {/* <br className="laptop:hidden block" /> */}
-          <span className="text-md font-semibold">2980円</span>で
+          <span className="text-md font-semibold">ワンコイン</span>で
         </span>
         キャンセルはいつでもOK
       </Typography>
@@ -68,8 +68,8 @@ export default function Introduce({ products }) {
             </svg>
           </Button>
         </Link>
-        <Typography className="text-xs ml-auto">
-          ※予約システムは今後実装予定
+        <Typography className="text-xs ml-auto mt-3">
+          ※予約・キャッシュレス決済はSquareのサービスを採用
         </Typography>
       </Container>
     </Box>

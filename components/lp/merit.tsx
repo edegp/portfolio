@@ -10,26 +10,24 @@ export default function Merit() {
   const lists = [
     {
       img: Fast,
-      dt: "即完成",
-      dd: "一週間以内にデザインを作成、最短10日でホームページ開設",
+      dt: "待ち時間がほぼ０",
+      dd: `一週間以内にデザインを作成、\n最短10日でホームページ開設`,
     },
     {
       img: Cost,
-      dt: "2週間,本当に0円",
-      dd: "初期費用が無料、さらに無料体験で初めの2週間まで0円",
+      dt: "1か月,本当に0円",
+      dd: `初期費用無料、初めの1か月は0円、\nサイト作成プランなら一か月1コインで`,
     },
     {
       img: Easy,
-      dt: "手間なし",
-      dd: "簡単な質問に答えるだけで、10日以内にデザインが完成",
+      dt: "手間０",
+      dd: `5分程度の簡単な質問の入力で、\n10日以内にデザインが完成`,
     },
   ];
   return (
     <Box className="merit  laptop:pt-[14vh] pt-[5vh] section">
-      <Typography className="font-bold text-primary text-2xl text-center laptop:mb-vw-16 mb-0">
-        初期費用
-        <span className="text-4xl">無料</span>
-        、手間<span className="text-3xl">0</span>で作成
+      <Typography className="font-bold text-primary text-2xl text-center laptop:mb-vw-16 mb-4">
+        ANfulの3つの<span className="text-3xl">０</span>
       </Typography>
       <Box>
         <Container className="flex flex-wrap">
@@ -44,8 +42,10 @@ export default function Merit() {
               <Typography className="text-primary text-lg text-center whitespace-nowrap font-bold laptop:my-vw-6 my-1">
                 {list.dt}
               </Typography>
-              <Typography className="laptop:text-left text-sm tablet:px-0 px-[20px] text-center font-medium">
-                {list.dd}
+              <Typography className="text-sm tablet:px-0 px-[20px] text-center font-medium">
+                {list.dd
+                  .split(/(\n)/)
+                  .map((dd) => (dd.match(/\n/) ? <br /> : dd))}
               </Typography>
             </Box>
           ))}

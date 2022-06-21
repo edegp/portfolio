@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState, FormEvent } from "react";
-import { useUser } from "@supabase/supabase-auth-helpers/react";
+import { useUser } from "../../utils/useUser";
 import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs";
 import { Provider } from "@supabase/supabase-js";
 import Button from "@mui/material/Button";
@@ -20,30 +20,36 @@ import { postData } from "../../utils/helpers";
 import LoadingDots from "../ui/LoadingDots";
 import Logo from "../icons/Logo";
 
-export default function SignIn({
-  info,
-  updateInfo,
-  updateSignin,
-  updateLoading,
-  loading,
-}) {
+export default function SignIn({ updateSignin }) {
   const router = useRouter();
   const [priceIdLoading, setPriceIdLoading] = useState<string>();
-  const { user, isLoading, subscription } = useUser();
+  const [loading, setLoading] = useState(false);
+  const { user, isLoading, subscription, info, setInfo } = useUser();
   const [loginUser, setloginUser] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState<{ type?: string; content?: string }>({
     type: "",
     content: "",
   });
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    updateInfo(e.target?.name, e.target?.value);
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    name === "email" ?? setEmail(value);
+    name === "password" ?? setPassword(value);
+    setInfo((prev) => ({ ...prev, [name]: value }));
+  };
   const handleSignin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    !loading ?? updateLoading();
+    setLoading(true);
     setMessage({});
-    await updateInfo("email", e.target.elements.email.value);
-    await updateInfo("password", e.target.elements.password.value);
+    await setInfo((prev) => ({
+      ...prev,
+      ["email"]: e.target.elements.email.value,
+    }));
+    await setInfo((prev) => ({
+      ...prev,
+      ["password"]: e.target.elements.password.value,
+    }));
     const { error, user: loginUser } = await supabaseClient.auth.signIn({
       email: info.email,
       password: info.password,
@@ -63,20 +69,20 @@ export default function SignIn({
         content: "Check your email for the magic link.",
       });
     }
-    (loading && !isLoading) ?? updateLoading();
+    setLoading(false);
   };
   const handleOAuthSignIn = async (provider: Provider) => {
-    !loading ?? updateLoading();
+    setLoading(true);
     const { error } = await supabaseClient.auth.signIn(
       { provider },
       {
-        redirectTo: getURL() + "/subscription",
+        redirectTo: `${window.location.origin}/subscription`,
       }
     );
     if (error) {
       setMessage({ type: "error", content: error.message });
     }
-    loading ?? updateLoading();
+    setLoading(false);
   };
 
   const handlePassword = async () => {

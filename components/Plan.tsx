@@ -28,7 +28,7 @@ export default function Plan({
       active: true,
       prices: [
         {
-          unit_amount: 980,
+          unit_amount: 500,
           active: true,
           interval: "month",
         },
@@ -40,7 +40,7 @@ export default function Plan({
       active: true,
       prices: [
         {
-          unit_amount: 1980,
+          unit_amount: 980,
           active: true,
           interval: "month",
           id: "price_1KuWXfDhR8iHUYPXcSwl6SIm",
@@ -49,11 +49,12 @@ export default function Plan({
     },
     {
       name: "Premium",
-      description: "自動投稿も予約システムも,予約システム○ 自動更新 ○",
+      description:
+        "自動投稿も予約システムも,予約・キャッシュレス決済○ 自動更新 ○",
       active: true,
       prices: [
         {
-          unit_amount: 3980,
+          unit_amount: 1980,
           active: true,
           interval: "month",
         },
@@ -102,9 +103,9 @@ export default function Plan({
                 label={
                   <Typography className="text-md text-center tablet:mt-vw-3 mt-0 font-bold">
                     {product.name === "basic"
-                      ? "ベーシック"
+                      ? "ページ作成"
                       : product.name === "standard"
-                      ? "スタンダード"
+                      ? "自動投稿"
                       : product.name === "Premium"
                       ? "プレミアム"
                       : "特別"}
@@ -158,7 +159,7 @@ export default function Plan({
                 {product.prices[0]?.unit_amount | "お問い合わせください"}円
               </span>
               <ArrowRightAltIcon />
-              0円(2週間)
+              0円(1か月)
             </Typography>
           </Paper>
           {product.name === "standard" && (

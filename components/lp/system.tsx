@@ -13,8 +13,9 @@ export default function System() {
       img: Schedule,
       dd: (
         <>
+          <span className="text-primary">予約・注文情報(POSレジ)</span> <br />を{" "}
           <span className="text-primary underline decoration-secondary underline-offset-4 decoration-4">
-            予約情報をスマホ
+            スマホ
           </span>
           で一括管理
         </>
@@ -25,6 +26,7 @@ export default function System() {
       dd: (
         <>
           SNSの投稿で
+          <br />
           <span className="text-primary underline decoration-secondary underline-offset-4 decoration-4">
             ブログを自動更新
           </span>
@@ -37,10 +39,11 @@ export default function System() {
         <>
           <span className="text-primary">新技術</span>
           を用いた
+          <br />
           <span className="text-primary underline decoration-secondary underline-offset-4 decoration-4">
             高速
           </span>
-          レンダリング
+          なサイト
         </>
       ),
     },
@@ -69,7 +72,7 @@ export default function System() {
             </Box>
           ))}
           <Typography className="text-xs ml-auto mt-vw-3">
-            ※予約システムは今後実装予定
+            ※予約・POSレジはSquareのサービスを採用
           </Typography>
         </Container>
       </Box>

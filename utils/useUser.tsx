@@ -38,7 +38,16 @@ export const MyUserContextProvider = (props: Props) => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [canceled, setCanceled] = useState<Subscription | null>(null);
-
+  const [info, setInfo] = useState({
+    email: "",
+    password: "",
+    purpose: "",
+    color: "#333",
+    site_name: "",
+    favorite: "",
+    google: "",
+    other: "",
+  });
   const getUserDetails = () =>
     supabase.from<UserDetails>("users").select("*").single();
   const getSubscription = () =>
@@ -127,6 +136,8 @@ export const MyUserContextProvider = (props: Props) => {
     isLoading: isLoadingUser || isLoadingData,
     subscription,
     canceled,
+    info,
+    setInfo,
   };
   return <UserContext.Provider value={value} {...props} />;
 };

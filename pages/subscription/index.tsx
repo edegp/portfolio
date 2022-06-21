@@ -93,18 +93,6 @@ export default function Register({ products }) {
     Object.keys(router.query).length !== 0 ? router.query : "basic"
   );
   const updatePlan = (e) => setPlan(e.target.value);
-  const [info, setInfo] = useState({
-    email: "",
-    password: "",
-    purpose: "",
-    color: "#333",
-    site_name: "",
-    favorite: "",
-    google: "",
-    other: "",
-  });
-  const updateInfo = (key, value) =>
-    setInfo((prev) => ({ ...prev, [key]: value }));
   const [messages, _setMessages] = useState("");
   const [intent, setIntent] = useState(null);
   const updateIntent = (e) => setIntent(e);
@@ -112,9 +100,8 @@ export default function Register({ products }) {
     type: "",
     content: "",
   });
-  const { user, isLoading, subscription, canceled } = useUser();
+  const { user, isLoading, subscription, canceled, info, setInfo } = useUser();
   const [loading, setLoading] = useState(false);
-  const updateLoading = () => setLoading(!loading);
   const [clientSecret, setClientSecret] = useState(null);
   const [customer, setCustomer] = useState("");
   const [subscriptionId, setSubscriptionId] = useState("");
@@ -180,11 +167,9 @@ export default function Register({ products }) {
   useEffect(() => {
     if (
       subscription?.status === "active" ||
-      subscription?.status === "trialing"
+      subscription?.status === "trialing" ||
+      intent?.status === "succeeded"
     ) {
-      router.push("/subscription/account");
-    }
-    if (intent?.status === "succeeded") {
       router.push("/subscription/account");
     }
   }, [subscription, intent]);
@@ -224,12 +209,10 @@ export default function Register({ products }) {
         </div>
       ) : (
         <SignUp
-          info={info}
-          updateInfo={updateInfo}
+          // info={info}
+          // updateInfo={updateInfo}
           activeStep={activeStep}
           handleNext={handleNext}
-          updateLoading={updateLoading}
-          loading={loading}
         />
       )
     ) : step === 1 ? (

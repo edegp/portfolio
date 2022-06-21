@@ -39,7 +39,7 @@ export default function Blog({ preview, allPosts }) {
                     aspectRatio: "16/9",
                   }}
                 >
-                  <Typography
+                  {/* <Typography
                     className="mb-4 text-2xl leading-tight 
                     mix-blend-difference 
                   text-white
@@ -47,7 +47,7 @@ export default function Blog({ preview, allPosts }) {
                   "
                   >
                     {heroPost.title}
-                  </Typography>
+                  </Typography> */}
                 </Box>
               </Link>
             </>

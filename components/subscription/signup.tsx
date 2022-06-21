@@ -20,13 +20,10 @@ import { getURL } from "../../utils/helpers";
 
 export default function SignUp({
   handleNext,
-  info,
-  updateInfo,
+  // info, updateInfo,
   activeStep,
-  updateLoading,
-  loading,
 }) {
-  const { user, isLoading } = useUser();
+  const { user, isLoading, info, setInfo } = useUser();
   const [newUser, setNewUser] = useState<User | null>(null);
   const [signin, setSignin] = useState(false);
   const updateSignin = (e) => setSignin(e);
@@ -35,20 +32,22 @@ export default function SignUp({
     content: "",
   });
   const [password, setPassword] = useState("");
+
   const [email, setEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const name = event.target.name;
     const value = event.target.value;
     name === "email" ?? setEmail(value);
     name === "password" ?? setPassword(value);
-    updateInfo(name, value);
+    setInfo((prev) => ({ ...prev, [name]: value }));
   };
   const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    !loading ?? updateLoading();
+    setLoading(true);
     setMessage({});
-    await updateInfo(e.target.name, e.target.value);
+    await setInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     const { error, user: createdUser } = await supabase.auth.signUp({
       email: e.target.elements.email.value,
       password: e.target.elements.password.value,
@@ -64,32 +63,26 @@ export default function SignUp({
           "本登録用のメールを送信しました。メールのURLで登録を完了してください。",
       });
     }
-    loading ?? updateLoading();
+    setLoading(false);
   };
 
   const handleOAuthSignIn = async (provider: Provider) => {
-    !loading ?? updateLoading();
+    setLoading(true);
     const { error } = await supabase.auth.signIn(
       { provider },
       {
-        redirectTo: getURL() + "/subscription",
+        redirectTo: `${window.location.origin}/subscription`,
       }
     );
     if (error) {
       setMessage({ type: "error", content: error.message });
     }
-    loading ?? updateLoading();
+    setLoading(false);
   };
   return (
     <>
       {signin ? (
-        <SignIn
-          info={info}
-          updateInfo={updateInfo}
-          updateSignin={updateSignin}
-          updateLoading={updateLoading}
-          loading={loading}
-        />
+        <SignIn updateSignin={updateSignin} />
       ) : (
         <div className="flex justify-center height-screen-helper">
           <div className="flex flex-col justify-between max-w-lg p-3 m-auto w-80">
@@ -110,6 +103,12 @@ export default function SignUp({
                     ? "すでにこのメールアドレスは登録済みです"
                     : message.content === "Signup requires a valid password"
                     ? "有効なパスワードを入力してください"
+                    : message.content.startsWith(
+                        "For security purposes, you can only request this after"
+                      )
+                    ? "セキュリティのため," +
+                      message.content.replace(/[^0-9]/g, "") +
+                      "秒お待ちになってから再度作成ボタンを押してください"
                     : message.content}
                 </div>
               )}
@@ -155,7 +154,11 @@ export default function SignUp({
                   variant="slim"
                   type="submit"
                 >
-                  {isLoading ? <LoadingDots /> : "無料でアカウントを作成"}
+                  {isLoading || loading ? (
+                    <LoadingDots />
+                  ) : (
+                    "無料でアカウントを作成"
+                  )}
                 </Button>
               </form>
               <span className="pt-1 text-center text-sm">

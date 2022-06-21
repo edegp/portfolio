@@ -14,7 +14,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import FormControl from "@mui/material/FormControl";
 import IconButton from "@mui/material/IconButton";
-import { getURL,postData  } from "../../utils/helpers";
+import { getURL, postData } from "../../utils/helpers";
 import { useUser } from "../../utils/useUser";
 import Facebook from "../../components/icons/Facebook";
 import Google from "../../components/icons/Google";
@@ -66,10 +66,12 @@ export default function SignIn() {
 
   const handleOAuthSignIn = async (provider: Provider) => {
     setLoading(true);
-    const { error } = await supabaseClient.auth.signIn({
-      provider},
+    const { error } = await supabaseClient.auth.signIn(
       {
-        redirectTo: getURL()+"/subscription"
+        provider,
+      },
+      {
+        redirectTo: `${window.location.origin}/subscription`,
       }
     );
     if (error) {

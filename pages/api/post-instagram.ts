@@ -52,6 +52,7 @@ const PostInstagram = async (req, res) => {
             title + "\n" + discription
           );
         postRequest.execute().then((response: GetContainerResponse) => {
+          console.log(response);
           let getContainerRequest = new GetContainerRequest(
             process.env.ACCESS_TOKEN,
             response.data.id

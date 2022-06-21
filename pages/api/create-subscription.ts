@@ -50,7 +50,7 @@ export default withApiAuth(async function createSubscription(
                 price: price.id,
               },
             ],
-            trial_period_days: 14,
+            trial_period_days: 30,
             payment_behavior: "default_incomplete",
             expand: ["pending_setup_intent"],
           })

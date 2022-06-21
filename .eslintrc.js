@@ -4,6 +4,7 @@ module.exports = {
     es2021: true,
     node: true,
   },
+  ignorePatterns: ["*.config.js"],
   extends: [
     "plugin:react/recommended",
     "airbnb",

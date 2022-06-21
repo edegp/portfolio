@@ -191,35 +191,36 @@ export default function SubscriptionForm({
             });
           }
         } else {
-          await stripe
-            .confirmCardSetup(clientSecret, {
+          const { setupIntent, error } = await stripe.confirmCardSetup(
+            clientSecret,
+            {
               payment_method: {
                 card: cardNumberElement,
                 billing_details: {
                   name,
                 },
               },
-            })
-            .then(async ({ setupIntent }) => {
-              const update = await postData({
-                url: "/api/update-customer",
-                data: {
-                  default_payment_method: setupIntent?.payment_method,
-                  customerId: customer,
-                  info,
-                },
-              });
-              updateIntent(setupIntent);
-            })
-            .catch((error) =>
-              setMessage({
-                type: "error",
-                content:
-                  error.message === "Internal Server Error"
-                    ? "支払エラー"
-                    : error.message,
-              })
-            );
+            }
+          );
+          if (error) {
+            setMessage({
+              type: "error",
+              content:
+                e.message === "Internal Server Error"
+                  ? "支払エラー"
+                  : e.message,
+            });
+          } else {
+            const update = await postData({
+              url: "/api/update-customer",
+              data: {
+                default_payment_method: setupIntent?.payment_method,
+                customerId: customer,
+                info,
+              },
+            });
+            updateIntent(setupIntent);
+          }
         }
       })
       .catch((error) =>
@@ -227,7 +228,7 @@ export default function SubscriptionForm({
           type: "error",
           content:
             error.message === "Internal Server Error"
-              ? "サーバーエラー、サポートにお問い合わせください"
+              ? "支払エラー、カード情報に不備がないかお確かめください"
               : error.message,
         })
       );
