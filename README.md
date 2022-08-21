@@ -2,7 +2,7 @@
 
 ## Demo
 
-### [https://anful.vercel.app/](https://anful.vercel.app/)
+### [https://anful.jp/](https://anful.jp/)
 
 ## What
  これまでのウェブ作成サービスは、お客様からのお問い合わせを受けて、資料送信⇒申し込み⇒作成の流れだったが、
