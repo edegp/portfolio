@@ -1,50 +1,50 @@
-import Link from "next/link";
-import Head from "next/head";
-import { useRouter } from "next/router";
-import { useEffect, useState, FormEvent } from "react";
-import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs";
-import { Provider } from "@supabase/supabase-js";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import InputAdornment from "@mui/material/InputAdornment";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import FormControl from "@mui/material/FormControl";
-import IconButton from "@mui/material/IconButton";
-import { getURL, postData } from "../../utils/helpers";
-import { useUser } from "../../utils/useUser";
-import Facebook from "../../components/icons/Facebook";
-import Google from "../../components/icons/Google";
-import LoadingDots from "../../components/ui/LoadingDots";
-import Logo from "../../components/icons/Logo";
-import Container from "../../components/container";
+import Link from "next/link"
+import Head from "next/head"
+import { useRouter } from "next/router"
+import { useEffect, useState, FormEvent } from "react"
+import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs"
+import { Provider } from "@supabase/supabase-js"
+import TextField from "@mui/material/TextField"
+import Button from "@mui/material/Button"
+import Box from "@mui/material/Box"
+import OutlinedInput from "@mui/material/OutlinedInput"
+import InputLabel from "@mui/material/InputLabel"
+import InputAdornment from "@mui/material/InputAdornment"
+import Visibility from "@mui/icons-material/Visibility"
+import VisibilityOff from "@mui/icons-material/VisibilityOff"
+import FormControl from "@mui/material/FormControl"
+import IconButton from "@mui/material/IconButton"
+import { getURL, postData } from "../../utils/helpers"
+import { useUser } from "../../utils/useUser"
+import Facebook from "../../components/icons/Facebook"
+import Google from "../../components/icons/Google"
+import LoadingDots from "../../components/ui/LoadingDots"
+import Logo from "../../components/icons/Logo"
+import Container from "../../components/container"
 
 export default function SignIn() {
-  const router = useRouter();
-  const [priceIdLoading, setPriceIdLoading] = useState<string>();
-  const { user, isLoading, subscription, userDetails } = useUser();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loginUser, setloginUser] = useState(false);
+  const router = useRouter()
+  const [priceIdLoading, setPriceIdLoading] = useState<string>()
+  const { user, isLoading, subscription, userDetails } = useUser()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [loginUser, setloginUser] = useState(false)
   const [message, setMessage] = useState<{ type?: string; content?: string }>({
     type: "",
     content: "",
-  });
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  })
+  const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setInfo((prev) => ({ ...prev, [event.target?.name]: event.target?.value }));
+    setInfo((prev) => ({ ...prev, [event.target?.name]: event.target?.value }))
   const handleSignin = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage({});
+    e.preventDefault()
+    setLoading(true)
+    setMessage({})
     const { error, user: loginUser } = await supabaseClient.auth.signIn({
       email,
       password,
-    });
+    })
     if (error) {
       setMessage({
         type: "error",
@@ -52,20 +52,20 @@ export default function SignIn() {
           error.message === "Invalid login credentials"
             ? "ご入力のメールアドレスは登録されていません。"
             : "",
-      });
+      })
     }
     if (!password) {
       setMessage({
         type: "note",
         content: "パスワードを入力してください",
-      });
+      })
     }
-    subscription ?? router.push("/subscription/account");
-    setLoading(false);
-  };
+    subscription ?? router.push("/subscription/account")
+    setLoading(false)
+  }
 
   const handleOAuthSignIn = async (provider: Provider) => {
-    setLoading(true);
+    setLoading(true)
     const { error } = await supabaseClient.auth.signIn(
       {
         provider,
@@ -73,26 +73,26 @@ export default function SignIn() {
       {
         redirectTo: `${window.location.origin}/subscription`,
       }
-    );
+    )
     if (error) {
-      setMessage({ type: "error", content: error.message });
+      setMessage({ type: "error", content: error.message })
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   const handlePassword = async () => {
     const { data, error } = await supabaseClient.auth.api.resetPasswordForEmail(
       email
-    );
+    )
     if (data) {
       setMessage({
         type: "note",
         content: "リセット用のメールを送信しました。",
-      });
+      })
     }
-  };
+  }
 
-  if (user) router.replace("/subscription");
+  if (user) router.replace("/subscription")
   return (
     <>
       <Head>
@@ -222,5 +222,5 @@ export default function SignIn() {
         </Box>
       </Container>
     </>
-  );
+  )
 }
