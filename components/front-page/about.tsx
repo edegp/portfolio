@@ -1,15 +1,11 @@
-import { useContext } from "react";
-import Image from "next/image";
-import { Link as LinkScroll } from "react-scroll";
-import * as Scroll from "react-scroll";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
-import Container from "@mui/material/Container";
-import { context } from "../container";
-import Link from "../Link";
-import Homepage from "../../public/image/homepage.jpg";
-import Code from "../../public/image/code.jpg";
+import Image from "next/image"
+import { Link as LinkScroll } from "react-scroll"
+import Button from "@mui/material/Button"
+import Typography from "@mui/material/Typography"
+import Grid from "@mui/material/Grid"
+import Container from "@mui/material/Container"
+import Homepage from "../../public/image/homepage.jpg"
+import Code from "../../public/image/code.jpg"
 
 export default function About() {
   return (
@@ -20,7 +16,7 @@ export default function About() {
       >
         <Grid
           container
-          className="grid 
+          className="grid
 
         laptop:grid-rows-[30vh,35vh]
         grid-flow-col
@@ -30,13 +26,7 @@ export default function About() {
         laptop:gap-y-2
         "
         >
-          <Grid
-            item
-            variant="h2"
-            className="laptop:w-[85%] 
-          self-center
-          "
-          >
+          <Grid item className="laptop:w-[85%] self-center">
             <Typography
               variant="h2"
               className="text-lg font-bold laptop:text-left text-center max-h-vw-20 fadein"
@@ -59,12 +49,12 @@ export default function About() {
               delay={200}
               onClick={() => {
                 if (process.browser) {
-                  const container = document.getElementById("container");
-                  container.style.scrollSnapType = "none";
+                  const container = document.getElementById("container")
+                  container.style.scrollSnapType = "none"
+                  setTimeout(() => {
+                    container.style.scrollSnapType = "y mandatory"
+                  }, 950)
                 }
-                setTimeout(() => {
-                  container.style.scrollSnapType = "y mandatory";
-                }, 950);
               }}
               to="contact"
               className="text-white"
@@ -85,11 +75,12 @@ export default function About() {
               width={480}
               height={269}
               className="rounded-2xl fadein"
+              alt="homepage image"
             />
           </Grid>
           <Grid
             item
-            className=" 
+            className="
             laptop:text-left text-center w-[85%] mx-auto self-center  laptop:hidden block"
           >
             <Button
@@ -109,10 +100,11 @@ export default function About() {
               width={480}
               height={269}
               className="rounded-2xl"
+              alt="display code in pc"
             />
           </Grid>
         </Grid>
       </Container>
     </section>
-  );
+  )
 }

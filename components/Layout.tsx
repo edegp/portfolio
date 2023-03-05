@@ -1,23 +1,23 @@
-import Head from "next/head";
-import { useRouter } from "next/router";
-import { ReactNode } from "react";
-import { Elements } from "@stripe/react-stripe-js";
-import { getStripe } from "../utils/stripe-client";
-import { PageMeta } from "../types";
-import Navbar from "./ui/Navbar";
+import Head from "next/head"
+import { useRouter } from "next/router"
+import { ReactNode } from "react"
+import { Elements } from "@stripe/react-stripe-js"
+import { getStripe } from "../utils/stripe-client"
+import PageMeta from "../types"
+import Navbar from "./ui/Navbar"
 
-import Header from "./header";
+import Header from "./header"
 // import Footer from "./footer";
-import { useUser } from "../utils/useUser";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { useUser } from "../utils/useUser"
+import { ThemeProvider, createTheme } from "@mui/material/styles"
 
 interface Props {
-  children: ReactNode;
-  meta?: PageMeta;
+  children: ReactNode
+  meta?: PageMeta
 }
 
 export default function Layout({ children, meta: pageMeta }: Props) {
-  const { userDetails } = useUser();
+  const { userDetails } = useUser()
   const theme = createTheme({
     palette: {
       primary: {
@@ -57,8 +57,8 @@ export default function Layout({ children, meta: pageMeta }: Props) {
       MuiToggleButton: {
         styleOverrides: {
           root: {
-            borderLeft: "1px solid rgba(0, 0, 0, 0.12)!important",
-            padding: "10px 25px",
+            "borderLeft": "1px solid rgba(0, 0, 0, 0.12)!important",
+            "padding": "10px 25px",
             "&.Mui-selected": {
               borderColor: "black",
               borderLeft: "1px solid black !important",
@@ -77,12 +77,12 @@ export default function Layout({ children, meta: pageMeta }: Props) {
         },
       },
     },
-  });
+  })
 
-  const router = useRouter();
+  const router = useRouter()
   const meta = {
     title: "Next.js Subscription Starter",
-  };
+  }
   return (
     <>
       <Head>
@@ -96,5 +96,5 @@ export default function Layout({ children, meta: pageMeta }: Props) {
         {/* <Footer /> */}
       </ThemeProvider>
     </>
-  );
+  )
 }

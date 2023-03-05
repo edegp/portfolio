@@ -1,12 +1,12 @@
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import InstagramIcon from "@mui/icons-material/Instagram";
-import Link from "../Link";
-import ContactForm from "../contactForm";
+import Box from "@mui/material/Box"
+import Typography from "@mui/material/Typography"
+import Container from "@mui/material/Container"
+import List from "@mui/material/List"
+import ListItem from "@mui/material/ListItem"
+import ListItemIcon from "@mui/material/ListItemIcon"
+import InstagramIcon from "@mui/icons-material/Instagram"
+import Link from "../Link"
+import ContactForm from "../contactForm"
 
 export default function Contact() {
   return (
@@ -78,5 +78,5 @@ export default function Contact() {
         <ContactForm />
       </Container>
     </section>
-  );
+  )
 }
