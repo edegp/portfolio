@@ -10,7 +10,36 @@ import MoreStories from "../../components/post/more-stories"
 import PostHeader from "../../components/post/post-header"
 import PostTitle from "../../components/post/post-title"
 
-export default function Post({ post, morePosts }) {
+export type Post = {
+  slug: string
+  title: string
+  coverImage: {
+    url: string
+  }
+  date: Date
+  author: {
+    name: string
+    picture: {
+      url: string
+    }
+  }
+  excerpt: string
+  content: {
+    json: string
+  }
+  sys: {
+    updatedAt: Date
+    publishedAt: Date
+  }
+}
+
+export default function Post({
+  post,
+  morePosts,
+}: {
+  post: Post
+  morePosts: Post[]
+}) {
   const router = useRouter()
 
   if (!router.isFallback && !post) {

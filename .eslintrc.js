@@ -14,9 +14,8 @@ module.exports = {
 
     "plugin:@typescript-eslint/recommended-requiring-type-checking", // typescriptの型チェックをします
 
-    "plugin:@next/next/core-web-vitals", // Next.jsとCore Web Vitalsのチェック
-
     "prettier", // prettierと競合するESLintのルールを無効化します
+    "next/core-web-vitals",
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -110,4 +109,4 @@ module.exports = {
       },
     },
   },
-};
+}

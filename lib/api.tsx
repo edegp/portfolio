@@ -1,3 +1,5 @@
+import type { Post } from "../pages/posts/[slug]"
+
 const POST_GRAPHQL_FIELDS = `
 slug
 title
@@ -18,7 +20,7 @@ content {
 sys {
   updatedAt: publishedAt
 }
-`;
+`
 
 async function fetchGraphQL(query, preview = false) {
   return fetch(
@@ -27,7 +29,7 @@ async function fetchGraphQL(query, preview = false) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${
+        "Authorization": `Bearer ${
           preview
             ? process.env.NEXT_PUBLIC_CONTENTFUL_PREVIEW_ACCESS_TOKEN
             : process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN
@@ -35,15 +37,15 @@ async function fetchGraphQL(query, preview = false) {
       },
       body: JSON.stringify({ query }),
     }
-  ).then((response) => response.json());
+  ).then((response) => response.json())
 }
 
 function extractPost(fetchResponse) {
-  return fetchResponse?.data?.postCollection?.items?.[0];
+  return fetchResponse?.data?.postCollection?.items?.[0]
 }
 
 function extractPostEntries(fetchResponse) {
-  return fetchResponse?.data?.postCollection?.items;
+  return fetchResponse?.data?.postCollection?.items
 }
 
 export async function getPreviewPostBySlug(slug) {
@@ -56,8 +58,8 @@ export async function getPreviewPostBySlug(slug) {
       }
     }`,
     true
-  );
-  return extractPost(entry);
+  )
+  return extractPost(entry)
 }
 
 export async function getAllPostsWithSlug() {
@@ -69,8 +71,8 @@ export async function getAllPostsWithSlug() {
         }
       }
     }`
-  );
-  return extractPostEntries(entries);
+  )
+  return extractPostEntries(entries)
 }
 
 export async function getAllPostsForHome(preview) {
@@ -83,8 +85,8 @@ export async function getAllPostsForHome(preview) {
       }
     }`,
     preview
-  );
-  return extractPostEntries(entries);
+  )
+  return extractPostEntries(entries)
 }
 
 export async function getPostAndMorePosts(slug, preview) {
@@ -99,7 +101,7 @@ export async function getPostAndMorePosts(slug, preview) {
       }
     }`,
     preview
-  );
+  )
   const entries = await fetchGraphQL(
     `query {
       postCollection(where: { slug_not_in: "${slug}" }, order: date_DESC, preview: ${
@@ -111,9 +113,9 @@ export async function getPostAndMorePosts(slug, preview) {
       }
     }`,
     preview
-  );
+  )
   return {
-    post: extractPost(entry),
-    morePosts: extractPostEntries(entries),
-  };
+    post: extractPost(entry) as Post,
+    morePosts: extractPostEntries(entries) as Post[],
+  }
 }

@@ -1,12 +1,13 @@
 import React from "react"
+type Props = React.ComponentProps<"div">
 
-export default function Container({
-  children,
-  ...other
-}: React.ComponentProps<"div">) {
+export default React.forwardRef<HTMLDivElement, Props>(function Container(
+  { children, ...other },
+  ref
+) {
   return (
-    <div id="container" {...other}>
+    <div ref={ref} id="container" {...other}>
       {children}
     </div>
   )
-}
+})

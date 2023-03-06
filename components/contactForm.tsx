@@ -134,7 +134,7 @@ export default function ContactForm({
     })
   }
   return (
-    <Container className="w-[70%]">
+    <Container className="w-9/10">
       {router.pathname === "/" && (
         <>
           <Typography variant="h3" className="text-xs mb-2 ml-2 fadein">

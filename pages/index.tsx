@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useRef, useState } from "react"
 import Head from "next/head"
 import Container from "../components/container"
 import Home from "../components/front-page/home"
@@ -10,8 +10,9 @@ import Subscription from "../components/front-page/subscription"
 
 export default function Index() {
   const [open, setOpen] = useState(false)
-  const handleScroll = (e) => {
-    const container = e
+  const ref = useRef<HTMLDivElement>()
+
+  const handleScroll = () => {
     if (!open) setOpen(false)
     const ids = [
       "home",
@@ -21,6 +22,7 @@ export default function Index() {
       "subscription",
       "contact",
     ]
+    const container = ref.current
     const children = ids.map((name) => container.children.namedItem(name))
     const windowHeight = window.innerHeight
     const adjust = 150
@@ -37,19 +39,25 @@ export default function Index() {
       }
     })
   }
-  useEffect(() => {
-    handleScroll(document.querySelector("#container"))
-  })
+
+  const handleClick = () => {
+    const container = ref.current
+    container.style.scrollSnapType = "none"
+    setTimeout(() => {
+      container.style.scrollSnapType = "y mandatory"
+    }, 950)
+  }
+
   return (
     <>
       <Head>
         <title>anful</title>
       </Head>
-      <Container id="container" onScroll={handleScroll}>
-        <Home />
+      <Container ref={ref} onScroll={handleScroll}>
+        <Home onClick={handleClick} />
         <WhatICan open={open} setOpen={setOpen} />
         <Service />
-        <About />
+        <About onClick={handleClick} />
         <Subscription />
         <Contact />
       </Container>

@@ -1,32 +1,32 @@
-import { useRouter } from "next/router";
-import Head from "next/head";
-import { useState, ReactNode, useEffect } from "react";
-import { withPageAuth, getUser } from "@supabase/supabase-auth-helpers/nextjs";
-import MuiContainer from "@mui/material/Container";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Fade from "@mui/material/Fade";
-import { useUser } from "../../utils/useUser";
-import { postData } from "../../utils/helpers";
-import { supabase } from "../../utils/supabase-client";
-import { createOrRetrieveCustomer } from "../../utils/supabase-admin";
-import Container from "../../components/container";
-import Link from "../../components/Link";
-import CenteredTabs from "../../components/centeredTabs";
-import LoadingDots from "../../components/ui/LoadingDots";
-import ContactForm from "../../components/contactForm";
-import Info from "../../components/subscription/info";
-import { getRGBColor } from "../../utils/color";
-import ToggleButton from "../../components/subscription/toggleButton";
+import { useRouter } from "next/router"
+import Head from "next/head"
+import { withPageAuth, getUser } from "@supabase/supabase-auth-helpers/nextjs"
+import MuiContainer from "@mui/material/Container"
+import Tabs from "@mui/material/Tabs"
+import Tab from "@mui/material/Tab"
+import Typography from "@mui/material/Typography"
+import Box from "@mui/material/Box"
+import Button from "@mui/material/Button"
+import Fade from "@mui/material/Fade"
+import { useState, ReactNode, useEffect } from "react"
+import { useUser } from "../../utils/useUser"
+import { postData } from "../../utils/helpers"
+import { supabase } from "../../utils/supabase-client"
+import { createOrRetrieveCustomer } from "../../utils/supabase-admin"
+import Container from "../../components/container"
+import Link from "next/link"
+import CenteredTabs from "../../components/centeredTabs"
+import LoadingDots from "../../components/ui/LoadingDots"
+import ContactForm from "../../components/contactForm"
+import Info from "../../components/subscription/info"
+import { getRGBColor } from "../../utils/color"
+import ToggleButton from "../../components/subscription/toggleButton"
 
 interface Props {
-  title: string;
-  description?: string;
-  footer?: ReactNode;
-  children: ReactNode;
+  title: string
+  description?: string
+  footer?: ReactNode
+  children: ReactNode
 }
 
 function Card({ title, description, footer, children }: Props) {
@@ -43,52 +43,52 @@ function Card({ title, description, footer, children }: Props) {
         <></>
       )}
     </div>
-  );
+  )
 }
 
 export default function Account({ user, customer }) {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const { isLoading, subscription, userDetails } = useUser();
-  const [info, setInfo] = useState(userDetails);
-  const [fade, setFade] = useState(Boolean(subscription));
-  const updateLoading = (e) => setLoading(e);
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const { isLoading, subscription, userDetails } = useUser()
+  const [info, setInfo] = useState(userDetails)
+  const [fade, setFade] = useState(Boolean(subscription))
+  const updateLoading = (e) => setLoading(e)
   const updateInfo = (key, value) =>
-    setInfo((prev) => ({ ...prev, [key]: value }));
-  const resetInfo = (userDetails) => setInfo(userDetails);
+    setInfo((prev) => ({ ...prev, [key]: value }))
+  const resetInfo = (userDetails) => setInfo(userDetails)
   const redirectToCustomerPortal = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
       const { url, error } = await postData({
         url: "/api/create-portal-link",
-      });
+      })
       if (!window.open(url)) {
-        location.href = url;
+        location.href = url
       } else {
-        window.open(url, "_blank");
+        window.open(url, "_blank")
       }
     } catch (error) {
-      if (error) return alert((error as Error).message);
+      if (error) return alert((error as Error).message)
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
   const subscriptionPrice = new Intl.NumberFormat("ja-JP").format(
     subscription?.prices?.unit_amount || 0
-  );
+  )
   useEffect(() => {
-    setInfo(userDetails);
-  }, [userDetails, isLoading]);
+    setInfo(userDetails)
+  }, [userDetails, isLoading])
   useEffect(() => {
-    setFade(true);
+    setFade(true)
     setTimeout(() => {
-      setFade(false);
-    }, [5000]);
+      setFade(false)
+    }, [5000])
     if (!subscription && !isLoading) {
-      router.push("/subscription");
+      router.push("/subscription")
     }
-  }, [subscription]);
-  const primaryColor = getRGBColor(info?.color || "#333", "primary");
-  const plan = subscription?.prices?.products?.name;
+  }, [subscription])
+  const primaryColor = getRGBColor(info?.color || "#333", "primary")
+  const plan = subscription?.prices?.products?.name
   return (
     <>
       <Head>
@@ -101,10 +101,10 @@ export default function Account({ user, customer }) {
           <Box className="system laptop:pt-[18vh] pt-[14vh] section">
             <MuiContainer>
               {subscription && (
-                <Fade in={fade} unmountOnExit={true}>
+                <Fade in={fade} unmountOnExit>
                   <Typography
-                    component={"span"}
-                    variant={"body2"}
+                    component="span"
+                    variant="body2"
                     className="text-color text-lg font-bold text-center mb-8"
                   >
                     ご登録ありがとうございます。
@@ -125,8 +125,8 @@ export default function Account({ user, customer }) {
                       subscription?.status === "active" ||
                       subscription?.status === "trialing" ? (
                         <Typography
-                          component={"span"}
-                          variant={"body2"}
+                          component="span"
+                          variant="body2"
                           className="text-sm font-light mt-3"
                         >
                           {plan === "basic"
@@ -161,24 +161,22 @@ export default function Account({ user, customer }) {
                           <LoadingDots className="bg-black" />
                         </div>
                       ) : subscription?.status === "trialing" ? (
-                        <Typography component={"span"} variant={"body2"}>
+                        <Typography component="span" variant="body2">
                           無料体験　
                           <span className="text-xs">
                             {subscription?.canceled_at_period_end
-                              ? subscription?.trial_end
+                              ? `${subscription?.trial_end
                                   .split(/-|T/, 3)
                                   .slice(1, 3)
-                                  .join("/") + "自動更新予定"
-                              : "キャンセル済み  " +
-                                subscription?.trial_end
+                                  .join("/")}自動更新予定`
+                              : `キャンセル済み  ${subscription?.trial_end
                                   .split(/-|T/, 3)
                                   .slice(1, 3)
-                                  .join("/") +
-                                "に終了"}
+                                  .join("/")}に終了`}
                           </span>
                         </Typography>
                       ) : subscription ? (
-                        <Typography component={"span"} variant={"body2"}>
+                        <Typography component="span" variant="body2">
                           {subscriptionPrice}
                           <span className="text-xs">
                             円/
@@ -210,7 +208,7 @@ export default function Account({ user, customer }) {
         </Container>
       </section>
     </>
-  );
+  )
 }
 
 export const getServerSideProps = withPageAuth({
@@ -218,14 +216,14 @@ export const getServerSideProps = withPageAuth({
   async getServerSideProps(ctx) {
     // Access the user object
     try {
-      const { user } = await getUser(ctx);
+      const { user } = await getUser(ctx)
       const customer = await createOrRetrieveCustomer({
         uuid: user.id || "",
         email: user.email || "",
-      });
-      return { props: { customer } };
+      })
+      return { props: { customer } }
     } catch (error) {
-      if (error) return alert((error as Error).message);
+      if (error) return alert((error as Error).message)
     }
   },
-});
+})

@@ -1,10 +1,10 @@
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { Link } from "../Link";
+import Box from "@mui/material/Box"
+import Typography from "@mui/material/Typography"
+import Container from "@mui/material/Container"
+import { Link } from "next/link"
 // import Avatar from "../avatar";
 // import DateComponent from "../date";
-import CoverImage from "../cover-image";
+import CoverImage from "../cover-image"
 // import ContentfulImage from "../contentful-image";
 
 export default function HeroPost({
@@ -23,7 +23,7 @@ export default function HeroPost({
       width={1200}
       height={600}
     />
-  );
+  )
   return (
     <section className="mt-vw-32">
       <Container>
@@ -55,5 +55,5 @@ export default function HeroPost({
         </div>
       </div> */}
     </section>
-  );
+  )
 }

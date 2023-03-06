@@ -1,84 +1,84 @@
-import { useState, useEffect } from "react";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import InputAdornment from "@mui/material/InputAdornment";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import FormControl from "@mui/material/FormControl";
-import IconButton from "@mui/material/IconButton";
-import { useUser } from "../../utils/useUser";
-import SignIn from "./signin";
-import LoadingDots from "../ui/LoadingDots";
-import { updateUserName, supabase } from "../../utils/supabase-client";
-import Facebook from "../icons/Facebook";
-import Google from "../icons/Google";
-import Link from "../Link";
-import { User } from "../../types";
-import { getURL } from "../../utils/helpers";
+import Button from "@mui/material/Button"
+import TextField from "@mui/material/TextField"
+import OutlinedInput from "@mui/material/OutlinedInput"
+import InputLabel from "@mui/material/InputLabel"
+import InputAdornment from "@mui/material/InputAdornment"
+import Visibility from "@mui/icons-material/Visibility"
+import VisibilityOff from "@mui/icons-material/VisibilityOff"
+import FormControl from "@mui/material/FormControl"
+import IconButton from "@mui/material/IconButton"
+import { useState, useEffect } from "react"
+import { useUser } from "../../utils/useUser"
+import SignIn from "./signin"
+import LoadingDots from "../ui/LoadingDots"
+import { updateUserName, supabase } from "../../utils/supabase-client"
+import Facebook from "../icons/Facebook"
+import Google from "../icons/Google"
+import Link from "next/link"
+import { User } from "../../types"
+import { getURL } from "../../utils/helpers"
 
 export default function SignUp({
   handleNext,
   // info, updateInfo,
   activeStep,
 }) {
-  const { user, isLoading, info, setInfo } = useUser();
-  const [newUser, setNewUser] = useState<User | null>(null);
-  const [signin, setSignin] = useState(false);
-  const updateSignin = (e) => setSignin(e);
+  const { user, isLoading, info, setInfo } = useUser()
+  const [newUser, setNewUser] = useState<User | null>(null)
+  const [signin, setSignin] = useState(false)
+  const updateSignin = (e) => setSignin(e)
   const [message, setMessage] = useState<{ type?: string; content?: string }>({
     type: "",
     content: "",
-  });
-  const [password, setPassword] = useState("");
+  })
+  const [password, setPassword] = useState("")
 
-  const [email, setEmail] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    name === "email" ?? setEmail(value);
-    name === "password" ?? setPassword(value);
-    setInfo((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name } = event.target
+    const { value } = event.target
+    name === "email" ?? setEmail(value)
+    name === "password" ?? setPassword(value)
+    setInfo((prev) => ({ ...prev, [name]: value }))
+  }
   const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage({});
-    await setInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    e.preventDefault()
+    setLoading(true)
+    setMessage({})
+    await setInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }))
     const { error, user: createdUser } = await supabase.auth.signUp({
       email: e.target.elements.email.value,
       password: e.target.elements.password.value,
-    });
+    })
     if (error) {
-      setMessage({ type: "error", content: error.message });
+      setMessage({ type: "error", content: error.message })
     }
     if (createdUser) {
-      setNewUser(createdUser);
+      setNewUser(createdUser)
       setMessage({
         type: "note",
         content:
           "本登録用のメールを送信しました。メールのURLで登録を完了してください。",
-      });
+      })
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   const handleOAuthSignIn = async (provider: Provider) => {
-    setLoading(true);
+    setLoading(true)
     const { error } = await supabase.auth.signIn(
       { provider },
       {
         redirectTo: `${window.location.origin}/subscription`,
       }
-    );
+    )
     if (error) {
-      setMessage({ type: "error", content: error.message });
+      setMessage({ type: "error", content: error.message })
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
   return (
     <>
       {signin ? (
@@ -106,9 +106,10 @@ export default function SignUp({
                     : message.content.startsWith(
                         "For security purposes, you can only request this after"
                       )
-                    ? "セキュリティのため," +
-                      message.content.replace(/[^0-9]/g, "") +
-                      "秒お待ちになってから再度作成ボタンを押してください"
+                    ? `セキュリティのため,${message.content.replace(
+                        /[^0-9]/g,
+                        ""
+                      )}秒お待ちになってから再度作成ボタンを押してください`
                     : message.content}
                 </div>
               )}
@@ -172,12 +173,12 @@ export default function SignUp({
               <div
                 className="border-t border-zinc-600 flex-grow mr-3"
                 aria-hidden="true"
-              ></div>
+              />
               <div className="text-zinc-400">Or</div>
               <div
                 className="border-t border-zinc-600 flex-grow ml-3"
                 aria-hidden="true"
-              ></div>
+              />
             </div>
             <Button
               className="mt-4  py-2  bg-white"
@@ -207,5 +208,5 @@ export default function SignUp({
         </div>
       )}
     </>
-  );
+  )
 }

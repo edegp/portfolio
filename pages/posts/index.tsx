@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography"
 import Container from "../../components/container"
 import MoreStories from "../../components/post/more-stories"
 import Meta from "../../components/meta"
-import Link from "../../components/Link"
+import Link from "next/link"
 import { getAllPostsForHome } from "../../lib/api"
 
 export default function Blog({ preview, allPosts }) {
@@ -29,7 +29,7 @@ export default function Blog({ preview, allPosts }) {
                   Blog
                 </Typography>
               </Box>
-              <Link href={`/posts/${heroPost.slug}`}>
+              <Link href={`/posts/${heroPost.slug}`} legacyBehavior>
                 <Box
                   className="mb-8 md:mb-16 bg-cover w-full"
                   sx={{

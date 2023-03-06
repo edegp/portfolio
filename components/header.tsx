@@ -6,7 +6,6 @@ import Button from "@mui/material/Button"
 import Box from "@mui/material/Box"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
-import ListItemText from "@mui/material/ListItemText"
 import Typography from "@mui/material/Typography"
 import Drawer from "@mui/material/Drawer"
 import Grid from "@mui/material/Grid"
@@ -14,11 +13,10 @@ import Slide from "@mui/material/Slide"
 import CloseIcon from "@mui/icons-material/Close"
 import DehazeIcon from "@mui/icons-material/Dehaze"
 import Image from "next/image"
-import Link from "./Link"
-import { useUser } from "../utils/useUser"
+import Link from "next/link"
 import logo from "../public/image/logo.jpg"
 
-export default function Header({ Location }) {
+export default function Header() {
   const router = useRouter()
   const [navOpen, setNavOpen] = useState(false)
   const headerLogo = useRef<HTMLAnchorElement>(null)
@@ -57,17 +55,27 @@ export default function Header({ Location }) {
   }, [navOpen])
 
   useEffect(() => {
-    window.addEventListener("resize", () => {
-      setNavOpen(false)
-      const container: HTMLElement = document.querySelector("#container")
-      container.style.opacity = "1"
-    })
-  })
+    if (window !== undefined) {
+      window.addEventListener("resize", () => {
+        setNavOpen(false)
+        const container: HTMLElement = document.querySelector("#container")
+        container.style.opacity = "1"
+      })
+    }
+    return () => {
+      window.removeEventListener("resize", () => {
+        setNavOpen(false)
+        const container: HTMLElement = document.querySelector("#container")
+        container.style.opacity = "1"
+      })
+    }
+  }, [])
+
   const list = (nav) => (
     <Box className="w-screen tablet:w-[70vw] h-full items-center flex z-32">
       <Button
         onClick={toggleDrawer}
-        className="items-center  mr-6  fixed top-[calc(4vw-20px)] right-h-w p-8 z-40 mix-blend-difference text-white rounded-full"
+        className="items-center  mr-6  fixed top-[calc(4vw-20px)] right-h-w p-8 z-40 mix-blend-difference  rounded-full"
       >
         <CloseIcon className="text-2xl" />
       </Button>
@@ -78,18 +86,30 @@ export default function Header({ Location }) {
           </Typography>
           <List>
             <ListItem className="pl-0 ">
-              <Link href="https://qiita.com/edegp" target="_blank">
-                <ListItemText className="!text-sm" primary="Qitta" />
+              <Link
+                href="https://qiita.com/edegp"
+                target="_blank"
+                className="!text-sm"
+              >
+                Qitta
               </Link>
             </ListItem>
             <ListItem className="pl-0 ">
-              <Link href="https://www.instagram.com/anfulled4/" target="_blank">
-                <ListItemText className="!text-sm" primary="Instagram" />
+              <Link
+                href="https://www.instagram.com/anfulled4/"
+                target="_blank"
+                className="!text-sm"
+              >
+                Instagram
               </Link>
             </ListItem>
             <ListItem className="pl-0 ">
-              <Link href="https://note.com/edegp" target="_blank">
-                <ListItemText className="!text-sm" primary="Note" />
+              <Link
+                href="https://note.com/edegp"
+                target="_blank"
+                className="!text-sm"
+              >
+                Note
               </Link>
             </ListItem>
           </List>
@@ -116,21 +136,21 @@ export default function Header({ Location }) {
                     delay={200}
                     onClick={handleSetActive}
                     to="about"
-                    className="text-white capitalize text-md mr-5 hover:cursor-pointer"
+                    className=" capitalize mr-5 hover:cursor-pointer"
                   >
                     <h2 className="tracking-normal !font-extrabold !text-2xl leading-tight pl-0 text-black no-underline">
                       About
                     </h2>
                   </LinkScroll>
                 ) : (
-                  <Link
-                    href="/#about"
-                    className="text-white capitalize text-md mr-5 hover:cursor-pointer"
-                  >
-                    <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black no-underline">
+                  <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black no-underline">
+                    <Link
+                      href="/#about"
+                      className=" capitalize mr-5 hover:cursor-pointer"
+                    >
                       About
-                    </h2>
-                  </Link>
+                    </Link>
+                  </h2>
                 )}
               </ListItem>
               <ListItem className="pl-0">
@@ -143,21 +163,21 @@ export default function Header({ Location }) {
                     delay={200}
                     onClick={handleSetActive}
                     to="whatido"
-                    className="text-white capitalize text-md mr-5 hover:cursor-pointer"
+                    className=" capitalize mr-5 hover:cursor-pointer"
                   >
                     <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black no-underline">
                       My History
                     </h2>
                   </LinkScroll>
                 ) : (
-                  <Link
-                    href="/#whatido"
-                    className="text-white capitalize text-md mr-5 hover:cursor-pointer"
-                  >
-                    <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black no-underline">
+                  <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black no-underline">
+                    <Link
+                      href="/#whatido"
+                      className=" capitalize mr-5 hover:cursor-pointer"
+                    >
                       My History
-                    </h2>
-                  </Link>
+                    </Link>
+                  </h2>
                 )}
               </ListItem>
               <ListItem className="pl-0">
@@ -170,14 +190,14 @@ export default function Header({ Location }) {
                     Blog
                   </h2>
                 ) : (
-                  <Link
-                    href="/posts"
-                    className="text-white capitalize text-md mr-5 hover:cursor-pointer"
-                  >
-                    <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black no-underline">
+                  <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black no-underline">
+                    <Link
+                      href="/posts"
+                      className="capitalize mr-5 hover:cursor-pointer"
+                    >
                       Blog
-                    </h2>
-                  </Link>
+                    </Link>
+                  </h2>
                 )}
               </ListItem>
               <ListItem className="pl-0">
@@ -190,22 +210,22 @@ export default function Header({ Location }) {
                     delay={200}
                     onClick={handleSetActive}
                     to="contact"
-                    className="text-white capitalize text-md mr-5 hover:cursor-pointer"
+                    className=" capitalize mr-5 hover:cursor-pointer"
                   >
                     <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black underline">
                       Contact
                     </h2>
                   </LinkScroll>
                 ) : (
-                  <Link
-                    target=""
-                    href="/#contact"
-                    className="text-white capitalize text-md mr-5 hover:cursor-pointer"
-                  >
-                    <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black underline">
+                  <h2 className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black underline">
+                    <Link
+                      target=""
+                      href="/#contact"
+                      className=" capitalize mr-5 hover:cursor-pointer"
+                    >
                       Contact
-                    </h2>
-                  </Link>
+                    </Link>
+                  </h2>
                 )}
               </ListItem>
             </List>
@@ -226,12 +246,12 @@ export default function Header({ Location }) {
           href="/"
           target=""
           ref={headerLogo}
-          onClick={() => {
+          onClick={() =>
             Scroll.animateScroll.scrollToTop({
               duration: 500,
               smooth: true,
             })
-          }}
+          }
           onMouseMove={onMouseMove}
           onMouseLeave={onMouseLeave}
           className="hover:brightness-75 pl-10"
@@ -254,14 +274,14 @@ export default function Header({ Location }) {
                   delay={200}
                   onClick={handleSetActive}
                   to="about"
-                  className="text-white capitalize mr-10 hover:cursor-pointer"
+                  className=" capitalize text-2xl mr-10 hover:cursor-pointer"
                 >
                   About
                 </LinkScroll>
               ) : (
                 <Link
                   href="/#about"
-                  className="text-white capitalize mr-10 hover:cursor-pointer"
+                  className=" capitalize mr-10 hover:cursor-pointer"
                 >
                   About
                 </Link>
@@ -277,14 +297,14 @@ export default function Header({ Location }) {
                   delay={200}
                   onClick={handleSetActive}
                   to="whatido"
-                  className="text-white capitalize mr-10 hover:cursor-pointer"
+                  className=" capitalize mr-10 hover:cursor-pointer"
                 >
                   My History
                 </LinkScroll>
               ) : (
                 <Link
                   href="/#whatido"
-                  className="text-white capitalize mr-10 hover:cursor-pointer"
+                  className=" capitalize mr-10 hover:cursor-pointer"
                 >
                   My History
                 </Link>
@@ -292,7 +312,7 @@ export default function Header({ Location }) {
             </li>
             <li>
               <Link
-                className=" capitalize mr-10 hover:cursor-pointer text-white"
+                className=" capitalize mr-10 hover:cursor-pointer "
                 href="/posts"
                 target=""
               >
@@ -300,7 +320,7 @@ export default function Header({ Location }) {
               </Link>
             </li>
             <li>
-              {Location === "Home" ? (
+              {router.pathname === "/" ? (
                 <LinkScroll
                   containerId="container"
                   smooth="linear"
@@ -309,37 +329,35 @@ export default function Header({ Location }) {
                   delay={200}
                   onClick={handleSetActive}
                   to="contact"
-                  className="text-white capitalize mr-10 hover:cursor-pointer"
+                  className=" capitalize mr-10 hover:cursor-pointer"
                 >
                   Contact
                 </LinkScroll>
               ) : (
                 <Link
                   href="/#contact"
-                  className="text-white capitalize mr-10 hover:cursor-pointer"
+                  className=" capitalize mr-10 hover:cursor-pointer"
                 >
                   Contact
                 </Link>
               )}
             </li>
           </ul>
-          <>
-            <Button
-              className="laptop:hidden block items-center mr-6  fixed top-[calc(4vw-5px)] right-h-w p-8 z-20 mix-blend-difference text-white rounded-full"
-              onClick={toggleDrawer}
-            >
-              <DehazeIcon />
-            </Button>
-            <Drawer
-              anchor="right"
-              open={navOpen}
-              onClose={toggleDrawer}
-              transitionDuration={500}
-              className="z-30"
-            >
-              {list(navOpen)}
-            </Drawer>
-          </>
+          <Button
+            className="laptop:hidden block items-center mr-6  fixed top-[calc(4vw-5px)] right-h-w p-8 z-20 mix-blend-difference  rounded-full"
+            onClick={toggleDrawer}
+          >
+            <DehazeIcon />
+          </Button>
+          <Drawer
+            anchor="right"
+            open={navOpen}
+            onClose={toggleDrawer}
+            transitionDuration={500}
+            className="z-30"
+          >
+            {list(navOpen)}
+          </Drawer>
         </>
       ) : (
         // eslint-disable-next-line react/jsx-no-useless-fragment

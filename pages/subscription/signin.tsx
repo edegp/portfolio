@@ -1,10 +1,8 @@
 import Link from "next/link"
 import Head from "next/head"
 import { useRouter } from "next/router"
-import { useEffect, useState, FormEvent } from "react"
 import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs"
 import { Provider } from "@supabase/supabase-js"
-import TextField from "@mui/material/TextField"
 import Button from "@mui/material/Button"
 import Box from "@mui/material/Box"
 import OutlinedInput from "@mui/material/OutlinedInput"
@@ -14,17 +12,15 @@ import Visibility from "@mui/icons-material/Visibility"
 import VisibilityOff from "@mui/icons-material/VisibilityOff"
 import FormControl from "@mui/material/FormControl"
 import IconButton from "@mui/material/IconButton"
-import { getURL, postData } from "../../utils/helpers"
+import { useState, FormEvent } from "react"
 import { useUser } from "../../utils/useUser"
 import Facebook from "../../components/icons/Facebook"
 import Google from "../../components/icons/Google"
 import LoadingDots from "../../components/ui/LoadingDots"
-import Logo from "../../components/icons/Logo"
 import Container from "../../components/container"
 
 export default function SignIn() {
   const router = useRouter()
-  const [priceIdLoading, setPriceIdLoading] = useState<string>()
   const { user, isLoading, subscription, userDetails } = useUser()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -169,9 +165,11 @@ export default function SignIn() {
                 </form>
                 <span className="pt-1 text-center text-sm">
                   <span className="text-black text-xs">初めての方はこちら</span>
-                  <Link href="/subscription">
-                    <Button>サインアップ</Button>
-                  </Link>
+
+                  <Button>
+                    <Link href="/subscription">サインアップ</Link>
+                  </Button>
+
                   <Button onClick={handlePassword}>
                     パスワードをお忘れの方はこちら
                   </Button>
@@ -186,12 +184,12 @@ export default function SignIn() {
                 <div
                   className="border-t border-zinc-600 flex-grow mr-3"
                   aria-hidden="true"
-                ></div>
+                />
                 <div className="text-zinc-400">Or</div>
                 <div
                   className="border-t border-zinc-600 flex-grow ml-3"
                   aria-hidden="true"
-                ></div>
+                />
               </div>
               <Button
                 className="mt-4 py-2  bg-white"

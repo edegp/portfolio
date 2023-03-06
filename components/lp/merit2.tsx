@@ -1,9 +1,9 @@
-import Image from "next/image";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Link from "../Link";
-import reader from "../../public/image/reader.webp";
+import Image from "next/image"
+import Container from "@mui/material/Container"
+import Box from "@mui/material/Box"
+import Typography from "@mui/material/Typography"
+import Link from "next/link"
+import reader from "../../public/image/reader.webp"
 
 export default function Merit2() {
   return (
@@ -41,5 +41,5 @@ export default function Merit2() {
         </Container>
       </Box>
     </Box>
-  );
+  )
 }

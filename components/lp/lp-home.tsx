@@ -1,10 +1,10 @@
-import Image from "next/image";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Link from "../Link";
-import HP from "../../public/image/HP.png";
-import IMG from "../../public/image/img.png";
+import Image from "next/image"
+import Box from "@mui/material/Box"
+import Typography from "@mui/material/Typography"
+import Button from "@mui/material/Button"
+import Link from "next/link"
+import HP from "../../public/image/HP.png"
+import IMG from "../../public/image/img.png"
 
 export default function LPHome() {
   return (
@@ -68,5 +68,5 @@ export default function LPHome() {
         </Box>
       </Box>
     </>
-  );
+  )
 }
