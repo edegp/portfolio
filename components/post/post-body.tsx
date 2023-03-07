@@ -2,13 +2,11 @@
 import Box from "@mui/material/Box"
 import List from "@mui/material/List"
 import Typography from "@mui/material/Typography"
-import dynamic from "next/dynamic"
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 import { BLOCKS, INLINES, NodeData } from "@contentful/rich-text-types"
 import { ReactNode } from "react"
 import Link from "next/link"
-
-const Bookmark = dynamic(() => import("../ui/Bookmark"), { ssr: false })
+import Bookmark from "../ui/Bookmark"
 
 const options = {
   renderNode: {

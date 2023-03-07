@@ -1,5 +1,3 @@
-import Link from "next/link"
-import { useRouter } from "next/router"
 import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs"
 import { Provider } from "@supabase/supabase-js"
 import Button from "@mui/material/Button"
@@ -12,19 +10,14 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff"
 import FormControl from "@mui/material/FormControl"
 import IconButton from "@mui/material/IconButton"
 import { useUser } from "../../utils/useUser"
-import { useEffect, useState, FormEvent } from "react"
+import { useState, FormEvent } from "react"
 import Google from "../icons/Google"
 import Facebook from "../icons/Facebook"
-import { getURL, postData } from "../../utils/helpers"
 import LoadingDots from "../ui/LoadingDots"
-import Logo from "../icons/Logo"
 
 export default function SignIn({ updateSignin }) {
-  const router = useRouter()
-  const [priceIdLoading, setPriceIdLoading] = useState<string>()
   const [loading, setLoading] = useState(false)
   const { user, isLoading, subscription, info, setInfo } = useUser()
-  const [loginUser, setloginUser] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [message, setMessage] = useState<{ type?: string; content?: string }>({
     type: "",
@@ -33,21 +26,20 @@ export default function SignIn({ updateSignin }) {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name } = event.target
     const { value } = event.target
-    name === "email" ?? setEmail(value)
-    name === "password" ?? setPassword(value)
     setInfo((prev) => ({ ...prev, [name]: value }))
   }
   const handleSignin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
     setMessage({})
+    const formElements = (e.target as HTMLFormElement).elements
     await setInfo((prev) => ({
       ...prev,
-      email: e.target.elements.email.value,
+      email: (formElements.namedItem("email") as HTMLInputElement).value,
     }))
     await setInfo((prev) => ({
       ...prev,
-      password: e.target.elements.password.value,
+      password: (formElements.namedItem("password") as HTMLInputElement).value,
     }))
     const { error, user: loginUser } = await supabaseClient.auth.signIn({
       email: info.email,
@@ -86,7 +78,7 @@ export default function SignIn({ updateSignin }) {
 
   const handlePassword = async () => {
     const { data, error } = await supabaseClient.auth.api.resetPasswordForEmail(
-      email
+      info.email
     )
     if (data) {
       setMessage({

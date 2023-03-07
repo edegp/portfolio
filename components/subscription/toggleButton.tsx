@@ -1,7 +1,7 @@
 import { useUser } from "@supabase/supabase-auth-helpers/react"
 import Link from "next/link"
 
-export default function ToggleButton({ className }: { className: string }) {
+export default function ToggleButton({ className }: { className?: string }) {
   const { user } = useUser()
   return (
     <div

@@ -29,7 +29,7 @@ export default function Merit2() {
             </Link>
           </Typography>
           <Box>
-            <Image src={reader} />
+            <Image src={reader} fill alt="Square"/>
           </Box>
           <Typography className="text-xs ml-auto mt-3">
             ※決済時に決済手数料は

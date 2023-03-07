@@ -15,7 +15,7 @@ import "../styles/index.scss"
 export const initialTheme = createTheme({
   palette: {
     primary: {
-      light: "#eedf39",
+      light: "white",
       main: "#04ac4d",
       dark: "#027835",
       contrastText: "#fff",
@@ -64,13 +64,25 @@ export const initialTheme = createTheme({
           "&:hover": {
             backgroundColor: "rgba(230, 230, 230, 0.08)",
           },
+          "&:focus": {
+            backgroundColor: "rgba(230, 230, 230, 0.08)",
+          },
+          "&:active": {
+            backgroundColor: "rgba(230, 230, 230, 0.08)",
+          },
+          "&:focus-within": {
+            backgroundColor: "rgba(230, 230, 230, 0.08)",
+          },
+          "&:focus-visible": {
+            backgroundColor: "rgba(230, 230, 230, 0.08)",
+          },
         },
       },
     },
   },
 })
 
-export default function MyApp({ Component, pageProps }: AppProps) {
+export default function MyApp({ Component, pageProps }) {
   usePageView() // 追加
   const cursor = useRef<HTMLDivElement>()
 

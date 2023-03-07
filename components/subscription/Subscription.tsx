@@ -7,6 +7,8 @@ import {
   CardNumberElement,
   CardExpiryElement,
   CardCvcElement,
+  CardNumberElementComponent,
+  PaymentElementProps,
 } from "@stripe/react-stripe-js"
 import { withPageAuth, getUser } from "@supabase/supabase-auth-helpers/nextjs"
 import Button from "@mui/material/Button"
@@ -23,13 +25,22 @@ import DialogActions from "@mui/material/DialogActions"
 import DialogContent from "@mui/material/DialogContent"
 import DialogContentText from "@mui/material/DialogContentText"
 import DialogTitle from "@mui/material/DialogTitle"
-import React, { useState, useEffect } from "react"
+import React, {
+  useState,
+  useEffect,
+  ChangeEvent,
+  useRef,
+  FunctionComponent,
+  ElementType,
+} from "react"
 import { postData } from "../../utils/helpers"
 import { useUser } from "../../utils/useUser"
 import Credit from "../../public/image/credit.jpg"
 import LoadingDots from "../ui/LoadingDots"
 import Link from "next/link"
 import Terms from "../terms"
+import { StripeElementChangeEvent } from "@stripe/stripe-js"
+import { InputBaseComponentProps } from "@mui/material"
 
 const CARD_NUMBER_OPTIONS = {
   placeholder: "",
@@ -80,21 +91,23 @@ const CARD_OPTIONS = {
   },
 }
 
-const StripeInput = React.forwardRef((props, inputRef) => {
-  const { component: Component, ...other } = props
-  const elementRef = React.useRef()
+const StripeInput: ElementType<InputBaseComponentProps> = React.forwardRef(
+  (props, inputRef) => {
+    const { component: Component, ...other } = props
+    const elementRef = useRef(null)
 
-  React.useImperativeHandle(inputRef, () => ({
-    focus: () => elementRef.current.focus,
-  }))
+    React.useImperativeHandle(inputRef, () => ({
+      focus: () => elementRef.current?.focus,
+    }))
 
-  return (
-    <Component
-      onReady={(element) => (elementRef.current = element)}
-      {...other}
-    />
-  )
-})
+    return (
+      <Component
+        onReady={(element) => (elementRef.current = element)}
+        {...other}
+      />
+    )
+  }
+)
 
 export default function SubscriptionForm({
   products,
@@ -233,7 +246,12 @@ export default function SubscriptionForm({
       )
     setLoading(false)
   }
-  const handleElementChange = ({ error, elementType }) => {
+  const handleElementChange = ({
+    error,
+    elementType,
+  }: {
+    [K in keyof StripeElementChangeEvent]?: StripeElementChangeEvent[K]
+  } & ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (error) {
       elementType === "cardNumber"
         ? setErrorMessage({ ...errorMessage, number: error.message })
@@ -411,7 +429,7 @@ export default function SubscriptionForm({
               className="col-span-2"
               fullWidth
               required
-              ame="cardExpiration"
+              name="cardExpiration"
               autoComplete="cc-exp"
               label="有効期限"
               InputLabelProps={{
@@ -530,9 +548,9 @@ export default function SubscriptionForm({
                 type="submit"
                 variant="contained"
                 disabled={
-                  errorMessage.number ||
-                  errorMessage.cvc ||
-                  errorMessage.expriy ||
+                  !!errorMessage.number ||
+                  !!errorMessage.cvc ||
+                  !!errorMessage.expiry ||
                   isLoading
                 }
                 className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70 rounded-md text-sm whitespace-nowrap px-10 self-center col-start-2 col-span-2 my-8"
@@ -552,7 +570,12 @@ export default function SubscriptionForm({
               <Button
                 type="submit"
                 variant="contained"
-                disabled={s}
+                disabled={
+                  !!errorMessage.number ||
+                  !!errorMessage.cvc ||
+                  !!errorMessage.expiry ||
+                  isLoading
+                }
                 className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70 rounded-md text-sm whitespace-nowrap px-10 self-center col-start-2 col-span-2 my-8"
               >
                 {loading ? <LoadingDots /> : "追加する"}

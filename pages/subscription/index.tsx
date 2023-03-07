@@ -192,49 +192,10 @@ export default function Register({ products }) {
       <></>
     )
   )
-  const getStepContent = (step) =>
-    step === 0 ? (
-      user && !subscription && !loading && !isLoading ? (
-        handleUser()
-      ) : isLoading && loading ? (
-        <div className="h-12 mb-6">
-          <LoadingDots />
-        </div>
-      ) : (
-        <SignUp activeStep={activeStep} handleNext={handleNext} />
-      )
-    ) : step === 1 ? (
-      <>
-        {jsx[1]}
-        <Box className="my-12">
-          <Typography
-            className="text-xs font-bold text-color mb-8"
-            gutterBottom
-          >
-            あなたが希望するサイトのメインカラーを教えてください。
-          </Typography>
-          <SliderPicker color={info.color} onChange={handleColor} />
-        </Box>
-      </>
-    ) : step === 2 ? (
-      jsx[2]
-    ) : step === 3 ? (
-      <Plan
-        products={products}
-        className="my-0 tablet:mb-16"
-        updatePlan={updatePlan}
-      />
-    ) : step === 4 ? (
-      <SubscriptionForm
-        plan={plan}
-        products={products}
-        info={info}
-        updateIntent={updateIntent}
-        handleBack={handleBack}
-      />
-    ) : (
-      console.log("Unknown step")
-    )
+  useEffect(() => {
+    if (activeStep === 0 && user && !subscription && !loading && !isLoading)
+      handleUser()
+  })
   let container = ""
   if (activeStep === 1 || activeStep === 2 || activeStep === 4) {
     container = "tablet:my-30 sp:my-24 my-0 max-w-lg p-3 m-auto w-90"
@@ -265,7 +226,46 @@ export default function Register({ products }) {
             </Stepper>
             <MuiContainer>
               <Box className={container}>
-                {getStepContent(activeStep)}
+                {activeStep === 0 ? (
+                  isLoading && loading ? (
+                    <div className="h-12 mb-6">
+                      <LoadingDots />
+                    </div>
+                  ) : (
+                    <SignUp activeStep={activeStep} handleNext={handleNext} />
+                  )
+                ) : activeStep === 1 ? (
+                  <>
+                    {jsx[1]}
+                    <Box className="my-12">
+                      <Typography
+                        className="text-xs font-bold text-color mb-8"
+                        gutterBottom
+                      >
+                        あなたが希望するサイトのメインカラーを教えてください。
+                      </Typography>
+                      <SliderPicker color={info.color} onChange={handleColor} />
+                    </Box>
+                  </>
+                ) : activeStep === 2 ? (
+                  jsx[2]
+                ) : activeStep === 3 ? (
+                  <Plan
+                    products={products}
+                    className="my-0 tablet:mb-16"
+                    updatePlan={updatePlan}
+                  />
+                ) : (
+                  activeStep === 4 && (
+                    <SubscriptionForm
+                      plan={plan}
+                      products={products}
+                      info={info}
+                      updateIntent={updateIntent}
+                      handleBack={handleBack}
+                    />
+                  )
+                )}
                 {activeStep !== 0 && activeStep !== 4 && (
                   <>
                     <Button onClick={handleBack}>戻る</Button>

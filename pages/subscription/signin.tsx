@@ -31,8 +31,6 @@ export default function SignIn() {
   })
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setInfo((prev) => ({ ...prev, [event.target?.name]: event.target?.value }))
   const handleSignin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)

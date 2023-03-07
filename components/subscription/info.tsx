@@ -11,14 +11,20 @@ import Typography from "@mui/material/Typography"
 import { useState } from "react"
 import { upsertInfo } from "../../utils/supabase-admin"
 import { postData } from "../../utils/helpers"
+import { UserDetails } from "../../types"
 
 export default function Info({
-  user,
   info,
   userDetails,
   customer,
   updateInfo,
   resetInfo,
+}: {
+  info: UserDetails
+  userDetails?: UserDetails
+  customer: string
+  updateInfo: (key: string, value: string) => void
+  resetInfo: (userDetails: UserDetails) => void
 }) {
   const [update, setUpdate] = useState(null)
   const listclass = "text-color text-sm font-bold shrink-0 grow-0 basis-1/3"
@@ -44,9 +50,6 @@ export default function Info({
       : key === "other"
       ? "その他ご要望 : "
       : null
-  const handleChange = (e) => {
-    updateInfo(e.target.name, e.target.value)
-  }
   const handleColor = (color, event) => {
     updateInfo("color", color.hex)
   }
@@ -57,7 +60,7 @@ export default function Info({
       data: { customer, info },
     }).then(() => {
       setUpdate(true)
-      setTimeout(() => setUpdate(false), [10000])
+      setTimeout(() => setUpdate(false), 10000)
     })
   }
   return (
@@ -91,7 +94,7 @@ export default function Info({
         <Box className="flex my-8">
           <Button
             className="text-color hover:opacity-70 w-vw-70 laptop:justify-self-end rounded-md text-xs whitespace-nowrap px-10 justify-self-center"
-            onClick={() => updateInfo(userDetails)}
+            onClick={() => resetInfo(userDetails)}
           >
             はじめの情報に戻す
           </Button>

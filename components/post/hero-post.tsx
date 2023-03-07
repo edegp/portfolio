@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
 import Container from "@mui/material/Container"
-import { Link } from "next/link"
+import Link from "next/link"
 // import Avatar from "../avatar";
 // import DateComponent from "../date";
 import CoverImage from "../cover-image"

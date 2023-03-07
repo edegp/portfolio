@@ -8,9 +8,9 @@ import Typography from "@mui/material/Typography"
 import * as rdd from "react-device-detect"
 import { SAFARI_SHARE, MENU_ICON, STAR_ICON } from "./images"
 
-type Props = {
-  className: string
-  linkClassName: string
+export type BookMarkProps = {
+  className?: string
+  linkClassName?: string
   title: string
   href: string
   innerText: string
@@ -24,10 +24,10 @@ export default function Bookmark({
   href = "#",
   innerText = "ブックマークする",
   onAddBookmark,
-}: Props) {
+}: BookMarkProps) {
   const handleAddBookmark = () => onAddBookmark()
 
-  const mobile = () => {
+  const Mobile = () =>
     rdd.isSafari && rdd.isIOS ? (
       <Box>
         <Box>
@@ -55,8 +55,8 @@ export default function Bookmark({
     ) : (
       <Typography>後でブックマークするために覚えておいてください</Typography>
     )
-  }
-  const tablet = () => {
+
+  const Tablet = () =>
     rdd.isChrome || rdd.isFirefox ? (
       <>
         <Image
@@ -70,14 +70,13 @@ export default function Bookmark({
     ) : (
       <Typography>後でブックマークするために覚えておいてください</Typography>
     )
-  }
 
   return (
     <Box className={className}>
       {rdd.isMobile ? (
-        mobile
+        <Mobile />
       ) : rdd.isTablet ? (
-        tablet
+        <Tablet />
       ) : rdd.isFirefox ? (
         <Button>
           <Link

@@ -51,7 +51,7 @@ export default function Trouble(checked) {
                 <span className={`${blow} ${blowBeforeCss[index]}`} />
                 <Paper
                   className="tablet:rounded-[30px] rounded-2xl"
-                  elevation="4"
+                  elevation={4}
                 >
                   <Typography
                     className={`p-vw-8 text-sm text-center whitespace-nowrap ${

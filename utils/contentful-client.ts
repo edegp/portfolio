@@ -1,15 +1,15 @@
-import * as contentful from "contentful-management";
+import * as contentful from "contentful-management"
 
 export const contentfulClient = contentful.createClient({
   // This is the access token for this space. Normally you get the token in the Contentful web app
   accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
-});
+})
 
 export const contentfulConnect = contentfulClient
   .getSpace(process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID)
-  .then((space) => space.getEnvironment("master"));
+  .then((space) => space.getEnvironment("master"))
 
-export const createAssets = (environment) =>
+export const createAssets = (environment, title, description, url) =>
   environment
     .createAsset({
       fields: {
@@ -17,7 +17,7 @@ export const createAssets = (environment) =>
           "ja-JP": title,
         },
         description: {
-          "ja-JP": discription,
+          "ja-JP": description,
         },
         file: {
           "ja-JP": {
@@ -30,12 +30,12 @@ export const createAssets = (environment) =>
     })
     .then((asset) => asset.processForAllLocales())
     .then((asset) => {
-      asset.publish();
-      return asset;
-    });
-export const getTags = (environment) =>
+      asset.publish()
+      return asset
+    })
+export const getTags = (environment, caption) =>
   environment.getTags().then((tags) => {
-    let newTags;
+    let newTags
     if (tags.items.length !== 0) {
       newTags = caption
         .substr(caption.indexOf("#", 0) + 1)
@@ -48,11 +48,11 @@ export const getTags = (environment) =>
               linkType: "Tag",
               id: tag,
             },
-          };
-          return sys;
-        });
+          }
+          return sys
+        })
     }
-    return newTags | tags.items;
-  });
+    return newTags | tags.items
+  })
 export const getAuthor = (environment) =>
-  environment.getEntry("6754QhfY8WKPNa5Y479a0r");
+  environment.getEntry("6754QhfY8WKPNa5Y479a0r")

@@ -1,9 +1,7 @@
 import { useRouter } from "next/router"
 import Head from "next/head"
-import { withPageAuth, getUser } from "@supabase/supabase-auth-helpers/nextjs"
+import { createServerSupabaseClient, User } from "@supabase/auth-helpers-nextjs"
 import MuiContainer from "@mui/material/Container"
-import Tabs from "@mui/material/Tabs"
-import Tab from "@mui/material/Tab"
 import Typography from "@mui/material/Typography"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
@@ -11,7 +9,6 @@ import Fade from "@mui/material/Fade"
 import { useState, ReactNode, useEffect } from "react"
 import { useUser } from "../../utils/useUser"
 import { postData } from "../../utils/helpers"
-import { supabase } from "../../utils/supabase-client"
 import { createOrRetrieveCustomer } from "../../utils/supabase-admin"
 import Container from "../../components/container"
 import Link from "next/link"
@@ -21,10 +18,11 @@ import ContactForm from "../../components/contactForm"
 import Info from "../../components/subscription/info"
 import { getRGBColor } from "../../utils/color"
 import ToggleButton from "../../components/subscription/toggleButton"
+import { GetServerSidePropsContext } from "next"
 
 interface Props {
   title: string
-  description?: string
+  description?: ReactNode
   footer?: ReactNode
   children: ReactNode
 }
@@ -52,7 +50,6 @@ export default function Account({ user, customer }) {
   const { isLoading, subscription, userDetails } = useUser()
   const [info, setInfo] = useState(userDetails)
   const [fade, setFade] = useState(Boolean(subscription))
-  const updateLoading = (e) => setLoading(e)
   const updateInfo = (key, value) =>
     setInfo((prev) => ({ ...prev, [key]: value }))
   const resetInfo = (userDetails) => setInfo(userDetails)
@@ -82,7 +79,7 @@ export default function Account({ user, customer }) {
     setFade(true)
     setTimeout(() => {
       setFade(false)
-    }, [5000])
+    }, 5000)
     if (!subscription && !isLoading) {
       router.push("/subscription")
     }
@@ -138,7 +135,7 @@ export default function Account({ user, customer }) {
                             : "特別"}
                         </Typography>
                       ) : (
-                        ""
+                        <></>
                       )
                     }
                     footer={
@@ -146,7 +143,6 @@ export default function Account({ user, customer }) {
                         {/* <Link href="/subscription/customer-portal"> */}
                         <Button
                           className="bg-black text-white"
-                          variant="slim"
                           onClick={redirectToCustomerPortal}
                         >
                           サブスクリプションの管理へ
@@ -164,7 +160,7 @@ export default function Account({ user, customer }) {
                         <Typography component="span" variant="body2">
                           無料体験　
                           <span className="text-xs">
-                            {subscription?.canceled_at_period_end
+                            {subscription?.cancel_at_period_end
                               ? `${subscription?.trial_end
                                   .split(/-|T/, 3)
                                   .slice(1, 3)
@@ -195,7 +191,6 @@ export default function Account({ user, customer }) {
                   </Card>
                 </div>
                 <Info
-                  user={user}
                   updateInfo={updateInfo}
                   resetInfo={resetInfo}
                   info={info}
@@ -211,19 +206,28 @@ export default function Account({ user, customer }) {
   )
 }
 
-export const getServerSideProps = withPageAuth({
-  redirectTo: "/subscription/signin",
-  async getServerSideProps(ctx) {
-    // Access the user object
-    try {
-      const { user } = await getUser(ctx)
-      const customer = await createOrRetrieveCustomer({
-        uuid: user.id || "",
-        email: user.email || "",
-      })
-      return { props: { customer } }
-    } catch (error) {
-      if (error) return alert((error as Error).message)
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  // Create authenticated Supabase Client
+  const supabase = createServerSupabaseClient(ctx)
+  // Check if we have a session
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
+  if (!session)
+    return {
+      redirect: {
+        destination: "/subscription/signin",
+        permanent: false,
+      },
     }
-  },
-})
+  try {
+    const customer = await createOrRetrieveCustomer({
+      uuid: session.user.id || "",
+      email: session.user.email || "",
+    })
+    return { props: { customer } }
+  } catch (error) {
+    if (error) return alert((error as Error).message)
+  }
+}

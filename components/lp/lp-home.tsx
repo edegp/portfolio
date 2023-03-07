@@ -15,7 +15,7 @@ export default function LPHome() {
           className="text-lg relative self-center leading-snug font-bold text-shadow-md"
         >
           <Box className=" absolute top-[-60px] w-vw-56 min-w-[100px] max-w-[220px] laptop:right-[calc(8vw-120px)] sp:right-[calc(15vw-60px)] right-[calc(5vw-20px)]">
-            <Image src={HP} />
+            <Image src={HP} alt="Homepage image" />
           </Box>
           新規会員<span className="text-2xl">限定！</span>
           <br />
@@ -59,7 +59,7 @@ export default function LPHome() {
         </Button>
         <Box className="row-span-2 w-vw-100 mr-[-10vw] grid">
           <Box>
-            <Image src={IMG} width={1600} height={900} />
+            <Image src={IMG} width={1600} height={900} alt="image" />
           </Box>
           <Typography className="text-[12px] self-end font-normal mr-vw-28 inline-block justify-self-end">
             ※出典：東京商工会議所 がんばる飲食店応援サイト！

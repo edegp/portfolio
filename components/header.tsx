@@ -75,9 +75,9 @@ export default function Header() {
     <Box className="w-screen tablet:w-[70vw] h-full items-center flex z-32">
       <Button
         onClick={toggleDrawer}
-        className="items-center  mr-6  fixed top-[calc(4vw-20px)] right-h-w p-8 z-40 mix-blend-difference  rounded-full"
+        className="items-center  mr-6  fixed top-[calc(4vw-20px)] right-h-w p-8 z-40 mix-blend-difference rounded-full text-white border-white"
       >
-        <CloseIcon className="text-2xl" />
+        <CloseIcon className="text-2xl text-white" />
       </Button>
       <Grid container className="pl-vw-32">
         <Grid item xs={4}>
@@ -344,7 +344,7 @@ export default function Header() {
             </li>
           </ul>
           <Button
-            className="laptop:hidden block items-center mr-6  fixed top-[calc(4vw-5px)] right-h-w p-8 z-20 mix-blend-difference  rounded-full"
+            className="laptop:hidden block items-center mr-6  fixed top-[calc(4vw-5px)] right-h-w p-8 z-20 mix-blend-difference text-white rounded-full"
             onClick={toggleDrawer}
           >
             <DehazeIcon />

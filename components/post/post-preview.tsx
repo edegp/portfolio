@@ -7,14 +7,7 @@ import Avatar from "../avatar"
 import DateComponent from "../date"
 import CoverImage from "../cover-image"
 
-export default function PostPreview({
-  title,
-  coverImage,
-  date,
-  // excerpt,
-  author,
-  slug,
-}) {
+export default function PostPreview({ title, coverImage, date, author, slug }) {
   return (
     <Container>
       <Box className="my-5">

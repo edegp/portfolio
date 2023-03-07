@@ -7,16 +7,15 @@ import Visibility from "@mui/icons-material/Visibility"
 import VisibilityOff from "@mui/icons-material/VisibilityOff"
 import FormControl from "@mui/material/FormControl"
 import IconButton from "@mui/material/IconButton"
-import { useState, useEffect } from "react"
+import { useState, useEffect, FormEvent } from "react"
 import { useUser } from "../../utils/useUser"
 import SignIn from "./signin"
 import LoadingDots from "../ui/LoadingDots"
 import { updateUserName, supabase } from "../../utils/supabase-client"
 import Facebook from "../icons/Facebook"
 import Google from "../icons/Google"
-import Link from "next/link"
-import { User } from "../../types"
-import { getURL } from "../../utils/helpers"
+import { User } from "@supabase/supabase-auth-helpers/nextjs"
+import { Provider } from "@supabase/supabase-js"
 
 export default function SignUp({
   handleNext,
@@ -47,10 +46,14 @@ export default function SignUp({
     e.preventDefault()
     setLoading(true)
     setMessage({})
-    await setInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    await setInfo((prev) => ({
+      ...prev,
+      [(e.target as HTMLFormElement).name]: (e.target as HTMLFormElement).value,
+    }))
+    const formElements = (e.target as HTMLFormElement).elements
     const { error, user: createdUser } = await supabase.auth.signUp({
-      email: e.target.elements.email.value,
-      password: e.target.elements.password.value,
+      email: (formElements.namedItem("email") as HTMLInputElement).value,
+      password: (formElements.namedItem("password") as HTMLInputElement).value,
     })
     if (error) {
       setMessage({ type: "error", content: error.message })
@@ -152,7 +155,6 @@ export default function SignUp({
                 </FormControl>
                 <Button
                   className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70 laptop:justify-self-end rounded-3 text-sm whitespace-nowrap px-10 justify-self-center"
-                  variant="slim"
                   type="submit"
                 >
                   {isLoading || loading ? (
