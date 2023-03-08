@@ -1,10 +1,10 @@
-import Image from "next/image";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Fast from "../../public/image/fast.jpg";
-import Cost from "../../public/image/cost.jpg";
-import Easy from "../../public/image/easy.jpg";
+import Image from "next/image"
+import Container from "@mui/material/Container"
+import Box from "@mui/material/Box"
+import Typography from "@mui/material/Typography"
+import Fast from "../../public/image/fast.jpg"
+import Cost from "../../public/image/cost.jpg"
+import Easy from "../../public/image/easy.jpg"
 
 export default function Merit() {
   const lists = [
@@ -23,7 +23,7 @@ export default function Merit() {
       dt: "手間０",
       dd: `5分程度の簡単な質問の入力で、\n10日以内にデザインが完成`,
     },
-  ];
+  ]
   return (
     <Box className="merit  laptop:pt-[14vh] pt-[5vh] section">
       <Typography className="font-bold text-primary text-2xl text-center laptop:mb-vw-16 mb-4">
@@ -37,7 +37,7 @@ export default function Merit() {
               className="laptop:w-1/3 laptop:px-vw-10 w-full mb-0 mx-auto"
             >
               <Box className="text-center laptop:w-3/4 w-vw-72 mx-auto laptop:min-h-[30vh]">
-                <Image src={list.img} fill className="object-cover" alt="0 image"/>
+                <Image src={list.img} width={400} alt="0 image" />
               </Box>
               <Typography className="text-primary text-lg text-center whitespace-nowrap font-bold laptop:my-vw-6 my-1">
                 {list.dt}
@@ -52,5 +52,5 @@ export default function Merit() {
         </Container>
       </Box>
     </Box>
-  );
+  )
 }

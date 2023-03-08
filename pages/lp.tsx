@@ -30,16 +30,16 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
 
 export default function LP({ products }: Props) {
   const [checked, setChecked] = useState(false)
-  const ref = useRef<HTMLDivElement>()
+  const ref = useRef<HTMLDivElement>(null)
   const handleChange = () => setChecked((prev) => !prev)
   const handleScroll: UIEventHandler<HTMLDivElement> = throttle(
     (event: UIEvent) => {
-      // eslint-disable-next-line no-unused-expressions
+      console.log(ref.current.scrollTop, checked)
       ref.current.scrollTop > 800 && ref.current.scrollTop < 1000
-        ? handleChange()
+        ? setChecked(true)
         : checked && setChecked(false)
     },
-    400
+    500
   )
   return (
     <>
@@ -50,9 +50,7 @@ export default function LP({ products }: Props) {
         <LPHome />
         <Trouble checked={checked} />
         <Merit />
-
         <Acheive />
-        <Merit2 />
         <System />
         <Introduce products={products} />
         <FAQ />
