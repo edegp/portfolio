@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react"
-import { useRouter } from "next/router"
+import { usePathname, useRouter } from "next/navigation"
 import { Link as LinkScroll } from "react-scroll"
 import * as Scroll from "react-scroll"
 import Button from "@mui/material/Button"
@@ -17,7 +17,8 @@ import Link from "next/link"
 import logo from "../public/image/logo.jpg"
 
 export default function Header() {
-  const router = useRouter()
+  const pathname = usePathname()
+  console.log(!/^\/subscription.*$/.test(pathname))
   const [navOpen, setNavOpen] = useState(false)
   const headerLogo = useRef<HTMLAnchorElement>(null)
   const onMouseMove = useCallback((event: React.MouseEvent<HTMLElement>) => {
@@ -127,7 +128,7 @@ export default function Header() {
             </Typography>
             <List>
               <ListItem className="pl-0">
-                {router.pathname === "/" ? (
+                {pathname === "/" ? (
                   <LinkScroll
                     containerId="container"
                     smooth="linear"
@@ -154,7 +155,7 @@ export default function Header() {
                 )}
               </ListItem>
               <ListItem className="pl-0">
-                {router.pathname === "/" ? (
+                {pathname === "/" ? (
                   <LinkScroll
                     containerId="container"
                     smooth="linear"
@@ -181,7 +182,7 @@ export default function Header() {
                 )}
               </ListItem>
               <ListItem className="pl-0">
-                {router.pathname === "/posts" ? (
+                {pathname === "/posts" ? (
                   // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
                   <h2
                     className="tracking-normal !font-extrabold !text-2xl !font-G-bold leading-tight pl-0 text-black no-underline"
@@ -201,7 +202,7 @@ export default function Header() {
                 )}
               </ListItem>
               <ListItem className="pl-0">
-                {router.pathname === "/" ? (
+                {pathname === "/" ? (
                   <LinkScroll
                     containerId="container"
                     smooth="linear"
@@ -236,12 +237,8 @@ export default function Header() {
   )
 
   return (
-    <header>
-      <Box
-        className="header-logo flex items-center fixed tablet:top-h-w tablet:left-h-logo
-      mix-blend-difference
-      z-50"
-      >
+    <header className="text-white">
+      <Box className="header-logo flex items-center fixed tablet:top-h-w tablet:left-h-logo mix-blend-difference z-50">
         <Link
           href="/"
           target=""
@@ -259,13 +256,13 @@ export default function Header() {
           <Image alt="logo" src={logo.src} width="100" height="100" />
         </Link>
       </Box>
-      {!/^\/subscription.*$/.test(router.pathname) ||
-      router.pathname === "/subscription/signin" ||
-      router.pathname === "/subscription/signup" ? (
+      {!/^\/subscription.*$/.test(pathname) ||
+      pathname === "/subscription/signin" ||
+      pathname === "/subscription/signup" ? (
         <>
           <ul className="laptop:flex items-center mr-6 text-lg fixed top-[calc(4vw-5px)] right-h-w px-8 z-40 pb-8 mix-blend-difference hidden">
             <li>
-              {router.pathname === "/" ? (
+              {pathname === "/" ? (
                 <LinkScroll
                   containerId="container"
                   smooth="linear"
@@ -274,7 +271,7 @@ export default function Header() {
                   delay={200}
                   onClick={handleSetActive}
                   to="about"
-                  className=" capitalize text-2xl mr-10 hover:cursor-pointer"
+                  className=" capitalize mr-10 hover:cursor-pointer"
                 >
                   About
                 </LinkScroll>
@@ -288,7 +285,7 @@ export default function Header() {
               )}
             </li>
             <li>
-              {router.pathname === "/" ? (
+              {pathname === "/" ? (
                 <LinkScroll
                   containerId="container"
                   smooth="linear"
@@ -320,7 +317,7 @@ export default function Header() {
               </Link>
             </li>
             <li>
-              {router.pathname === "/" ? (
+              {pathname === "/" ? (
                 <LinkScroll
                   containerId="container"
                   smooth="linear"
