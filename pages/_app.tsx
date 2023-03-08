@@ -1,4 +1,3 @@
-import type { AppProps } from "next/app"
 import { useRef, useEffect } from "react"
 import Head from "next/head"
 import CookieConsent from "react-cookie-consent"
@@ -10,7 +9,7 @@ import Meta from "../components/meta"
 import { usePageView, GoogleAnalytics } from "../lib/gtag"
 import { MyUserContextProvider } from "../utils/useUser"
 import Layout from "../components/Layout"
-import "../styles/index.css"
+import "../styles/index.scss"
 
 export const initialTheme = createTheme({
   palette: {
