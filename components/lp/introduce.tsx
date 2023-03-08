@@ -41,7 +41,7 @@ export default function Introduce({
           rounded-full text-sm whitespace-nowrap px-10 mx-auto laptop:mt-0 tablet:mt-12 mt-0"
         >
           <Link
-            className="w-fit text-center mx-auto"
+            className="w-fit text-center mx-auto flex"
             href={{ pathname: "../subscription", query: { plan } }}
           >
             <span className="font-[Noto Sans JP] font-bold">

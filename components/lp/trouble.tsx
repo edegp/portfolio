@@ -32,19 +32,19 @@ const blowAfterCss = [
   "left-[-13px] top-[30%] border-r-white hidden tablet:block",
 ]
 
-export default function Trouble(checked) {
+export default function Trouble({ checked }: { checked: boolean }) {
   return (
     <Box className="merit laptop:pt-[14vh] pt-[5vh] section">
       <Typography className="font-bold text-primary text-2xl text-center laptop:mb-vw-10 tablet:mb-[10vh] mb-2">
         こんなことでお困りではありませんか？
       </Typography>
       <Box className="grid laptop:grid-cols-[repeat(3,33%)] tablet:grid-cols-[repeat(3,34%)] gap-x-20  tablet:gap-x-5 tablet:gap-y-20 gap-y-4 auto-cols-min tablet:px-[4%] mx-[2%]">
-        {iconList.map((icon, index) => (
+        {iconList.map((icon: string, index: number) => (
           <>
             <Grow
               in={checked}
               style={{ transformOrigin: "0 0 0" }}
-              {...(checked ? { timeout: 1000 } : {})}
+              {...(checked ? { timeout: 600 * 1.01 * (index + 1) } : {})}
               key={index}
             >
               <Box className="relative">

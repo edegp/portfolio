@@ -62,7 +62,6 @@ export default function System() {
                 <Image
                   src={list.img}
                   className="object-cover"
-                  fill
                   alt="easy system"
                 />
               </Box>
