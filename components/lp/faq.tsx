@@ -1,23 +1,15 @@
-import Image from "next/image";
-import { useState, useEffect } from "react";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Card from "@mui/material/Card";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import Chip from "@mui/material/Chip";
-import Button from "@mui/material/Button";
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import { useForm, ValidationError } from "@formspree/react";
-import Footer from "../footer";
+import Image from "next/image"
+import Container from "@mui/material/Container"
+import Box from "@mui/material/Box"
+import Typography from "@mui/material/Typography"
+import List from "@mui/material/List"
+import Divider from "@mui/material/Divider"
+import Accordion from "@mui/material/Accordion"
+import AccordionSummary from "@mui/material/AccordionSummary"
+import AccordionDetails from "@mui/material/AccordionDetails"
+import ExpandMore from "@mui/icons-material/ExpandMore"
+import { useState } from "react"
+import Footer from "../footer"
 
 export default function FAQ() {
   const lists = [
@@ -86,15 +78,15 @@ export default function FAQ() {
         </>
       ),
     },
-  ];
+  ]
 
-  const [state, setState] = useState(lists);
+  const [state, setState] = useState(lists)
   const handleClick = (targetID) =>
     setState(
       state.map((list, id) =>
         id === targetID ? { ...list, open: !list.open } : list
       )
-    );
+    )
   return (
     <Box className="system laptop:pt-[15vh] pt-[9vh] section">
       <Typography className="font-semibold text-primary text-xl text-center">
@@ -124,5 +116,5 @@ export default function FAQ() {
       </Container>
       <Footer />
     </Box>
-  );
+  )
 }

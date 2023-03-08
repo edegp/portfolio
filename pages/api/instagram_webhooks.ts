@@ -4,52 +4,52 @@ import {
   createAssets,
   getTags,
   getAuthor,
-} from "./../../utils/contentful-client";
+} from "./../../utils/contentful-client"
 import {
   Client,
   GetPageInfoRequest,
   GetPageMediaRequest,
-} from "instagram-graph-api";
+} from "instagram-graph-api"
 
-import { NextApiRequest, NextApiResponse } from "next";
-import { Readable } from "node:stream";
-import * as contentful from "contentful-management";
+import { NextApiRequest, NextApiResponse } from "next"
+import { Readable } from "node:stream"
+import * as contentful from "contentful-management"
 
 // Stripe requires the raw body to construct the event.
 export const config = {
   api: {
     bodyParser: false,
   },
-};
-
-async function buffer(readable: Readable) {
-  const chunks = [];
-  for await (const chunk of readable) {
-    chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
-  }
-  return Buffer.concat(chunks);
 }
 
-const spaceId = process.env.CONTENTFUL_SPACE_ID;
+async function buffer(readable: Readable) {
+  const chunks = []
+  for await (const chunk of readable) {
+    chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk)
+  }
+  return Buffer.concat(chunks)
+}
+
+const spaceId = process.env.CONTENTFUL_SPACE_ID
 const InstagramWebhookHandler = async (req, res) => {
   if (req.method === "POST") {
-    const buf = await buffer(req);
-    const { caption, url, source, time } = JSON.parse(buf.toString());
-    const title = caption?.split("\n")[0];
-    const titleIndex = caption.indexOf("\n", 0);
-    let discription;
+    const buf = await buffer(req)
+    const { caption, url, source, time } = JSON.parse(buf.toString())
+    const title = caption?.split("\n")[0]
+    const titleIndex = caption.indexOf("\n", 0)
+    let description
     titleIndex !== -1
-      ? (discription = caption?.substr(titleIndex + 1))
-      : (discription = caption);
+      ? (description = caption?.substr(titleIndex + 1))
+      : (description = caption)
     contentfulConnect.then((environment) => {
       Promise.allSettled([
-        createAssets(environment),
-        getTags(environment),
+        createAssets(environment, title, description, url),
+        getTags(environment, caption),
         getAuthor(environment),
       ]).then((results) => {
-        const coverImage = results[0].value;
-        const sys = results[1].value;
-        const author = results[2].value;
+        const coverImage = results[0].status === "fulfilled" && results[0].value
+        const sys = results[1].status === "fulfilled" && results[1].value
+        const author = results[2].status === "fulfilled" && results[2].value
         environment
           .createEntry("post", {
             fields: {
@@ -105,11 +105,11 @@ const InstagramWebhookHandler = async (req, res) => {
               tags: sys && [...sys],
             },
           })
-          .then((post) => post.publish());
-      });
-    });
-    return res.status(200).send(req);
+          .then((post) => post.publish())
+      })
+    })
+    return res.status(200).send(req)
   }
-};
+}
 
-export default InstagramWebhookHandler;
+export default InstagramWebhookHandler

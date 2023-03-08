@@ -40,7 +40,7 @@ export default function Acheive() {
                 "laptop:w-[20vw] tablet:w-[30vw] w-[40vw] tablet:mt-vw-8  z-[-3]");
           return (
             <Box className={`mx-auto text-center ${CN}`}>
-              <Image src={list} objectFit={"cover"} />
+              <Image src={list} objectFit={"cover"} alt="brand asset"/>
             </Box>
           );
         })}

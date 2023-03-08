@@ -1,9 +1,8 @@
-import Head from "next/head";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Link from "../../components/Link";
-import { supabase } from "../../utils/supabase-client";
-import SubscriptionLayout from "../../components/subscription/SubscriptionLayout";
+import Head from "next/head"
+import Typography from "@mui/material/Typography"
+import Button from "@mui/material/Button"
+import SubscriptionLayout from "../../components/subscription/SubscriptionLayout"
+import Link from 'next/link'
 
 export default function Confirm() {
   return (
@@ -13,15 +12,16 @@ export default function Confirm() {
       </Head>
       <SubscriptionLayout className="text-center">
         <Typography className="text-xl">本登録が完了しました！</Typography>
-        <Link
-          href="/api/auth/logout"
-          className="text-center mx-auto justify-self-center self-center"
-        >
-          <Button className="mt-4 bg-black text-white" variant="slim">
+
+        <Button className="mt-4 bg-black text-white">
+          <Link
+            href="/api/auth/logout"
+            className="text-center mx-auto justify-self-center self-center"
+          >
             無料体験をはじめる
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </SubscriptionLayout>
     </>
-  );
+  )
 }

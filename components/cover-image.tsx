@@ -1,6 +1,6 @@
-import Link from "next/link";
-import cn from "classnames";
-import ContentfulImage from "./contentful-image";
+import Link from "next/link"
+import cn from "classnames"
+import ContentfulImage from "./contentful-image"
 
 export default function CoverImage({ title, url, slug, width, height }) {
   const image = (
@@ -13,18 +13,11 @@ export default function CoverImage({ title, url, slug, width, height }) {
       })}
       src={url}
     />
-  );
+  )
 
   return (
     <div className="sm:mx-0">
-      {slug ? (
-        <Link href={`/posts/${slug}` || "#"} passHref>
-          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-          <a aria-label={title}>{image}</a>
-        </Link>
-      ) : (
-        image
-      )}
+      {slug ? <Link href={`/posts/${slug}` || "#"}>{image}</Link> : image}
     </div>
-  );
+  )
 }

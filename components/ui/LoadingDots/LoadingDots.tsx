@@ -1,8 +1,17 @@
-import s from "./LoadingDots.module.css";
+import s from "./LoadingDots.module.css"
 
-const LoadingDots = ({ c = "#fff", s = "24px" }) => {
+const LoadingDots = ({
+  className,
+  c = "#fff",
+  s = "24px",
+}: {
+  className?: string
+  c?: string
+  s?: string
+}) => {
   return (
     <svg
+      className={className}
       width={s}
       height={s}
       viewBox="0 0 38 38"
@@ -25,7 +34,7 @@ const LoadingDots = ({ c = "#fff", s = "24px" }) => {
         </g>
       </g>
     </svg>
-  );
-};
+  )
+}
 
-export default LoadingDots;
+export default LoadingDots

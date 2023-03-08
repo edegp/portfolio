@@ -1,12 +1,12 @@
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import InstagramIcon from "@mui/icons-material/Instagram";
-import Link from "../Link";
-import ContactForm from "../contactForm";
+import Box from "@mui/material/Box"
+import Typography from "@mui/material/Typography"
+import Container from "@mui/material/Container"
+import List from "@mui/material/List"
+import ListItem from "@mui/material/ListItem"
+import ListItemIcon from "@mui/material/ListItemIcon"
+import InstagramIcon from "@mui/icons-material/Instagram"
+import Link from "next/link"
+import ContactForm from "../contactForm"
 
 export default function Contact() {
   return (
@@ -53,8 +53,12 @@ export default function Contact() {
                 </Link>
               </ListItem>
               <ListItem className="p-0">
-                <Link href="https://note.com/edegp" target="_blank">
-                  <ListItemIcon className="min-w-[calc(2vw+20px)] text-[#afafaf]">
+                <ListItemIcon>
+                  <Link
+                    href="https://note.com/edegp"
+                    target="_blank"
+                    className="min-w-[calc(2vw+20px)] text-[#afafaf]"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="calc(1vw + 10px)"
@@ -69,8 +73,8 @@ export default function Contact() {
                         transform="translate(36.294 69.491) rotate(-179)"
                       />
                     </svg>
-                  </ListItemIcon>
-                </Link>
+                  </Link>
+                </ListItemIcon>
               </ListItem>
             </List>
           </Box>
@@ -78,5 +82,5 @@ export default function Contact() {
         <ContactForm />
       </Container>
     </section>
-  );
+  )
 }

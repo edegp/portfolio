@@ -13,7 +13,6 @@ export default function MoreStories({ posts }) {
             date={post.sys.updatedAt}
             author={post.author}
             slug={post.slug}
-            excerpt={post.excerpt}
           />
         ))}
       </MuiContainer>

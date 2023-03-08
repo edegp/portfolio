@@ -1,11 +1,7 @@
-import Head from "next/head";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import Terms from "../components/terms";
+import Head from "next/head"
+import Box from "@mui/material/Box"
+import Container from "@mui/material/Container"
+import Terms from "../components/terms"
 
 export default function Term() {
   return (
@@ -19,5 +15,5 @@ export default function Term() {
         </Container>
       </Box>
     </>
-  );
+  )
 }

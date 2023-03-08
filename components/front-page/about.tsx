@@ -1,17 +1,13 @@
-import { useContext } from "react";
-import Image from "next/image";
-import { Link as LinkScroll } from "react-scroll";
-import * as Scroll from "react-scroll";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
-import Container from "@mui/material/Container";
-import { context } from "../container";
-import Link from "../Link";
-import Homepage from "../../public/image/homepage.jpg";
-import Code from "../../public/image/code.jpg";
+import Image from "next/image"
+import { Link as LinkScroll } from "react-scroll"
+import Button from "@mui/material/Button"
+import Typography from "@mui/material/Typography"
+import Grid from "@mui/material/Grid"
+import Container from "@mui/material/Container"
+import Homepage from "../../public/image/homepage.jpg"
+import Code from "../../public/image/code.jpg"
 
-export default function About() {
+export default function About({ onClick }: { onClick: () => void }) {
   return (
     <section id="about" className=" bg-black text-white">
       <Container
@@ -20,8 +16,7 @@ export default function About() {
       >
         <Grid
           container
-          className="grid 
-
+          className="grid
         laptop:grid-rows-[30vh,35vh]
         grid-flow-col
         grid-rows-[17vh,1fr,32vh,5vh]
@@ -30,13 +25,7 @@ export default function About() {
         laptop:gap-y-2
         "
         >
-          <Grid
-            item
-            variant="h2"
-            className="laptop:w-[85%] 
-          self-center
-          "
-          >
+          <Grid item className="laptop:w-[85%] self-center">
             <Typography
               variant="h2"
               className="text-lg font-bold laptop:text-left text-center max-h-vw-20 fadein"
@@ -57,40 +46,30 @@ export default function About() {
               spy
               duration={800}
               delay={200}
-              onClick={() => {
-                if (process.browser) {
-                  const container = document.getElementById("container");
-                  container.style.scrollSnapType = "none";
-                }
-                setTimeout(() => {
-                  container.style.scrollSnapType = "y mandatory";
-                }, 950);
-              }}
+              onClick={onClick}
               to="contact"
               className="text-white"
             >
-              {/* <Link href="#contact" target="_blank" className="!font-extrabold"> */}
               <Button className="bg-white text-black rounded-full px-vw-32 normal-case whitespace-nowrap hover:bg-white hover:opacity-50 fadein mt-vw-16 laptop:block hidden">
                 Contact me!
               </Button>
-              {/* </Link> */}
             </LinkScroll>
           </Grid>
           <Grid
             item
-            className="homepage rounded-2xl self-center text-center laptop:col-span-2"
+            className="homepage rounded-2xl text-center laptop:col-span-2 place-self-center"
           >
             <Image
               src={Homepage}
-              width={480}
-              height={269}
+              width={360}
+              height={200}
               className="rounded-2xl fadein"
+              alt="homepage image"
             />
           </Grid>
           <Grid
             item
-            className=" 
-            laptop:text-left text-center w-[85%] mx-auto self-center  laptop:hidden block"
+            className="laptop:text-left text-center w-[85%] mx-auto self-center  laptop:hidden block "
           >
             <Button
               className="bg-white text-black rounded-full px-vw-32 normal-case whitespace-nowrap hover:bg-white hover:opacity-50 fadein"
@@ -102,17 +81,18 @@ export default function About() {
           </Grid>
           <Grid
             item
-            className="code rounded-2xl bg-black laptop:block hidden laptop:col-span-2 fadein"
+            className="code rounded-2xl bg-black laptop:block hidden laptop:col-span-2 fadein self-end justify-self-center"
           >
             <Image
               src={Code}
-              width={480}
-              height={269}
-              className="rounded-2xl"
+              width={360}
+              height={200}
+              className="rounded-2xl object-cover"
+              alt="display code in pc"
             />
           </Grid>
         </Grid>
       </Container>
     </section>
-  );
+  )
 }

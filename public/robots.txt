@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://anful.vercel.app
+
+# Sitemaps
+Sitemap: https://anful.vercel.app/sitemap.xml

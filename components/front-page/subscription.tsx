@@ -1,26 +1,20 @@
-import { useState } from "react";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Link from "../Link";
-import Serviceimg from "../../public/image/website.png";
-import Plan from "../Plan";
+import Typography from "@mui/material/Typography"
+import Container from "@mui/material/Container"
+import Button from "@mui/material/Button"
+import Link from "next/link"
+import Plan from "../Plan"
 
 export default function Subscription() {
   return (
     <section id="subscription" className="text-center">
-      <Container
-        className="tablet:pt-[15vh] pt-vw-24 pb-vw-8 
-       "
-      >
+      <Container className="tablet:pt-[15vh] pt-24 pb-8">
         <Typography
           variant="h2"
-          className="font-Noto-Sans font-bold text-lg 
-            laptop:mb-20 
+          className="font-Noto-Sans font-bold text-lg
+            laptop:mb-20
             tablet:mb-vw-20
             sp:mb-16
-            mb-3
+            mb-6
             mx-auto fadein whitespace-nowrap"
         >
           ANfulの飲食店向け低価格な
@@ -54,5 +48,5 @@ export default function Subscription() {
         </Link>
       </Container>
     </section>
-  );
+  )
 }

@@ -1,9 +1,9 @@
-import Image from "next/image";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Link from "../Link";
-import reader from "../../public/image/reader.webp";
+import Image from "next/image"
+import Container from "@mui/material/Container"
+import Box from "@mui/material/Box"
+import Typography from "@mui/material/Typography"
+import Link from "next/link"
+import reader from "../../public/image/reader.webp"
 
 export default function Merit2() {
   return (
@@ -29,7 +29,7 @@ export default function Merit2() {
             </Link>
           </Typography>
           <Box>
-            <Image src={reader} />
+            <Image src={reader} fill alt="Square"/>
           </Box>
           <Typography className="text-xs ml-auto mt-3">
             ※決済時に決済手数料は
@@ -41,5 +41,5 @@ export default function Merit2() {
         </Container>
       </Box>
     </Box>
-  );
+  )
 }

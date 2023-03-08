@@ -17,7 +17,7 @@ export default function Policy() {
           <Typography variant="h2" className="text-lg ml-10 mb-10">
             個人情報の取り扱いについて
           </Typography>
-          <Typography variant="body" className="text-sm mb-10">
+          <Typography variant="body1" className="text-sm mb-10">
             ANful（以下、「当社」といいます）は、お客様・お取引先様・株主の皆様・従業員の方々の個人情報について、「個人情報保護方針（プライバシー・ポリシー）」に従い適正な管理を行うとともに、個人情報の保護に努めます。
             具体的には、以下の内容に従って個人情報の取り扱いを行います。
           </Typography>
@@ -25,7 +25,7 @@ export default function Policy() {
             <Typography variant="h3" className="text-md mb-10">
               1. 個人情報の取得および利用について
             </Typography>
-            <Typography variant="p" className="text-xs">
+            <Typography variant="body1" className="text-xs">
               当社は、皆様から個人情報のご提供をお願いする際は、あらかじめ皆様の個人情報の利用目的・第三者への提供の有無等についてお知らせいたします。
               <br />
               また、皆様からご提供いただいた個人情報については、以下の利用目的以外の目的では利用いたしません。万一、当該目的以外の目的で利用する場合や、利用目的そのものを変更する場合は、事前に皆様にお知らせいたします。なお、利用目的に照らして不要となった個人情報については、速やかに且つ適正に削除・廃棄いたします。
@@ -34,7 +34,7 @@ export default function Policy() {
               <Typography variant="h6" className="text-sm mb-2">
                 ・利用目的
               </Typography>
-              <Typography variant="p" className="text-xs mb-10">
+              <Typography variant="body1" className="text-xs mb-10">
                 ご注文いただいた商品の発送・決済業務のため
                 登録いただいた方への情報提供のため
                 商品・サービスの開発およびご案内のため
@@ -128,7 +128,7 @@ export default function Policy() {
             <Typography variant="h3" className="text-md mb-10">
               4. 個人情報の管理について
             </Typography>
-            <Typography variant="p" className="text-xs">
+            <Typography variant="body1" className="text-xs">
               当社は、個人情報に関する法令、規範および社内諸規程に則り、皆様からご提供いただいた個人情報を適正に管理いたします。また、当社は、個人情報への不正アクセス、紛失、破壊、改ざん、漏洩等について適切かつ合理的な安全対策を講じるとともに、万一の発生時には速やかな是正措置を実施いたします。
             </Typography>
           </Box>
@@ -183,7 +183,7 @@ export default function Policy() {
             <Typography variant="h3" className="text-md mb-10">
               6. 開示等の受付方法・窓口
             </Typography>
-            <Typography variant="p" className="text-xs">
+            <Typography variant="body1" className="text-xs">
               個人情報に関するお問い合わせは、以下の窓口にて受け付けいたします。なお、開示等の求めには応じられない場合がありますので、あらかじめご了承ください。
             </Typography>
             <Box className="text-xs my-14">Emeil: anfulled4@gmail.com</Box>
@@ -191,5 +191,5 @@ export default function Policy() {
         </Container>
       </Box>
     </>
-  );
+  )
 }

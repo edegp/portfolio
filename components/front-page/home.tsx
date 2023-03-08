@@ -1,15 +1,11 @@
-import { useContext } from "react";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import { Link as LinkScroll } from "react-scroll";
-import * as Scroll from "react-scroll";
-import HomeTitle from "./hometitle";
-import Link from "../Link";
-import { context } from "../container";
+import Typography from "@mui/material/Typography"
+import Button from "@mui/material/Button"
+import Box from "@mui/material/Box"
+import { Link as LinkScroll } from "react-scroll"
+import HomeTitle from "./hometitle"
+import Link from "next/link"
 
-export default function Home() {
-  // const container = useContext(context);
+export default function Home({ onClick }: { onClick: () => void }) {
   return (
     <section id="home">
       <Box id="app" className="w-full">
@@ -32,16 +28,7 @@ export default function Home() {
                       spy
                       duration={800}
                       delay={200}
-                      onClick={() => {
-                        if (process.browser) {
-                          const container =
-                            document.getElementById("container");
-                          container.style.scrollSnapType = "none";
-                        }
-                        setTimeout(() => {
-                          container.style.scrollSnapType = "y mandatory";
-                        }, 950);
-                      }}
+                      onClick={onClick}
                       to="whatido"
                       className="text-white"
                     >
@@ -137,5 +124,5 @@ export default function Home() {
         </Box>
       </Box>
     </section>
-  );
+  )
 }

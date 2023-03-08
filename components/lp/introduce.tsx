@@ -1,24 +1,22 @@
-import { useState } from "react";
-import Image from "next/image";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Card from "@mui/material/Card";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import Chip from "@mui/material/Chip";
-import Button from "@mui/material/Button";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import Plan from "../Plan";
-import Link from "../Link";
+import Container from "@mui/material/Container"
+import Box from "@mui/material/Box"
+import Typography from "@mui/material/Typography"
+import Button from "@mui/material/Button"
+import React, { ChangeEvent, useState } from "react"
+import Plan from "../Plan"
+import Link from "next/link"
+import { ProductWithPrice } from "../../types"
 
-export default function Introduce({ products }) {
-  const [plan, setPlan] = useState("basic");
-  const updatePlan = (e) => setPlan(e.target.value);
+export default function Introduce({
+  products,
+}: {
+  products: ProductWithPrice[]
+}) {
+  const [plan, setPlan] = useState<"basic" | "standard" | "Premium">("basic")
+  const updatePlan = (
+    event: ChangeEvent<HTMLInputElement>,
+    value: "basic" | "standard" | "Premium"
+  ) => setPlan(value)
   return (
     <Box className="system laptop:pt-[15vh] pt-[8vh] section">
       <Typography className="font-bold text-primary text-2xl text-center laptop:mb-vw-5 mb-vw-2">
@@ -31,20 +29,20 @@ export default function Introduce({ products }) {
         無料期間終了後、
         <span className="tablet:block hidden">
           サイト作成プランなら 一か月
-          {/* <br className="laptop:hidden block" /> */}
           <span className="text-md font-semibold">ワンコイン</span>で
         </span>
         キャンセルはいつでもOK
       </Typography>
       <Container className="grid laptop:gap-y-14 gap-y-0">
-        <Plan products={products} updatePlan={updatePlan} />
-        <Link
-          className="w-fit text-center mx-auto"
-          href={{ pathname: "../subscription", params: plan }}
-        >
-          <Button
-            className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70 
+        <Plan products={products} updatePlan={updatePlan} plan={plan} />
+
+        <Button
+          className="!bg-[#04ac4d] text-white hover:opacity-70 w-vw-70
           rounded-full text-sm whitespace-nowrap px-10 mx-auto laptop:mt-0 tablet:mt-12 mt-0"
+        >
+          <Link
+            className="w-fit text-center mx-auto"
+            href={{ pathname: "../subscription", query: { plan } }}
           >
             <span className="font-[Noto Sans JP] font-bold">
               無料体験をはじめる
@@ -66,12 +64,12 @@ export default function Introduce({ products }) {
                 fill="#fff"
               />
             </svg>
-          </Button>
-        </Link>
+          </Link>
+        </Button>
         <Typography className="text-xs ml-auto mt-3">
           ※予約・キャッシュレス決済はSquareのサービスを採用
         </Typography>
       </Container>
     </Box>
-  );
+  )
 }

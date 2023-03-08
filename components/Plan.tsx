@@ -1,40 +1,35 @@
-import cn from "classnames";
-import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import Chip from "@mui/material/Chip";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
-import { supabase } from "../../utils/supabase-client";
-import { postData } from "../../utils/helpers";
-import { getStripe } from "../../utils/stripe-client";
-import { useUser } from "../../utils/useUser";
-import { Price, ProductWithPrice } from "../types";
-import Button from "../ui/Button";
+import { useRouter } from "next/router"
+import { ChangeEvent } from "react"
+import Box from "@mui/material/Box"
+import Typography from "@mui/material/Typography"
+import Paper from "@mui/material/Paper"
+import Radio from "@mui/material/Radio"
+import RadioGroup from "@mui/material/RadioGroup"
+import Chip from "@mui/material/Chip"
+import List from "@mui/material/List"
+import ListItem from "@mui/material/ListItem"
+import ListItemText from "@mui/material/ListItemText"
+import FormControlLabel from "@mui/material/FormControlLabel"
+import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt"
+import { ProductWithPrice } from "../types"
+
+type Props = React.ComponentPropsWithoutRef<"div"> & {
+  products?: ProductWithPrice[]
+  updatePlan?: (event: ChangeEvent<HTMLInputElement>, value: string) => void
+  plan?: "basic" | "standard" | "Premium"
+}
 
 export default function Plan({
   products = [
     {
+      id: "",
       name: "basic",
       description: "高速でシンプルなHP,予約システム× 自動更新 ×",
       active: true,
-      prices: [
-        {
-          unit_amount: 500,
-          active: true,
-          interval: "month",
-        },
-      ],
+      prices: [{ id: "", unit_amount: 500, active: true, interval: "month" }],
     },
     {
+      id: "",
       name: "standard",
       description: "自動投稿可能なHP,自動投稿○ 予約システム ×",
       active: true,
@@ -48,12 +43,14 @@ export default function Plan({
       ],
     },
     {
+      id: "",
       name: "Premium",
       description:
         "自動投稿も予約システムも,予約・キャッシュレス決済○ 自動更新 ○",
       active: true,
       prices: [
         {
+          id: "",
           unit_amount: 1980,
           active: true,
           interval: "month",
@@ -64,18 +61,29 @@ export default function Plan({
   updatePlan,
   plan,
   ...other
-}) {
-  const router = useRouter();
-  const handleChange = (e) => updatePlan?.(e);
+}: Props) {
+  const router = useRouter()
+  const planName = (product: ProductWithPrice) => {
+    switch (product.name) {
+      case "basic":
+        return "ページ作成"
+      case "standard":
+        return "自動投稿"
+      case "Premium":
+        return "プレミアム"
+      default:
+        return "特別"
+    }
+  }
   return (
     <RadioGroup
       row
       aria-labelledby="plan-radio"
       defaultValue="basic"
       name="plan"
-      className="flex flex-wrap"
+      className="flex flex-wrap gap-y-8"
       value={plan}
-      onChange={handleChange}
+      onChange={updatePlan}
       {...other}
     >
       {products.map((product) => (
@@ -89,54 +97,33 @@ export default function Plan({
               product.name === "standard" && "pb-5"
             }`}
           >
-            {router.pathname !== "/" ? (
-              <FormControlLabel
-                value={product.name}
-                control={
-                  <Radio
-                    className={`pt-0 ${
-                      router.pathname !== "/subscription" &&
-                      "tablet:block hidden"
-                    }`}
-                  />
-                }
-                label={
-                  <Typography className="text-md text-center tablet:mt-vw-3 mt-0 font-bold">
-                    {product.name === "basic"
-                      ? "ページ作成"
-                      : product.name === "standard"
-                      ? "自動投稿"
-                      : product.name === "Premium"
-                      ? "プレミアム"
-                      : "特別"}
-                    <br className="laptop:block sp:hidden block" />
-                    プラン
-                  </Typography>
-                }
-                labelPlacement="bottom"
-              />
-            ) : (
-              <Typography className="text-md text-center tablet:mt-vw-3 mt-0 font-bold">
-                {product.name === "basic"
-                  ? "ベーシック"
-                  : product.name === "standard"
-                  ? "スタンダード"
-                  : product.name === "Premium"
-                  ? "プレミアム"
-                  : "特別"}
-                <br className="laptop:block sp:hidden block" />
-                プラン
-              </Typography>
-            )}
+            <FormControlLabel
+              value={product.name}
+              control={
+                <Radio
+                  className={`pt-0 ${
+                    router.pathname !== "/subscription" && "tablet:block hidden"
+                  }`}
+                />
+              }
+              label={
+                <>
+                  {planName(product)}
+                  <br className="laptop:block sp:hidden block" />
+                  プラン
+                </>
+              }
+              labelPlacement="bottom"
+            />
             <List className="sp:py-[8px] py-0">
-              {product.description?.split(",").map((point) => {
-                return point.includes("○") ? (
+              {product.description?.split(",").map((point) =>
+                point.includes("○") ? (
                   <ListItem key={point} className="py-0">
                     <ListItemText
                       primary={
-                        <Typography className="text-xs text-center font-semibold">
+                        <p className="text-xs text-center font-semibold">
                           {point}
-                        </Typography>
+                        </p>
                       }
                     />
                   </ListItem>
@@ -144,19 +131,21 @@ export default function Plan({
                   <ListItem key={point} className="sp:block hidden py-0">
                     <ListItemText
                       primary={
-                        <Typography className="text-xs text-center font-semibold">
+                        <p className="text-xs text-center font-semibold">
                           {point}
-                        </Typography>
+                        </p>
                       }
                     />
                   </ListItem>
-                );
-              })}
+                )
+              )}
             </List>
             <Typography className="text-sm tablet:px-0 font-semibold tablet:whitespace-normal sp:whitespace-nowrap text-center">
               月額&ensp;
               <span className="text-lg font-bold line-through">
-                {product.prices[0]?.unit_amount | "お問い合わせください"}円
+                {product.prices[0]?.unit_amount.toString() ||
+                  "お問い合わせください"}
+                円
               </span>
               <ArrowRightAltIcon />
               0円(1か月)
@@ -172,5 +161,5 @@ export default function Plan({
         </Box>
       ))}
     </RadioGroup>
-  );
+  )
 }
