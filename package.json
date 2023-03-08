@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_OPTIONS='--inspect' && next dev",
+    "dev": " next dev",
     "stripe": "stripe listen --forward-to=localhost:3000/api/webhooks",
     "vercel pro": "npx vercel --prod",
     "vercel": "npx vercel",
