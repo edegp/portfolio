@@ -8,7 +8,7 @@ import Link from "next/link"
 import AI from "../../public/image/ai.jpg"
 import Food from "../../public/image/restaurant.jpg"
 import Analytics from "../../public/image/analytics.jpg"
-import Ecommerce from "../../public/image/e-commerce.jpg"
+import Ecommerce from "../../public/image/e-commerce.png"
 import Reserve from "../../public/image/reserve.jpg"
 import Marketing from "../../public/image/marketing.jpg"
 import WebSite from "../../public/image/website.png"
@@ -17,10 +17,10 @@ import throttle from "lodash.throttle"
 export default function WhatICan({ open, setOpen }) {
   const popperURL = {
     AI: "https://qiita.com/edegp/",
-    Food: "https://note.com/edegp/",
-    Analytics: "https://qiita.com/edegp/",
-    Ecommerce: "https://qiita.com/edegp/",
-    // WebSite: "https://libebar.shop",
+    Food: "https://cafe-cms-demo.vercel.app/",
+    Analytics: "https://edegp.github.io/yuhi/%E9%9D%92%E6%9C%A8%E6%82%A0%E9%A3%9B_%E5%8D%92%E8%AB%96.pdf",
+    Ecommerce: "https://taekobread.base.shop",
+    WebSite: "https://tutuzi.co.jp/",
     Reserve: "https://qiita.com/edegp/",
     Marketing: "https://note.com/edegp/",
   }
@@ -29,7 +29,7 @@ export default function WhatICan({ open, setOpen }) {
     Food,
     Analytics,
     Ecommerce,
-    // WebSite,
+    WebSite,
     Reserve,
     Marketing,
   }
@@ -43,6 +43,7 @@ export default function WhatICan({ open, setOpen }) {
     (event: React.MouseEvent<HTMLAnchorElement>) => {
       setPopper((event.target as HTMLAnchorElement).id)
       setOpen(true)
+      setDisable(false)
       ref.current.style.top = `${event.clientY - 100}px`
       ref.current.style.left = `${event.clientX - 100}px`
       if (intervalRef.current !== null) return
@@ -71,13 +72,12 @@ export default function WhatICan({ open, setOpen }) {
     },
     []
   )
-  const handleDouble = useCallback(
-    (event: React.MouseEvent<HTMLAnchorElement>) => {
-      console.log("double")
-      setDisable(false)
-    },
-    []
-  )
+  // const handleDouble = useCallback(
+  //   (event: React.MouseEvent<HTMLAnchorElement>) => {
+  //     setDisable(false)
+  //   },
+  //   []
+  // )
 
   const handleMouseMove = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -117,6 +117,8 @@ export default function WhatICan({ open, setOpen }) {
           className={
             disable ? "pointer-events-none rounded-full" : "rounded-full"
           }
+          rel="noreferrer"
+          target="_blank"
         >
           <Image
             src={popperImage[popper]}
@@ -143,7 +145,6 @@ export default function WhatICan({ open, setOpen }) {
               id="AI"
               onMouseOver={onMouseOver}
               onTouchStart={handleTouchStart}
-              onDoubleClick={handleDouble}
             >
               AI
             </Typography>
@@ -163,16 +164,16 @@ export default function WhatICan({ open, setOpen }) {
             >
               E-commerce
             </Typography>
-            {/* <Link
+            <Link
               id="WebSite"
-              href="https://libebar.shop"
+              href="https://taekobread.base.shop"
               target="_blank"
               className="marquee__inner1 text-white !font-extrabold w-full hover:cursor-pointer"
               onMouseOver={onMouseOver}
               onTouchStart={handleTouchStart}
             >
               WebSite
-            </Link> */}
+            </Link>
             <Typography
               id="Reserve"
               className="marquee__inner2 text-white !font-extrabold w-full hover:cursor-pointer"

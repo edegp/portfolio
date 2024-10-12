@@ -36,7 +36,7 @@ export default function Merit() {
               key={list.dt}
               className="laptop:w-1/3 laptop:px-vw-10 w-full mb-0 mx-auto"
             >
-              <Box className="text-center laptop:w-3/4 w-vw-72 mx-auto laptop:min-h-[30vh]">
+              <Box className="text-center laptop:w-3/4 tablet:w-vw-48 w-vw-72 mx-auto laptop:min-h-[30vh]">
                 <Image src={list.img} width={400} alt="0 image" />
               </Box>
               <Typography className="text-primary text-lg text-center whitespace-nowrap font-bold laptop:my-vw-6 my-1">

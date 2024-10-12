@@ -49,7 +49,7 @@ export default function System() {
     },
   ]
   return (
-    <Box className="system laptop:pt-[15vh] sp:pt-[10vh] pt-[8vh] section">
+    <Box className="system laptop:pt-[12vh] sp:pt-[6vh] pt-[8vh] section relative">
       <Typography className="font-bold text-primary text-2xl text-center laptop:mb-vw-12 mb-vw-5">
         管理が簡単なシステム
         <span className="text-xs text-black">※</span>
@@ -57,7 +57,7 @@ export default function System() {
       <Box>
         <Container className="flex flex-wrap justify-between">
           {lists.map((list) => (
-            <Box className="laptop:w-[30%] laptop:px-5 laptop:mb-0 w-full mb-[20px] laptop:h-[55vh] h-[22vh] flex flex-col  justify-between">
+            <Box className="laptop:w-[30%] laptop:px-5 laptop:mb-0 w-full [&:not(:last-of-type)]:mb-[32px] laptop:h-[55vh] sxsp:h-[23vh] flex flex-col justify-between">
               <Box className="text-center laptop:mx-[-20px] laptop:max-w-none sp:max-w-[140px] max-w-[90px] mx-auto">
                 <Image
                   src={list.img}
@@ -75,7 +75,7 @@ export default function System() {
               </Paper>
             </Box>
           ))}
-          <Typography className="text-xs ml-auto mt-vw-3">
+          <Typography className="text-xs ml-auto mt-vw-3 absolute bottom-2 right-2">
             ※予約・POSレジはSquareのサービスを採用
           </Typography>
         </Container>

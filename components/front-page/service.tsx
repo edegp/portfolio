@@ -3,7 +3,7 @@ import Container from "@mui/material/Container"
 import Box from "@mui/material/Box"
 import Image from "next/image"
 import Link from "next/link"
-import Serviceimg from "../../public/image/taeko.png"
+import Serviceimg from "../../public/image/website.png"
 
 export default function Service() {
   return (

@@ -31,11 +31,11 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
 export default function LP({ products }: Props) {
   const [checked, setChecked] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const handleChange = () => setChecked((prev) => !prev)
+  // const handleChange = () => setChecked((prev) => !prev)
   const handleScroll: UIEventHandler<HTMLDivElement> = throttle(
     (event: UIEvent) => {
       console.log(ref.current.scrollTop, checked)
-      ref.current.scrollTop > 800 && ref.current.scrollTop < 1000
+      ref.current.scrollTop > 650 && ref.current.scrollTop < 1000
         ? setChecked(true)
         : checked && setChecked(false)
     },

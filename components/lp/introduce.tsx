@@ -18,7 +18,7 @@ export default function Introduce({
     value: "basic" | "standard" | "Premium"
   ) => setPlan(value)
   return (
-    <Box className="system laptop:pt-[15vh] pt-[8vh] section">
+    <Box className="system laptop:pt-[15vh] tablet:pt-[16vh] pt-[8vh] section">
       <Typography className="font-bold text-primary text-2xl text-center laptop:mb-vw-5 mb-vw-2">
         プランのご紹介
       </Typography>

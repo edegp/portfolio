@@ -9,9 +9,10 @@ import GA from "../../public/image/GA.jpg";
 import Contentful from "../../public/image/Contentful.jpg";
 import Next from "../../public/image/Next.jpg";
 import Vercel from "../../public/image/Vercel.jpg";
+import BASE from "../../public/image/BASE.png";
 
 export default function Acheive() {
-  const lists = [WP, Shopify, CsCart, GA, Next, Contentful, Vercel];
+  const lists = [WP, Shopify, BASE, GA, Next, Contentful, Vercel];
   return (
     <Box className="archive pt-[14vh] section px-vw-20">
       <Typography className="font-bold text-primary text-2xl text-center mb-[10px]">
@@ -25,7 +26,7 @@ export default function Acheive() {
                 "laptop:w-[24vw] tablet:w-[30vw] w-[40vw] tablet:mt-vw-8 laptop:col-span-3 tablet:col-span-2 col-span-1")
             : list === GA
             ? (CN = "laptop:w-[33vw] w-[45vw]  z-[-4]")
-            : list === CsCart
+            : list === BASE
             ? (CN = "laptop:w-[20vw] tablet:w-[28vw] w-[35vw] z-[20]")
             : list === Contentful
             ? (CN =

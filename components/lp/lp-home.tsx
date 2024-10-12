@@ -25,10 +25,10 @@ export default function LPHome() {
             体験
           </span>
           <br />
-          小規模<span className="text-primary text-2xl">飲食店</span>に特化した
+          小規模<span className="text-primary text-2xl">飲食店</span>特化！
           <br />
-          <span className="text-primary text-2xl">スマホだけ</span>
-          でホームページ作成
+          <span className="text-primary text-2xl">スマホだけで</span>
+          管理するホームページ
         </Typography>
 
         <Button

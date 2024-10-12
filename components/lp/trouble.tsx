@@ -34,7 +34,7 @@ const blowAfterCss = [
 
 export default function Trouble({ checked }: { checked: boolean }) {
   return (
-    <Box className="merit laptop:pt-[14vh] pt-[5vh] section">
+    <Box className="merit laptop:pt-[14vh] pt-[8vh] section">
       <Typography className="font-bold text-primary text-2xl text-center laptop:mb-vw-10 tablet:mb-[10vh] mb-2">
         こんなことでお困りではありませんか？
       </Typography>
