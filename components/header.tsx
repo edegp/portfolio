@@ -253,7 +253,7 @@ export default function Header() {
           onMouseLeave={onMouseLeave}
           className="hover:brightness-75 pl-10"
         >
-          <Image alt="logo" src={logo.src} width="100" height="100" />
+          <Image alt="logo" src={logo.src} width={"100"} height={"100"} />
         </Link>
       </Box>
       {!/^\/subscription.*$/.test(pathname) ||

@@ -16,12 +16,13 @@ import throttle from "lodash.throttle"
 
 export default function WhatICan({ open, setOpen }) {
   const popperURL = {
-    AI: "https://qiita.com/edegp/",
+    AI: "https://github.com/edegp/katakana/blob/main/VGG(4)_(1).ipynb",
     Food: "https://cafe-cms-demo.vercel.app/",
-    Analytics: "https://edegp.github.io/yuhi/%E9%9D%92%E6%9C%A8%E6%82%A0%E9%A3%9B_%E5%8D%92%E8%AB%96.pdf",
+    Analytics:
+      "https://edegp.github.io/yuhi/%E9%9D%92%E6%9C%A8%E6%82%A0%E9%A3%9B_%E5%8D%92%E8%AB%96.pdf",
     Ecommerce: "https://taekobread.base.shop",
     WebSite: "https://tutuzi.co.jp/",
-    Reserve: "https://qiita.com/edegp/",
+    Reserve: "https://cafe-cms-demo.vercel.app/",
     Marketing: "https://note.com/edegp/",
   }
   const popperImage = {
@@ -46,8 +47,7 @@ export default function WhatICan({ open, setOpen }) {
       setDisable(false)
       ref.current.style.top = `${event.clientY - 100}px`
       ref.current.style.left = `${event.clientX - 100}px`
-      if (intervalRef.current !== null) return
-      intervalRef.current = setTimeout(() => setOpen(false), 500)
+      intervalRef.current = setTimeout(() => setOpen(false), 1500)
     },
     []
   )
@@ -87,19 +87,19 @@ export default function WhatICan({ open, setOpen }) {
       event.currentTarget.style.top = `${event.clientY - 100}px`
       event.currentTarget.style.left = `${event.clientX - 100}px`
       if (intervalRef.current !== null) return
-      intervalRef.current = setTimeout(() => setOpen(false), 350)
+      intervalRef.current = setTimeout(() => setOpen(false), 1200)
     },
     []
   )
   useEffect(() => {
     document.addEventListener(
       "scroll",
-      throttle(() => setOpen(false), 500)
+      throttle(() => setOpen(false), 800)
     )
     return () =>
       document.removeEventListener(
         "scroll",
-        throttle(() => setOpen(false), 500)
+        throttle(() => setOpen(false), 800)
       )
   }, [open])
   return (

@@ -26,22 +26,22 @@ export default function Service() {
         <Box className="service-img rounded-2xl mx-auto tablet:w-[75%]">
           <Link
             className="fadein"
-            href="https://taekobread.base.shop"
+            href="https://tutuzi.co.jp"
             target="_blank"
             legacyBehavior
           >
             <Image
               src={Serviceimg}
-              width={1200}
-              height={555}
+              // width={600}
+              // height={300}
               className="rounded-2xl border-[#a1aec0] border-[0.5px] border-solid max-w-none w-full"
               alt="サービスイメージ画像"
             />
           </Link>
         </Box>
         <p className="font-Noto-Sans text-xs mt-12 mx-auto fadein">
-          <Link href="https://taekobread.base.shop" target="_blank">
-            taeko bread@東京
+          <Link href="https://tutuzi.co.jp" target="_blank">
+            つつじ不動産@築地
           </Link>
         </p>
       </Container>

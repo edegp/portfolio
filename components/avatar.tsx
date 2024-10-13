@@ -1,7 +1,7 @@
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import ContentfulImage from "./contentful-image";
-import noImage from "../public/image/noimage.jpg";
+import Box from "@mui/material/Box"
+import Typography from "@mui/material/Typography"
+import ContentfulImage from "./contentful-image"
+import noImage from "../public/image/noimage.jpg"
 
 export default function Avatar({ name, picture }) {
   return (
@@ -16,5 +16,5 @@ export default function Avatar({ name, picture }) {
       </Box>
       <Typography className="text-xs">{name}</Typography>
     </Box>
-  );
+  )
 }

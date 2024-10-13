@@ -22,7 +22,9 @@ const options = {
     ),
     [BLOCKS.PARAGRAPH]: (node: NodeData, children: string[]) => (
       <>
-        <Typography className="font-[游明朝体]">{children}</Typography>
+        <Typography className="font-[游明朝体]">
+          {children[0] === "ブックマーク" ? children.slice(1) : children}
+        </Typography>
         {children[0] === "ブックマーク" && process.browser && (
           <Bookmark
             href={window.location.href}

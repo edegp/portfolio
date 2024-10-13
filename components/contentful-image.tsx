@@ -1,10 +1,9 @@
-import Image from "next/image";
+import Image from "next/image"
 
 const contentfulLoader = ({ src, width, quality }) =>
-  `${src}?w=${width}&q=${quality || 75}`;
+  `${src}?w=${width}&q=${quality || 75}`
 
 const ContentfulImage = (props) => (
   <Image loader={contentfulLoader} {...props} />
-);
-
-export default ContentfulImage;
+)
+export default ContentfulImage

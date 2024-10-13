@@ -31,8 +31,8 @@ export default function Bookmark({
     rdd.isSafari && rdd.isIOS ? (
       <Box>
         <Box>
-          <Image
-            width={30}
+          <img
+            width={"30"}
             className="rounded-[5px]"
             src={SAFARI_SHARE}
             alt="favorite"
@@ -44,13 +44,13 @@ export default function Bookmark({
     ) : rdd.isChrome || rdd.isFirefox ? (
       <Box>
         <Box>
-          <Image width={20} className="invert" src={MENU_ICON} alt="favorite" />
+          <img width={"20"} src={MENU_ICON} alt="favorite" />
         </Box>
         を押して
         <Box>
-          <Image width={20} className="invert" src={STAR_ICON} alt="favorite" />
+          <img width={"20"} src={STAR_ICON} alt="favorite" />
         </Box>
-        ブックマーク
+        でブックマーク
       </Box>
     ) : (
       <Typography>後でブックマークするために覚えておいてください</Typography>
@@ -60,7 +60,7 @@ export default function Bookmark({
     rdd.isChrome || rdd.isFirefox ? (
       <>
         <Image
-          width={20}
+          width={"20"}
           className="invert"
           src={STAR_ICON}
           alt="favorite toolbar"
