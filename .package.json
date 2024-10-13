@@ -1,4 +1,0 @@
-"scripts": {
- "lint": "eslint . && prettier --check .",
- "format": "eslint --fix . && prettier --write .",
-},
